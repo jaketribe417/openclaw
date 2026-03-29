@@ -1,0 +1,192 @@
+{
+  "version": 1,
+  "jobs": [
+    {
+      "id": "cdb98835-3ef2-4bb8-9756-72f81a7cbd0e",
+      "agentId": "main",
+      "sessionKey": "agent:main:main",
+      "name": "openclaw-heartbeat",
+      "enabled": true,
+      "createdAtMs": 1774768863106,
+      "updatedAtMs": 1774825175925,
+      "schedule": {
+        "everyMs": 1800000,
+        "kind": "every",
+        "anchorMs": 1774768863106
+      },
+      "sessionTarget": "session:agent:main:main",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Read HEARTBEAT.md in workspace and run the heartbeat checks. Be concise - only report issues, not all-ok status.",
+        "model": "ollama/qwen3.5:0.8b",
+        "timeoutSeconds": 60
+      },
+      "delivery": {
+        "mode": "announce"
+      },
+      "state": {
+        "nextRunAtMs": 1774826969389,
+        "lastRunAtMs": 1774825169389,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 6536,
+        "lastDeliveryStatus": "not-delivered",
+        "consecutiveErrors": 0,
+        "lastDelivered": false
+      }
+    },
+    {
+      "id": "288001f9-1969-4d35-a2b3-9c8b6401dc92",
+      "agentId": "main",
+      "sessionKey": "agent:main:main",
+      "name": "joy-email-check",
+      "enabled": true,
+      "createdAtMs": 1774802854612,
+      "updatedAtMs": 1774826409696,
+      "schedule": {
+        "expr": "*/10 * * * *",
+        "kind": "cron"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Check emails using the joy-email-check script. Run: node /Users/Jack/.openclaw/workspace/skills/agentmail-mail/scripts/joy-email-check.js\n\nIMPORTANT: Only report results if there are NEW unread emails. If no unread emails, reply with NO_REPLY (nothing else).",
+        "model": "ollama/qwen3.5:0.8b",
+        "timeoutSeconds": 60
+      },
+      "delivery": {
+        "mode": "none",
+        "channel": "telegram",
+        "to": "8382558273"
+      },
+      "state": {
+        "nextRunAtMs": 1774827000000,
+        "lastRunAtMs": 1774826400022,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 9674,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered",
+        "consecutiveErrors": 0
+      }
+    },
+    {
+      "id": "3772bf72-374e-4ac3-b034-daa9b8f647d4",
+      "agentId": "main",
+      "sessionKey": "agent:main:main",
+      "name": "hep-discord-notifier",
+      "enabled": true,
+      "createdAtMs": 1774811023382,
+      "updatedAtMs": 1774826416282,
+      "schedule": {
+        "expr": "*/10 * * * *",
+        "kind": "cron"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Check if HEP has posted any status updates in the last 10 minutes.\n\n1. Read /Users/Jack/.openclaw/workspace/logs/hep-status.log\n2. Look for new entries since last check\n3. If there are updates, send them to Discord channel for project updates\n\nUse this format:\n**HEP Update** — [time]\n[summary of progress]\n\nCommitted: [yes/no]\nNext check-in: [time]"
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "nextRunAtMs": 1774827000000,
+        "lastRunAtMs": 1774826409696,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 6586,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered",
+        "consecutiveErrors": 0
+      }
+    },
+    {
+      "id": "02119c9d-1a2d-4a34-a865-5d0b90fd5ee9",
+      "agentId": "main",
+      "sessionKey": "agent:main:main",
+      "name": "joy-morning-news",
+      "enabled": true,
+      "createdAtMs": 1774823201842,
+      "updatedAtMs": 1774823201842,
+      "schedule": {
+        "expr": "30 5 * * *",
+        "kind": "cron",
+        "tz": "America/Chicago"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Run the morning news script: node /Users/Jack/.openclaw/workspace/skills/agentmail-mail/scripts/joy-morning-news.js\n\nThis fetches top 10 news stories and sends them via email to jason@hansentribe.com. Run silently - only report errors.",
+        "model": "ollama/qwen3.5:0.8b",
+        "timeoutSeconds": 120
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "nextRunAtMs": 1774866600000
+      }
+    },
+    {
+      "id": "dc3e258f-8233-48c8-98e1-4943ce7a7f73",
+      "agentId": "joy",
+      "sessionKey": "agent:main:main",
+      "name": "joy-calendar-daily",
+      "enabled": true,
+      "createdAtMs": 1774825321770,
+      "updatedAtMs": 1774825352133,
+      "schedule": {
+        "expr": "0 6 * * 1-5",
+        "kind": "cron",
+        "tz": "America/Chicago"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Run daily calendar summary script and send email from Joy. Execute: node /Users/Jack/.openclaw/workspace/skills/agentmail-mail/scripts/joy-calendar-summary.js daily\n\nSend daily calendar summary at 6:00 AM to jhansen@trustlineage.com from your inbox. Sign the email as Joy.",
+        "model": "ollama/qwen3.5:0.8b",
+        "timeoutSeconds": 60
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "nextRunAtMs": 1774868400000
+      }
+    },
+    {
+      "id": "c18ae692-3aa1-4b19-a83d-94fe77cbe747",
+      "agentId": "joy",
+      "sessionKey": "agent:main:main",
+      "name": "joy-calendar-weekly",
+      "enabled": true,
+      "createdAtMs": 1774825328081,
+      "updatedAtMs": 1774825360024,
+      "schedule": {
+        "expr": "0 5 * * 1",
+        "kind": "cron",
+        "tz": "America/Chicago"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Run weekly calendar summary script and send email from Joy. Execute: node /Users/Jack/.openclaw/workspace/skills/agentmail-mail/scripts/joy-calendar-summary.js weekly\n\nSend weekly calendar summary at 5:00 AM Monday to jhansen@trustlineage.com from your inbox. Sign the email as Joy.",
+        "model": "ollama/qwen3.5:0.8b",
+        "timeoutSeconds": 60
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "nextRunAtMs": 1774864800000
+      }
+    }
+  ]
+}

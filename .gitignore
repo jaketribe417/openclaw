@@ -1,0 +1,56 @@
+# --- Never commit secrets ---
+openclaw.json
+openclaw.json.bak*
+credentials/
+identity/
+telegram/
+
+# Device / operator tokens and pairing
+**/device-auth.json
+
+# Skill configs that may hold API keys or inbox credentials
+**/EMAIL_CONFIG.json
+workspace/skills/email-manager/config.json
+
+# OAuth / API profiles under agent state (may contain tokens)
+**/auth-profiles.json
+
+# Local memory plugin databases
+memory/*.sqlite
+
+# Accidental nested git backup trees (bloated; not useful in this repo)
+**/.git.backup-before-monorepo/
+
+# --- Large or volatile runtime state ---
+logs/
+**/logs/
+agents/*/sessions/
+cron/runs/
+backups/
+*.bak
+*.bak.*
+*.clobbered.*
+update-check.json
+sandboxes/
+media/
+memory-braid/
+canvas/
+extensions/
+devices/
+subagents/
+
+# Workspace runtime markers
+workspace/.openclaw/
+
+# --- Nested app project (separate git repo + build output) ---
+workspace/jake-mission-control/
+
+# --- Dependencies & build ---
+**/node_modules/
+**/.next/
+**/dist/
+**/.turbo/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
