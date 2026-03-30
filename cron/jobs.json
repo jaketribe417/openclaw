@@ -8,7 +8,7 @@
       "name": "openclaw-heartbeat",
       "enabled": true,
       "createdAtMs": 1774768863106,
-      "updatedAtMs": 1774825175925,
+      "updatedAtMs": 1774834183329,
       "schedule": {
         "everyMs": 1800000,
         "kind": "every",
@@ -26,14 +26,14 @@
         "mode": "announce"
       },
       "state": {
-        "nextRunAtMs": 1774826969389,
-        "lastRunAtMs": 1774825169389,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 6536,
-        "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 0,
-        "lastDelivered": false
+        "nextRunAtMs": 1774835969469,
+        "lastRunAtMs": 1774834169469,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 13860,
+        "lastDeliveryStatus": "unknown",
+        "consecutiveErrors": 1,
+        "lastError": "Channel is required (no configured channels detected). Set delivery.channel explicitly or use a main session with a previous channel."
       }
     },
     {
@@ -43,7 +43,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1774826409696,
+      "updatedAtMs": 1774834803662,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -62,11 +62,11 @@
         "to": "8382558273"
       },
       "state": {
-        "nextRunAtMs": 1774827000000,
-        "lastRunAtMs": 1774826400022,
+        "nextRunAtMs": 1774835400000,
+        "lastRunAtMs": 1774834800013,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 9674,
+        "lastDurationMs": 3649,
         "lastDelivered": false,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0
@@ -79,7 +79,7 @@
       "name": "hep-discord-notifier",
       "enabled": true,
       "createdAtMs": 1774811023382,
-      "updatedAtMs": 1774826416282,
+      "updatedAtMs": 1774834809092,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -94,11 +94,11 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1774827000000,
-        "lastRunAtMs": 1774826409696,
+        "nextRunAtMs": 1774835400000,
+        "lastRunAtMs": 1774834803662,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 6586,
+        "lastDurationMs": 5430,
         "lastDelivered": false,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0

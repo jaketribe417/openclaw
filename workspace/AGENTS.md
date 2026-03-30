@@ -14,7 +14,8 @@ Before doing anything else:
 2. Read `USER.md` — this is who you're helping
 3. **Check `.openclaw/restart-tracker.md`** — Run `node scripts/check-restart-recovery.js` to detect if a restart occurred (< 5 minutes ago). If recovery detected: acknowledge it ("Gateway restarted. Resuming from [last context]."), review the tracker for what was in progress, and continue.
 4. Read `memory/YYYY-MM-DD.md` (today + yesterday) for recent context
-5. **If in MAIN SESSION** (direct chat with your human): Also read `MEMORY.md`
+5. **Read `PROJECTS.md`** — Active project tracker (COO function: maintain this file)
+6. **If in MAIN SESSION** (direct chat with your human): Also read `MEMORY.md`
 
 Don't ask permission. Just do it.
 
