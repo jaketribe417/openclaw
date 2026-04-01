@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775034060047,
+      "updatedAtMs": 1775037610365,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -27,15 +27,16 @@
         "to": "8382558273"
       },
       "state": {
-        "nextRunAtMs": 1775034600000,
-        "lastRunAtMs": 1775034000030,
+        "nextRunAtMs": 1775038200000,
+        "lastRunAtMs": 1775037600031,
         "lastRunStatus": "error",
         "lastStatus": "error",
-        "lastDurationMs": 60017,
-        "lastDeliveryStatus": "not-requested",
+        "lastDurationMs": 10334,
+        "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 1,
-        "lastError": "cron: job execution timed out",
-        "lastErrorReason": "timeout"
+        "lastDelivered": false,
+        "lastError": "⚠️ 🖼️ Canvas: `subagent:ab7d1c4b-01c8-49ee-8284-7e76b6e842a3` failed",
+        "lastDeliveryError": "⚠️ 🖼️ Canvas: `subagent:ab7d1c4b-01c8-49ee-8284-7e76b6e842a3` failed"
       }
     },
     {
@@ -187,7 +188,7 @@
       "name": "git-auto-push",
       "enabled": true,
       "createdAtMs": 1775007924606,
-      "updatedAtMs": 1775030682260,
+      "updatedAtMs": 1775034283670,
       "schedule": {
         "expr": "0 * * * *",
         "kind": "cron",
@@ -204,15 +205,15 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775034271643,
-        "lastRunAtMs": 1775030671664,
+        "nextRunAtMs": 1775037871643,
+        "lastRunAtMs": 1775034271651,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 10596,
+        "lastDurationMs": 12019,
         "lastDelivered": false,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
-        "runningAtMs": 1775034271647
+        "runningAtMs": 1775037871646
       }
     }
   ]

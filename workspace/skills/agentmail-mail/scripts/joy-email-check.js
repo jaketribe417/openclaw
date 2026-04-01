@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * joy-email-check.js
- * Check emails via AgentMail API and log actions
- * Outputs summary to current chat only
+ * Joy Email Checker
+ * Checks inbox, logs to file, outputs summary to current chat only
+ * No orphan sessions created
  */
 
 const https = require('https');
@@ -21,19 +21,18 @@ const TRUSTED_SENDERS = [
   'jhansen@trustlineage.com'
 ];
 
-// Log file path
-const LOG_DIR = path.join(__dirname, '..', '..', '..', 'logs');
-const LOG_FILE = path.join(LOG_DIR, 'email-actions.log');
-
-// Ensure log directory exists
-if (!fs.existsSync(LOG_DIR)) {
-  fs.mkdirSync(LOG_DIR, { recursive: true });
+// Ensure logs directory exists
+const LOGS_DIR = path.join(__dirname, '..', '..', '..', 'logs');
+if (!fs.existsSync(LOGS_DIR)) {
+  fs.mkdirSync(LOGS_DIR, { recursive: true });
 }
+
+const LOG_FILE = path.join(LOGS_DIR, 'email-actions.log');
 
 function logAction(message) {
   const timestamp = new Date().toISOString();
-  const logEntry = `[${timestamp}] ${message}\\n`;\
-  fs.appendFileSync(LOG_FILE, logEntry);\
+  const logLine = `[${timestamp}] ${message}\n`;
+  fs.appendFileSync(LOG_FILE, logLine);
 }
 
 function makeRequest(path, method = 'GET', data = null) {
@@ -52,10 +51,10 @@ function makeRequest(path, method = 'GET', data = null) {
 
     const req = https.request(options, (res) => {
       let body = '';
-      res.on('data', (chunk) => body += chunk);\
+      res.on('data', (chunk) => body += chunk);
       res.on('end', () => {
         try {
-          const json = JSON.parse(body);\
+          const json = JSON.parse(body);
           resolve({ status: res.statusCode, data: json });
         } catch (e) {
           resolve({ status: res.statusCode, data: body });
@@ -64,7 +63,7 @@ function makeRequest(path, method = 'GET', data = null) {
     });
 
     req.on('error', (err) => reject(err));
-
+    
     if (data) {
       req.write(JSON.stringify(data));
     }
@@ -72,42 +71,82 @@ function makeRequest(path, method = 'GET', data = null) {
   });
 }
 
-async function checkEmails() {
-  logAction('Started email check');
+function isTrustedSender(from) {
+  const fromLower = from.toLowerCase();
+  return TRUSTED_SENDERS.some(sender => fromLower.includes(sender.toLowerCase()));
+}
 
+async function checkEmails() {
+  logAction('Starting email check...');
+  
   try {
     // List messages in inbox
     const response = await makeRequest(`/inboxes/${encodeURIComponent(INBOX_ID)}/messages?limit=20`, 'GET');
-
-    if (response.status < 200 || response.status >= 300) {
-      console.error(`Error fetching emails: HTTP ${response.status}`);\
-      logAction(`ERROR: HTTP ${response.status} - ${JSON.stringify(response.data)}`);\
-      return;\
+    
+    if (response.status !== 200) {
+      logAction(`Error fetching messages: HTTP ${response.status}`);
+      console.log(`Email check failed: HTTP ${response.status}`);
+      return;
     }
-
-    const messages = response.data.messages || [];\
-    const unread = messages.filter(m => m.status === 'unread');
-
-    console.log(`\n📧 Email Check for ${INBOX_ID}`);\
-    console.log(`Total messages: ${messages.length}`);\
-    console.log(`Unread messages: ${unread.length}`);\
-    logAction(`Found ${messages.length} total messages, ${unread.length} unread`);\
-
-    if (unread.length === 0) {
-      logAction('\nNo new unread messages.');
-      return;\
-    } else {
-      logAction(`\n📧 Found ${unread.length} NEW UNREAD email(s):`);\
-      unread.forEach(msg => {
-        console.log(`- ${msg.from} - ${msg.text || 'No text'}`);\
-      });
+    
+    const messages = response.data.data || [];
+    
+    if (messages.length === 0) {
+      logAction('No messages in inbox');
+      console.log('📭 No new emails in jaketribe_bot@agentmail.to');
+      return;
     }
-
-    logAction(`Email check complete`);\
-    logAction(`Summary: ${unread.length} unread email(s)`);\
+    
+    logAction(`Found ${messages.length} messages`);
+    
+    const unreadMessages = messages.filter(m => !m.read_at);
+    const trustedMessages = [];
+    const otherMessages = [];
+    
+    for (const msg of unreadMessages) {
+      const from = msg.from?.email || msg.from || 'unknown';
+      if (isTrustedSender(from)) {
+        trustedMessages.push(msg);
+      } else {
+        otherMessages.push(msg);
+      }
+    }
+    
+    // Log summary
+    logAction(`Unread: ${unreadMessages.length} total (${trustedMessages.length} trusted, ${otherMessages.length} other)`);
+    
+    // Output summary to console (current chat only)
+    console.log(`📧 Email Check: jaketribe_bot@agentmail.to`);
+    console.log(`   Total messages: ${messages.length}`);
+    console.log(`   Unread: ${unreadMessages.length}`);
+    
+    if (trustedMessages.length > 0) {
+      console.log(`\n✅ Trusted sender emails (${trustedMessages.length}):`);
+      for (const msg of trustedMessages) {
+        const from = msg.from?.email || msg.from || 'unknown';
+        console.log(`   - "${msg.subject}" from ${from}`);
+        logAction(`TRUSTED: "${msg.subject}" from ${from}`);
+      }
+    }
+    
+    if (otherMessages.length > 0) {
+      console.log(`\n⏳ Other emails queued for review (${otherMessages.length}):`);
+      for (const msg of otherMessages) {
+        const from = msg.from?.email || msg.from || 'unknown';
+        console.log(`   - "${msg.subject}" from ${from}`);
+        logAction(`QUEUED: "${msg.subject}" from ${from}`);
+      }
+    }
+    
+    if (unreadMessages.length === 0) {
+      console.log('   All caught up!');
+    }
+    
+    logAction('Email check complete');
+    
   } catch (err) {
-    console.error('Error checking emails:', err.message);\
-    logAction(`ERROR: ${err.message}`);\
+    logAction(`Error: ${err.message}`);
+    console.log(`Email check failed: ${err.message}`);
   }
 }
 
