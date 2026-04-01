@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775037610365,
+      "updatedAtMs": 1775041260050,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -27,16 +27,15 @@
         "to": "8382558273"
       },
       "state": {
-        "nextRunAtMs": 1775038200000,
-        "lastRunAtMs": 1775037600031,
+        "nextRunAtMs": 1775041800000,
+        "lastRunAtMs": 1775041200032,
         "lastRunStatus": "error",
         "lastStatus": "error",
-        "lastDurationMs": 10334,
-        "lastDeliveryStatus": "not-delivered",
+        "lastDurationMs": 60018,
+        "lastDeliveryStatus": "not-requested",
         "consecutiveErrors": 1,
-        "lastDelivered": false,
-        "lastError": "⚠️ 🖼️ Canvas: `subagent:ab7d1c4b-01c8-49ee-8284-7e76b6e842a3` failed",
-        "lastDeliveryError": "⚠️ 🖼️ Canvas: `subagent:ab7d1c4b-01c8-49ee-8284-7e76b6e842a3` failed"
+        "lastError": "cron: job execution timed out",
+        "lastErrorReason": "timeout"
       }
     },
     {
@@ -46,7 +45,7 @@
       "name": "joy-morning-news",
       "enabled": true,
       "createdAtMs": 1774823201842,
-      "updatedAtMs": 1774953023069,
+      "updatedAtMs": 1775039537725,
       "schedule": {
         "expr": "30 5 * * *",
         "kind": "cron",
@@ -64,14 +63,15 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775039400000,
-        "lastRunAtMs": 1774953016600,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 6469,
-        "lastDelivered": false,
-        "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 0
+        "nextRunAtMs": 1775125800000,
+        "lastRunAtMs": 1775039417713,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 120012,
+        "lastDeliveryStatus": "not-requested",
+        "consecutiveErrors": 1,
+        "lastError": "cron: job execution timed out",
+        "lastErrorReason": "timeout"
       }
     },
     {
@@ -81,7 +81,7 @@
       "name": "joy-calendar-daily",
       "enabled": true,
       "createdAtMs": 1774825321770,
-      "updatedAtMs": 1774954851205,
+      "updatedAtMs": 1775041316436,
       "schedule": {
         "expr": "0 6 * * 1-5",
         "kind": "cron",
@@ -99,11 +99,11 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775041200000,
-        "lastRunAtMs": 1774954823523,
+        "nextRunAtMs": 1775127600000,
+        "lastRunAtMs": 1775041260050,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 27682,
+        "lastDurationMs": 56386,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -188,7 +188,7 @@
       "name": "git-auto-push",
       "enabled": true,
       "createdAtMs": 1775007924606,
-      "updatedAtMs": 1775034283670,
+      "updatedAtMs": 1775037886199,
       "schedule": {
         "expr": "0 * * * *",
         "kind": "cron",
@@ -205,15 +205,15 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775037871643,
-        "lastRunAtMs": 1775034271651,
+        "nextRunAtMs": 1775041471643,
+        "lastRunAtMs": 1775037871653,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 12019,
+        "lastDurationMs": 14546,
         "lastDelivered": false,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
-        "runningAtMs": 1775037871646
+        "runningAtMs": 1775041471653
       }
     }
   ]
