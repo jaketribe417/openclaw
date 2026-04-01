@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775023238410,
+      "updatedAtMs": 1775026860051,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -27,16 +27,15 @@
         "to": "8382558273"
       },
       "state": {
-        "nextRunAtMs": 1775023800000,
-        "lastRunAtMs": 1775023200023,
+        "nextRunAtMs": 1775027400000,
+        "lastRunAtMs": 1775026800032,
         "lastRunStatus": "error",
         "lastStatus": "error",
-        "lastDurationMs": 38387,
-        "lastDeliveryStatus": "not-delivered",
+        "lastDurationMs": 60019,
+        "lastDeliveryStatus": "not-requested",
         "consecutiveErrors": 1,
-        "lastDelivered": false,
-        "lastError": "⚠️ ⏰ Cron failed",
-        "lastDeliveryError": "⚠️ ⏰ Cron failed"
+        "lastError": "cron: job execution timed out",
+        "lastErrorReason": "timeout"
       }
     },
     {
@@ -188,7 +187,7 @@
       "name": "git-auto-push",
       "enabled": true,
       "createdAtMs": 1775007924606,
-      "updatedAtMs": 1775019881047,
+      "updatedAtMs": 1775023483250,
       "schedule": {
         "expr": "0 * * * *",
         "kind": "cron",
@@ -205,15 +204,15 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775023471643,
-        "lastRunAtMs": 1775019871658,
+        "nextRunAtMs": 1775027071643,
+        "lastRunAtMs": 1775023471655,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 9389,
+        "lastDurationMs": 11595,
         "lastDelivered": false,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
-        "runningAtMs": 1775023471648
+        "runningAtMs": 1775027071646
       }
     }
   ]
