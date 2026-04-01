@@ -1,1 +1,79 @@
-joy-email-check: Run joy-email-check script
+#!/usr/bin/env node
+
+const joy = require('joy');
+const path = require('path');
+
+const joyClient = joy.create({
+    timeoutSeconds: 10,
+    timeoutMs: 1000,
+    delayMs: 100,
+    maxRetries: 3,
+    retryOnTimeoutMs: 20000,
+    retryDelay: 10000,
+    retryOnError: 'rejection',
+    retryOptions: {
+        delay: { seconds: 0.5 }
+    }
+});
+
+console.log('Joy Email Checker - Running...');
+console.log(`[joy] Default timeout: ${joyClient.default.timeoutSeconds} seconds, ${joyClient.default.timeoutMs}ms, ${joyClient.default.delayMs}ms, ${joyClient.default.maxRetries} retries, ${joyClient.default.retryOnTimeoutMs}ms timeout, ${joyClient.default.retryDelay}ms delay, ${joyClient.default.retryOnError} error, ${joyClient.default.retryOptions.delay.seconds}ms delay`);
+
+let successCount = 0;
+let failedCount = 0;
+
+// Process messages from the inbox
+joyClient.processMessages((msg) => {
+    if (msg && msg.channelId && msg.channelId !== joy.Channel.DEFAULT) {
+        processMessage(msg);
+    }
+});
+
+function processMessage(msg) {
+    const channel = msg.channelId;
+    const senderName = msg.author.name;
+    const message = msg.message || '';
+    const attachment = msg.attachment;
+
+    // Only check unread emails
+    if (!msg.markedAsRead && !attachment) {
+        if (channel === joy.Channel.JOY) {
+            console.log(`[JAY] ${channel}: ${message} - ${senderName}`);
+            console.log(`[JAY] ${channel}: ${msg.timestamp} - ${senderName}`);
+            successCount++;
+        } else {
+            if (joyClient.isMessage(msg)) {
+                joyClient.markMessage(msg, joy.markedAsRead, joy.MessageType.REMOVED);
+                console.log(`[JAY] ${channel}: ${message} - ${senderName} - ${msg.timestamp}`);
+                successCount++;
+            }
+        }
+    } else if (attachment) {
+        console.log(`[JAY] ${channel}: ${message}`);
+        successCount++;
+    }
+}
+
+joyClient.on('message', (msg) => {
+    if (msg && msg.channelId && msg.channelId !== joy.Channel.DEFAULT) {
+        processMessage(msg);
+    }
+});
+
+console.log(`[JAY] Default timeout: ${joyClient.default.timeoutSeconds} seconds`);
+console.log(`[JAY] Default delay: ${joyClient.default.delayMs}ms`);
+console.log(`[JAY] Default max retries: ${joyClient.default.maxRetries}`);
+
+console.log('[JAY] Checking inbox...');
+console.log(`[JAY] Total messages: ${joyClient.getMessagesCount()}`);
+
+const total = joyClient.getMessagesCount();
+const unreadCount = joyClient.getUnreadCount();
+
+console.log(`[JAY] UNREAD EMAILS: ${unreadCount} of ${total}`);
+
+// Show unread count
+const totalRead = joyClient.getMessagesCount() - unreadCount;
+console.log(`[JAY] Messages total: ${total}`);
+console.log(`[JAY] Messages read (today): ${unreadCount}`);
+console.log(`[JAY] Messages unread today: ${totalRead}`);
