@@ -2,49 +2,13 @@
   "version": 1,
   "jobs": [
     {
-      "id": "cdb98835-3ef2-4bb8-9756-72f81a7cbd0e",
-      "agentId": "main",
-      "sessionKey": "agent:main:main",
-      "name": "openclaw-heartbeat",
-      "enabled": true,
-      "createdAtMs": 1774768863106,
-      "updatedAtMs": 1775014255741,
-      "schedule": {
-        "everyMs": 1800000,
-        "kind": "every",
-        "anchorMs": 1774768863106
-      },
-      "sessionTarget": "session:agent:main:main",
-      "wakeMode": "now",
-      "payload": {
-        "kind": "agentTurn",
-        "message": "Read HEARTBEAT.md in workspace and run the heartbeat checks. Be concise - only report issues, not all-ok status.",
-        "model": "ollama/qwen3.5:0.8b",
-        "timeoutSeconds": 60
-      },
-      "delivery": {
-        "mode": "announce"
-      },
-      "state": {
-        "nextRunAtMs": 1775017855741,
-        "lastRunAtMs": 1775014195722,
-        "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 60019,
-        "lastDeliveryStatus": "unknown",
-        "consecutiveErrors": 7,
-        "lastError": "cron: job execution timed out",
-        "lastErrorReason": "timeout"
-      }
-    },
-    {
       "id": "288001f9-1969-4d35-a2b3-9c8b6401dc92",
       "agentId": "main",
       "sessionKey": "agent:main:main",
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775016006202,
+      "updatedAtMs": 1775019647181,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -63,46 +27,14 @@
         "to": "8382558273"
       },
       "state": {
-        "nextRunAtMs": 1775016600000,
-        "lastRunAtMs": 1775016000017,
+        "nextRunAtMs": 1775020200000,
+        "lastRunAtMs": 1775019600045,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 6185,
+        "lastDurationMs": 47136,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
-      }
-    },
-    {
-      "id": "3772bf72-374e-4ac3-b034-daa9b8f647d4",
-      "agentId": "main",
-      "sessionKey": "agent:main:main",
-      "name": "hep-discord-notifier",
-      "enabled": true,
-      "createdAtMs": 1774811023382,
-      "updatedAtMs": 1775016068783,
-      "schedule": {
-        "expr": "*/10 * * * *",
-        "kind": "cron"
-      },
-      "sessionTarget": "isolated",
-      "wakeMode": "now",
-      "payload": {
-        "kind": "agentTurn",
-        "message": "Check if HEP has posted any status updates in the last 10 minutes.\n\n1. Read /Users/Jack/.openclaw/workspace/logs/hep-status.log\n2. Look for new entries since last check\n3. If there are updates, send them to Discord channel for project updates\n\nUse this format:\n**HEP Update** — [time]\n[summary of progress]\n\nCommitted: [yes/no]\nNext check-in: [time]"
-      },
-      "delivery": {
-        "mode": "none"
-      },
-      "state": {
-        "nextRunAtMs": 1775016600000,
-        "lastRunAtMs": 1775016006202,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 62581,
-        "lastDelivered": false,
-        "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 0
       }
     },
     {
@@ -213,73 +145,6 @@
       }
     },
     {
-      "id": "b050edb0-fe0e-4d2f-8091-fc8243c4f829",
-      "agentId": "main",
-      "sessionKey": "agent:main:main",
-      "name": "hep-progress-check",
-      "enabled": true,
-      "createdAtMs": 1774836063732,
-      "updatedAtMs": 1775015522591,
-      "schedule": {
-        "everyMs": 1200000,
-        "kind": "every",
-        "anchorMs": 1774836063732
-      },
-      "sessionTarget": "session:agent:main:main",
-      "wakeMode": "now",
-      "payload": {
-        "kind": "agentTurn",
-        "message": "Check on HEP's Mission Control build progress. Read the cursor-build.log and any output files. Report status to Jason. If 5 hours have passed since build started, provide full status update including what was completed."
-      },
-      "delivery": {
-        "mode": "announce"
-      },
-      "state": {
-        "nextRunAtMs": 1775019122591,
-        "lastRunAtMs": 1775015500081,
-        "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 22510,
-        "lastDeliveryStatus": "unknown",
-        "consecutiveErrors": 53,
-        "lastError": "Channel is required when multiple channels are configured: telegram, discord Set delivery.channel explicitly or use a main session with a previous channel."
-      }
-    },
-    {
-      "id": "44e0d735-f026-4280-b8d0-d428d99a4e2a",
-      "agentId": "main",
-      "sessionKey": "agent:main:main",
-      "name": "cursor-build-monitor",
-      "enabled": true,
-      "createdAtMs": 1774867543419,
-      "updatedAtMs": 1775016251327,
-      "schedule": {
-        "anchorMs": 1774868640000,
-        "everyMs": 600000,
-        "kind": "every"
-      },
-      "sessionTarget": "isolated",
-      "wakeMode": "now",
-      "payload": {
-        "kind": "agentTurn",
-        "message": "Run the Cursor build monitor script: node /Users/Jack/.openclaw/workspace/scripts/monitor-cursor-build.js",
-        "timeoutSeconds": 60
-      },
-      "delivery": {
-        "mode": "none"
-      },
-      "state": {
-        "nextRunAtMs": 1775016844894,
-        "lastRunAtMs": 1775016244894,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 6433,
-        "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 0,
-        "lastDelivered": false
-      }
-    },
-    {
       "id": "827b3afc-337b-4369-812b-7fdd09401591",
       "agentId": "main",
       "sessionKey": "agent:main:main",
@@ -321,7 +186,7 @@
       "name": "git-auto-push",
       "enabled": true,
       "createdAtMs": 1775007924606,
-      "updatedAtMs": 1775012675449,
+      "updatedAtMs": 1775016317676,
       "schedule": {
         "expr": "0 * * * *",
         "kind": "cron",
@@ -338,49 +203,15 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775016271643,
-        "lastRunAtMs": 1775012671655,
+        "nextRunAtMs": 1775019871643,
+        "lastRunAtMs": 1775016271654,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 3794,
+        "lastDurationMs": 46022,
         "lastDelivered": false,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
-        "runningAtMs": 1775016271649
-      }
-    },
-    {
-      "id": "b5d68c2a-d44a-46a4-8a5f-d652ba7eb857",
-      "agentId": "jake",
-      "sessionKey": "agent:jake:main",
-      "name": "joy-email-check",
-      "enabled": true,
-      "createdAtMs": 1775013402730,
-      "updatedAtMs": 1775015806788,
-      "schedule": {
-        "everyMs": 600000,
-        "kind": "every",
-        "anchorMs": 1775013402730
-      },
-      "sessionTarget": "isolated",
-      "wakeMode": "now",
-      "payload": {
-        "kind": "agentTurn",
-        "message": "Check Joy's email inbox using the AgentMail script. Process emails from trusted senders (Jason@hansentribe.com, thehansentribe@gmail.com, jhansen@trustlineage.com). Log actions and report any new emails.",
-        "timeoutSeconds": 300
-      },
-      "delivery": {
-        "mode": "announce"
-      },
-      "state": {
-        "nextRunAtMs": 1775016402741,
-        "lastRunAtMs": 1775015802741,
-        "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 4047,
-        "lastDeliveryStatus": "unknown",
-        "consecutiveErrors": 3,
-        "lastError": "Channel is required when multiple channels are configured: telegram, discord Set delivery.channel explicitly or use a main session with a previous channel."
+        "runningAtMs": 1775019871649
       }
     }
   ]
