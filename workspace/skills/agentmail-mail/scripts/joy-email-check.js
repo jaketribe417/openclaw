@@ -21,19 +21,10 @@ const TRUSTED_SENDERS = [
   'jhansen@trustlineage.com'
 ];
 
-// Log file path
-const LOG_DIR = path.join(__dirname, '..', '..', '..', 'logs');
-const LOG_FILE = path.join(LOG_DIR, 'email-actions.log');
-
-// Ensure log directory exists
-if (!fs.existsSync(LOG_DIR)) {
-  fs.mkdirSync(LOG_DIR, { recursive: true });
-}
-
 function logAction(message) {
   const timestamp = new Date().toISOString();
   const logEntry = `[${timestamp}] ${message}\n`;
-  fs.appendFileSync(LOG_FILE, logEntry);
+  console.log(`[${timestamp}] ${message}`);
 }
 
 function makeRequest(path, method = 'GET', data = null) {
@@ -118,8 +109,6 @@ async function checkEmails() {
       if (isTrusted) {
         trustedCount++;
         logAction(`AUTO-PROCESSED: From ${from} - Subject: "${subject}"`);
-        // Note: Mark as read would require additional API call
-        // For now, just log it as processed
       } else {
         queuedCount++;
         logAction(`QUEUED: From ${from} - Subject: "${subject}"`);
@@ -129,7 +118,6 @@ async function checkEmails() {
     console.log(`\n--- Summary ---`);
     console.log(`Auto-processed (trusted): ${trustedCount}`);
     console.log(`Queued for review: ${queuedCount}`);
-    console.log(`Log saved to: ${LOG_FILE}`);
 
     logAction(`Summary: ${trustedCount} auto-processed, ${queuedCount} queued`);
 
