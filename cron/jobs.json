@@ -8,7 +8,7 @@
       "name": "openclaw-heartbeat",
       "enabled": true,
       "createdAtMs": 1774768863106,
-      "updatedAtMs": 1775010595715,
+      "updatedAtMs": 1775014255741,
       "schedule": {
         "everyMs": 1800000,
         "kind": "every",
@@ -26,14 +26,15 @@
         "mode": "announce"
       },
       "state": {
-        "nextRunAtMs": 1775014195715,
-        "lastRunAtMs": 1775010580934,
+        "nextRunAtMs": 1775017855741,
+        "lastRunAtMs": 1775014195722,
         "lastRunStatus": "error",
         "lastStatus": "error",
-        "lastDurationMs": 14781,
+        "lastDurationMs": 60019,
         "lastDeliveryStatus": "unknown",
-        "consecutiveErrors": 6,
-        "lastError": "Channel is required when multiple channels are configured: telegram, discord Set delivery.channel explicitly or use a main session with a previous channel."
+        "consecutiveErrors": 7,
+        "lastError": "cron: job execution timed out",
+        "lastErrorReason": "timeout"
       }
     },
     {
@@ -43,7 +44,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775012442597,
+      "updatedAtMs": 1775016006202,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -62,11 +63,11 @@
         "to": "8382558273"
       },
       "state": {
-        "nextRunAtMs": 1775013000000,
-        "lastRunAtMs": 1775012400024,
+        "nextRunAtMs": 1775016600000,
+        "lastRunAtMs": 1775016000017,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 42573,
+        "lastDurationMs": 6185,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -79,7 +80,7 @@
       "name": "hep-discord-notifier",
       "enabled": true,
       "createdAtMs": 1774811023382,
-      "updatedAtMs": 1775012448140,
+      "updatedAtMs": 1775016068783,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -94,11 +95,11 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775013000000,
-        "lastRunAtMs": 1775012442597,
+        "nextRunAtMs": 1775016600000,
+        "lastRunAtMs": 1775016006202,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 5543,
+        "lastDurationMs": 62581,
         "lastDelivered": false,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0
@@ -218,7 +219,7 @@
       "name": "hep-progress-check",
       "enabled": true,
       "createdAtMs": 1774836063732,
-      "updatedAtMs": 1775011900073,
+      "updatedAtMs": 1775015522591,
       "schedule": {
         "everyMs": 1200000,
         "kind": "every",
@@ -234,13 +235,13 @@
         "mode": "announce"
       },
       "state": {
-        "nextRunAtMs": 1775015500073,
-        "lastRunAtMs": 1775011884884,
+        "nextRunAtMs": 1775019122591,
+        "lastRunAtMs": 1775015500081,
         "lastRunStatus": "error",
         "lastStatus": "error",
-        "lastDurationMs": 15189,
+        "lastDurationMs": 22510,
         "lastDeliveryStatus": "unknown",
-        "consecutiveErrors": 52,
+        "consecutiveErrors": 53,
         "lastError": "Channel is required when multiple channels are configured: telegram, discord Set delivery.channel explicitly or use a main session with a previous channel."
       }
     },
@@ -251,7 +252,7 @@
       "name": "cursor-build-monitor",
       "enabled": true,
       "createdAtMs": 1774867543419,
-      "updatedAtMs": 1775012648061,
+      "updatedAtMs": 1775016251327,
       "schedule": {
         "anchorMs": 1774868640000,
         "everyMs": 600000,
@@ -268,11 +269,11 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775013244840,
-        "lastRunAtMs": 1775012644840,
+        "nextRunAtMs": 1775016844894,
+        "lastRunAtMs": 1775016244894,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 3221,
+        "lastDurationMs": 6433,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -344,7 +345,42 @@
         "lastDurationMs": 3794,
         "lastDelivered": false,
         "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 0
+        "consecutiveErrors": 0,
+        "runningAtMs": 1775016271649
+      }
+    },
+    {
+      "id": "b5d68c2a-d44a-46a4-8a5f-d652ba7eb857",
+      "agentId": "jake",
+      "sessionKey": "agent:jake:main",
+      "name": "joy-email-check",
+      "enabled": true,
+      "createdAtMs": 1775013402730,
+      "updatedAtMs": 1775015806788,
+      "schedule": {
+        "everyMs": 600000,
+        "kind": "every",
+        "anchorMs": 1775013402730
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Check Joy's email inbox using the AgentMail script. Process emails from trusted senders (Jason@hansentribe.com, thehansentribe@gmail.com, jhansen@trustlineage.com). Log actions and report any new emails.",
+        "timeoutSeconds": 300
+      },
+      "delivery": {
+        "mode": "announce"
+      },
+      "state": {
+        "nextRunAtMs": 1775016402741,
+        "lastRunAtMs": 1775015802741,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 4047,
+        "lastDeliveryStatus": "unknown",
+        "consecutiveErrors": 3,
+        "lastError": "Channel is required when multiple channels are configured: telegram, discord Set delivery.channel explicitly or use a main session with a previous channel."
       }
     }
   ]

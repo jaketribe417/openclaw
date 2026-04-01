@@ -1,0 +1,10 @@
+{
+  "emailsToCheck": [
+    {
+      "inbox": "jaketribe_bot",
+      "secret": "jaketribe_bot",
+      "userId": "user",
+      "threadId": null
+    }
+  ]
+}
