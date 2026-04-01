@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775048424209,
+      "updatedAtMs": 1775052045048,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -27,11 +27,11 @@
         "to": "8382558273"
       },
       "state": {
-        "nextRunAtMs": 1775049000000,
-        "lastRunAtMs": 1775048400028,
+        "nextRunAtMs": 1775052600000,
+        "lastRunAtMs": 1775052000034,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 24181,
+        "lastDurationMs": 45014,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -152,7 +152,7 @@
       "name": "harlan-bee-check",
       "enabled": true,
       "createdAtMs": 1774929904841,
-      "updatedAtMs": 1775048439006,
+      "updatedAtMs": 1775052165066,
       "schedule": {
         "expr": "0 7-21 * * *",
         "kind": "cron",
@@ -170,14 +170,15 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775052000000,
-        "lastRunAtMs": 1775048424209,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 14797,
-        "lastDelivered": false,
-        "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 0
+        "nextRunAtMs": 1775055600000,
+        "lastRunAtMs": 1775052045048,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 120018,
+        "lastDeliveryStatus": "not-requested",
+        "consecutiveErrors": 1,
+        "lastError": "cron: job execution timed out",
+        "lastErrorReason": "timeout"
       }
     },
     {
@@ -187,7 +188,7 @@
       "name": "git-auto-push",
       "enabled": true,
       "createdAtMs": 1775007924606,
-      "updatedAtMs": 1775045087262,
+      "updatedAtMs": 1775048688331,
       "schedule": {
         "expr": "0 * * * *",
         "kind": "cron",
@@ -204,15 +205,15 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775048671643,
-        "lastRunAtMs": 1775045071658,
+        "nextRunAtMs": 1775052271643,
+        "lastRunAtMs": 1775048671652,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 15604,
+        "lastDurationMs": 16679,
         "lastDelivered": false,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
-        "runningAtMs": 1775048671646
+        "runningAtMs": 1775052271647
       }
     }
   ]
