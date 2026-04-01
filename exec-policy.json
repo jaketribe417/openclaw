@@ -1,0 +1,4 @@
+{
+  "default": "allow-always",
+  "_comment": "Disable approval prompts for all commands"
+}

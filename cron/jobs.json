@@ -8,7 +8,7 @@
       "name": "openclaw-heartbeat",
       "enabled": true,
       "createdAtMs": 1774768863106,
-      "updatedAtMs": 1775006980912,
+      "updatedAtMs": 1775010595715,
       "schedule": {
         "everyMs": 1800000,
         "kind": "every",
@@ -26,13 +26,13 @@
         "mode": "announce"
       },
       "state": {
-        "nextRunAtMs": 1775010580912,
-        "lastRunAtMs": 1775006970678,
+        "nextRunAtMs": 1775014195715,
+        "lastRunAtMs": 1775010580934,
         "lastRunStatus": "error",
         "lastStatus": "error",
-        "lastDurationMs": 10234,
+        "lastDurationMs": 14781,
         "lastDeliveryStatus": "unknown",
-        "consecutiveErrors": 5,
+        "consecutiveErrors": 6,
         "lastError": "Channel is required when multiple channels are configured: telegram, discord Set delivery.channel explicitly or use a main session with a previous channel."
       }
     },
@@ -43,7 +43,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775008812406,
+      "updatedAtMs": 1775012442597,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -62,11 +62,11 @@
         "to": "8382558273"
       },
       "state": {
-        "nextRunAtMs": 1775009400000,
-        "lastRunAtMs": 1775008800017,
+        "nextRunAtMs": 1775013000000,
+        "lastRunAtMs": 1775012400024,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 12389,
+        "lastDurationMs": 42573,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -79,7 +79,7 @@
       "name": "hep-discord-notifier",
       "enabled": true,
       "createdAtMs": 1774811023382,
-      "updatedAtMs": 1775008848924,
+      "updatedAtMs": 1775012448140,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -94,11 +94,11 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775009400000,
-        "lastRunAtMs": 1775008812406,
+        "nextRunAtMs": 1775013000000,
+        "lastRunAtMs": 1775012442597,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 36518,
+        "lastDurationMs": 5543,
         "lastDelivered": false,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0
@@ -218,7 +218,7 @@
       "name": "hep-progress-check",
       "enabled": true,
       "createdAtMs": 1774836063732,
-      "updatedAtMs": 1775008284882,
+      "updatedAtMs": 1775011900073,
       "schedule": {
         "everyMs": 1200000,
         "kind": "every",
@@ -234,13 +234,13 @@
         "mode": "announce"
       },
       "state": {
-        "nextRunAtMs": 1775011884882,
-        "lastRunAtMs": 1775008271896,
+        "nextRunAtMs": 1775015500073,
+        "lastRunAtMs": 1775011884884,
         "lastRunStatus": "error",
         "lastStatus": "error",
-        "lastDurationMs": 12986,
+        "lastDurationMs": 15189,
         "lastDeliveryStatus": "unknown",
-        "consecutiveErrors": 51,
+        "consecutiveErrors": 52,
         "lastError": "Channel is required when multiple channels are configured: telegram, discord Set delivery.channel explicitly or use a main session with a previous channel."
       }
     },
@@ -251,7 +251,7 @@
       "name": "cursor-build-monitor",
       "enabled": true,
       "createdAtMs": 1774867543419,
-      "updatedAtMs": 1775009050743,
+      "updatedAtMs": 1775012648061,
       "schedule": {
         "anchorMs": 1774868640000,
         "everyMs": 600000,
@@ -268,11 +268,11 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775009644655,
-        "lastRunAtMs": 1775009044655,
+        "nextRunAtMs": 1775013244840,
+        "lastRunAtMs": 1775012644840,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 6088,
+        "lastDurationMs": 3221,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -320,7 +320,7 @@
       "name": "git-auto-push",
       "enabled": true,
       "createdAtMs": 1775007924606,
-      "updatedAtMs": 1775007924606,
+      "updatedAtMs": 1775012675449,
       "schedule": {
         "expr": "0 * * * *",
         "kind": "cron",
@@ -337,8 +337,14 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775009071643,
-        "runningAtMs": 1775009071652
+        "nextRunAtMs": 1775016271643,
+        "lastRunAtMs": 1775012671655,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 3794,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered",
+        "consecutiveErrors": 0
       }
     }
   ]

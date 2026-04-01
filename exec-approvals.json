@@ -1,0 +1,158 @@
+{
+  "version": 1,
+  "socket": {
+    "path": "/Users/Jack/.openclaw/exec-approvals.sock",
+    "token": "NQ0e5BMGIegQoo-GgvNMNg0ohn8dJfkP"
+  },
+  "defaults": {},
+  "agents": {
+    "main": {
+      "allowlist": [
+        {
+          "id": "1fc77804-499b-478b-b8f5-f5e897c5d4a4",
+          "pattern": "/bin/ls",
+          "lastUsedAt": 1775009582676,
+          "lastUsedCommand": "ls /opt/homebrew/lib/node_modules/openclaw/docs/channels/",
+          "lastResolvedPath": "/bin/ls"
+        }
+      ]
+    },
+    "jake": {
+      "allowlist": [
+        {
+          "id": "7a37fb73-cfdd-44a3-b5e7-efc18d218d37",
+          "pattern": "/opt/homebrew/bin/openclaw",
+          "lastUsedAt": 1775010724536,
+          "lastUsedCommand": "openclaw gateway status",
+          "lastResolvedPath": "/opt/homebrew/bin/openclaw"
+        },
+        {
+          "id": "edefe6d3-8d3e-4c44-bd5b-d2af83803b16",
+          "pattern": "/usr/bin/tail",
+          "lastUsedAt": 1775010734417,
+          "lastUsedCommand": "tail -100 /tmp/openclaw/openclaw-2026-03-31.log | grep -A5 -B5 \"discord\\|Discord\" | tail -50",
+          "lastResolvedPath": "/usr/bin/tail"
+        },
+        {
+          "id": "6ac9c8bf-cc51-49b1-8f8e-b79ecbd3ac9b",
+          "pattern": "/usr/bin/grep",
+          "lastUsedAt": 1775011631095,
+          "lastUsedCommand": "grep -A2 '\"agentId\": \"hep\"' ~/.openclaw/openclaw.json",
+          "lastResolvedPath": "/usr/bin/grep"
+        },
+        {
+          "id": "737e37c4-4502-4911-8de2-fc0381acb81c",
+          "pattern": "/app/holdd1806c07-941d-4f09-9449-02f3ce55a30b",
+          "lastUsedAt": 1775011211350
+        },
+        {
+          "id": "0fa6ab23-85af-4640-9a33-39a6fc2cb905",
+          "pattern": "/app/holld49d8446f-e910-4572-9ad6-42a7e4902d3e",
+          "lastUsedAt": 1775011217725
+        },
+        {
+          "id": "3a46e105-40b4-4d68-b5d7-11b5820eca8f",
+          "pattern": "/app/holldac86015e-7b1a-430b-9721-88519364f3e6",
+          "lastUsedAt": 1775011220907
+        },
+        {
+          "id": "b1326b34-5ade-45a7-90f8-357731bb1f3c",
+          "pattern": "/app/hold48e4b90a-eef2-4cad-9a23-6e331c6d3b70",
+          "lastUsedAt": 1775011233007
+        },
+        {
+          "id": "6e069010-a981-4832-98de-c4f11ac00cd1",
+          "pattern": "/app/holde45127a9-34ca-4ef4-8dd9-8633d7f62d10",
+          "lastUsedAt": 1775011234358
+        },
+        {
+          "id": "c6f821d1-9db6-40c1-ab8f-73e3850e09f6",
+          "pattern": "/app/hold622afdc6-3c34-4f9f-831d-b9a25e94b4fc",
+          "lastUsedAt": 1775011240104
+        },
+        {
+          "id": "775b430b-4243-4250-a6a5-ec3ad6cc73c6",
+          "pattern": "/app/holdf883e10a-1f46-4375-9e16-aceeee200d3d",
+          "lastUsedAt": 1775011242446
+        },
+        {
+          "id": "2de61562-d57c-4e1e-bbd4-7cef9072195b",
+          "pattern": "/app/hold6732eb75-1471-4c0b-a66d-50ee11561101",
+          "lastUsedAt": 1775011244769
+        },
+        {
+          "id": "61699f25-0da5-40b6-97ec-7fbefc1a703e",
+          "pattern": "/app/hold1bad89d1-7b31-4962-9f3e-551f6f11db39",
+          "lastUsedAt": 1775011248863
+        },
+        {
+          "id": "8419255b-d666-4b3a-ad61-4aef5c1ae3c6",
+          "pattern": "/app/hold8c4171a6-a0b9-43e7-a3f2-94ebff283346",
+          "lastUsedAt": 1775011255717
+        },
+        {
+          "id": "2565043e-487b-4dd0-9194-8d4007bd513a",
+          "pattern": "/app/hold6d90c5cb-2a9a-478a-be7f-a1668e30149f",
+          "lastUsedAt": 1775011263331
+        },
+        {
+          "id": "e8a21bd7-e57f-4cac-b28f-57c332e33230",
+          "pattern": "/bin/ls",
+          "lastUsedAt": 1775011312660,
+          "lastUsedCommand": "ls ~/.openclaw/agents/jake/agent/ && echo \"---JAKE---\" && ls ~/.openclaw/agents/harlan/agent/ && echo \"---HARLAN---\" && ls ~/.openclaw/agents/joy/agent/ && echo \"---JOY---\"",
+          "lastResolvedPath": "/bin/ls"
+        },
+        {
+          "id": "24940e4b-8792-4192-b941-b10356ab270a",
+          "pattern": "/bin/echo",
+          "lastUsedAt": 1775011312660,
+          "lastUsedCommand": "ls ~/.openclaw/agents/jake/agent/ && echo \"---JAKE---\" && ls ~/.openclaw/agents/harlan/agent/ && echo \"---HARLAN---\" && ls ~/.openclaw/agents/joy/agent/ && echo \"---JOY---\"",
+          "lastResolvedPath": "/bin/ls"
+        },
+        {
+          "id": "d3ee20ac-a0c8-4aef-b14c-7f0be24f5d6f",
+          "pattern": "/bin/cp",
+          "lastUsedAt": 1775011320311
+        },
+        {
+          "id": "3f5ef01c-dbd7-4eb4-8bd0-6e66f7edf1d4",
+          "pattern": "/app/openclaw/skill-creator/audit/healthcheck",
+          "lastUsedAt": 1775011859505
+        },
+        {
+          "id": "17b073b6-b0f7-48f7-8452-c202c6f1f7ea",
+          "pattern": "/app/openclaw/skill-creator/audit/config-backup",
+          "lastUsedAt": 1775011865705
+        },
+        {
+          "id": "93fd3d50-b565-4c7d-bc8f-343056691689",
+          "pattern": "/usr/bin/cd",
+          "lastUsedAt": 1775012689895
+        }
+      ]
+    },
+    "joy": {
+      "allowlist": [
+        {
+          "id": "84de35f9-ce59-4ea0-b30d-52d6a261ffb8",
+          "pattern": "/bin/ls",
+          "lastUsedAt": 1775012473540,
+          "lastUsedCommand": "ls -la /Users/Jack/.openclaw/workspace/agents/joy/",
+          "lastResolvedPath": "/bin/ls"
+        },
+        {
+          "id": "44a40cee-a548-44e5-9a36-d780eebdd010",
+          "pattern": "/usr/bin/curl",
+          "lastUsedAt": 1775012577139,
+          "lastUsedCommand": "curl -s \"https://api.agentmail.to/v0/inboxes\" -H \"Authorization: Bearer $AGENTMAIL_API_KEY\" | head -20",
+          "lastResolvedPath": "/usr/bin/curl"
+        },
+        {
+          "id": "87c03258-dd44-433c-a0f6-398400764875",
+          "pattern": "/usr/bin/head",
+          "lastUsedAt": 1775012577137
+        }
+      ]
+    }
+  }
+}
