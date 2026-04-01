@@ -8,7 +8,7 @@
       "name": "openclaw-heartbeat",
       "enabled": true,
       "createdAtMs": 1774768863106,
-      "updatedAtMs": 1774834183329,
+      "updatedAtMs": 1775003397286,
       "schedule": {
         "everyMs": 1800000,
         "kind": "every",
@@ -26,14 +26,14 @@
         "mode": "announce"
       },
       "state": {
-        "nextRunAtMs": 1774835969469,
-        "lastRunAtMs": 1774834169469,
+        "nextRunAtMs": 1775005170652,
+        "lastRunAtMs": 1775003370652,
         "lastRunStatus": "error",
         "lastStatus": "error",
-        "lastDurationMs": 13860,
+        "lastDurationMs": 26634,
         "lastDeliveryStatus": "unknown",
-        "consecutiveErrors": 1,
-        "lastError": "Channel is required (no configured channels detected). Set delivery.channel explicitly or use a main session with a previous channel."
+        "consecutiveErrors": 3,
+        "lastError": "Channel is required when multiple channels are configured: telegram, discord Set delivery.channel explicitly or use a main session with a previous channel."
       }
     },
     {
@@ -43,7 +43,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1774834803662,
+      "updatedAtMs": 1775004605122,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -62,14 +62,14 @@
         "to": "8382558273"
       },
       "state": {
-        "nextRunAtMs": 1774835400000,
-        "lastRunAtMs": 1774834800013,
+        "nextRunAtMs": 1775005200000,
+        "lastRunAtMs": 1775004600035,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 3649,
-        "lastDelivered": false,
+        "lastDurationMs": 5087,
         "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 0
+        "consecutiveErrors": 0,
+        "lastDelivered": false
       }
     },
     {
@@ -79,7 +79,7 @@
       "name": "hep-discord-notifier",
       "enabled": true,
       "createdAtMs": 1774811023382,
-      "updatedAtMs": 1774834809092,
+      "updatedAtMs": 1775004620092,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -94,11 +94,11 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1774835400000,
-        "lastRunAtMs": 1774834803662,
+        "nextRunAtMs": 1775005200000,
+        "lastRunAtMs": 1775004605122,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 5430,
+        "lastDurationMs": 14970,
         "lastDelivered": false,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0
@@ -111,7 +111,7 @@
       "name": "joy-morning-news",
       "enabled": true,
       "createdAtMs": 1774823201842,
-      "updatedAtMs": 1774823201842,
+      "updatedAtMs": 1774953023069,
       "schedule": {
         "expr": "30 5 * * *",
         "kind": "cron",
@@ -129,7 +129,14 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1774866600000
+        "nextRunAtMs": 1775039400000,
+        "lastRunAtMs": 1774953016600,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 6469,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered",
+        "consecutiveErrors": 0
       }
     },
     {
@@ -139,7 +146,7 @@
       "name": "joy-calendar-daily",
       "enabled": true,
       "createdAtMs": 1774825321770,
-      "updatedAtMs": 1774825352133,
+      "updatedAtMs": 1774954851205,
       "schedule": {
         "expr": "0 6 * * 1-5",
         "kind": "cron",
@@ -157,7 +164,14 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1774868400000
+        "nextRunAtMs": 1775041200000,
+        "lastRunAtMs": 1774954823523,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 27682,
+        "lastDeliveryStatus": "not-delivered",
+        "consecutiveErrors": 0,
+        "lastDelivered": false
       }
     },
     {
@@ -167,7 +181,7 @@
       "name": "joy-calendar-weekly",
       "enabled": true,
       "createdAtMs": 1774825328081,
-      "updatedAtMs": 1774825360024,
+      "updatedAtMs": 1774864837361,
       "schedule": {
         "expr": "0 5 * * 1",
         "kind": "cron",
@@ -185,7 +199,118 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1774864800000
+        "nextRunAtMs": 1775469600000,
+        "lastRunAtMs": 1774864818480,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 18881,
+        "lastError": "⚠️ ⏰ Cron failed",
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered",
+        "lastDeliveryError": "⚠️ ⏰ Cron failed",
+        "consecutiveErrors": 1
+      }
+    },
+    {
+      "id": "b050edb0-fe0e-4d2f-8091-fc8243c4f829",
+      "agentId": "main",
+      "sessionKey": "agent:main:main",
+      "name": "hep-progress-check",
+      "enabled": true,
+      "createdAtMs": 1774836063732,
+      "updatedAtMs": 1775004671885,
+      "schedule": {
+        "everyMs": 1200000,
+        "kind": "every",
+        "anchorMs": 1774836063732
+      },
+      "sessionTarget": "session:agent:main:main",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Check on HEP's Mission Control build progress. Read the cursor-build.log and any output files. Report status to Jason. If 5 hours have passed since build started, provide full status update including what was completed."
+      },
+      "delivery": {
+        "mode": "announce"
+      },
+      "state": {
+        "nextRunAtMs": 1775008271885,
+        "lastRunAtMs": 1775004623491,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 48394,
+        "lastDeliveryStatus": "unknown",
+        "consecutiveErrors": 50,
+        "lastError": "Channel is required when multiple channels are configured: telegram, discord Set delivery.channel explicitly or use a main session with a previous channel."
+      }
+    },
+    {
+      "id": "44e0d735-f026-4280-b8d0-d428d99a4e2a",
+      "agentId": "main",
+      "sessionKey": "agent:main:main",
+      "name": "cursor-build-monitor",
+      "enabled": true,
+      "createdAtMs": 1774867543419,
+      "updatedAtMs": 1775004852125,
+      "schedule": {
+        "anchorMs": 1774868640000,
+        "everyMs": 600000,
+        "kind": "every"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Run the Cursor build monitor script: node /Users/Jack/.openclaw/workspace/scripts/monitor-cursor-build.js",
+        "timeoutSeconds": 60
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "nextRunAtMs": 1775005444597,
+        "lastRunAtMs": 1775004844597,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 7528,
+        "lastDeliveryStatus": "not-delivered",
+        "consecutiveErrors": 0,
+        "lastDelivered": false
+      }
+    },
+    {
+      "id": "827b3afc-337b-4369-812b-7fdd09401591",
+      "agentId": "main",
+      "sessionKey": "agent:main:main",
+      "name": "harlan-bee-check",
+      "enabled": true,
+      "createdAtMs": 1774929904841,
+      "updatedAtMs": 1775001654023,
+      "schedule": {
+        "expr": "0 7-21 * * *",
+        "kind": "cron",
+        "tz": "America/Chicago"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Run Harlan's Bee meeting check. Execute: node /Users/Jack/.openclaw/workspace/agents/harlan/scripts/bee-meeting-check.js",
+        "model": "ollama/qwen3.5:0.8b",
+        "timeoutSeconds": 120
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "nextRunAtMs": 1775005200000,
+        "lastRunAtMs": 1775001635821,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 18202,
+        "lastDelivered": false,
+        "lastDeliveryStatus": "not-delivered",
+        "consecutiveErrors": 0
       }
     }
   ]

@@ -1,0 +1,22 @@
+{
+  "timestamp": "2026-03-31T17:18:42.116380",
+  "version": "pre-upgrade",
+  "tests": {
+    "AP-1": {
+      "test_id": "AP-1",
+      "test_name": "Create weather script for 3 cities",
+      "success": true,
+      "script_created": true,
+      "script_ran": true,
+      "cities_found": 3,
+      "notes": "Baseline test of current OpenClaw tooling capabilities"
+    },
+    "TE-1": {
+      "test_id": "TE-1",
+      "test_name": "Get weather in Tokyo",
+      "success": true,
+      "api_accessible": true,
+      "notes": "Tests basic API/tool access"
+    }
+  }
+}

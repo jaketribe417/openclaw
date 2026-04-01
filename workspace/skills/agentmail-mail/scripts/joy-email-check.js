@@ -2,7 +2,7 @@
 /**
  * Joy Email Check Script
  * Checks inbox for UNREAD emails only
- * Sends Telegram notification if unread emails exist, silent if none
+ * Sends Discord notification ONCE per email, then marks as read
  */
 
 const path = require('path');
@@ -13,13 +13,15 @@ const SCRIPT_DIR = __dirname;
 const WORKSPACE_DIR = path.resolve(SCRIPT_DIR, '../../..');
 const LOG_DIR = path.join(WORKSPACE_DIR, 'logs');
 const LOG_FILE = path.join(LOG_DIR, 'email-actions.log');
+const STATE_FILE = path.join(WORKSPACE_DIR, '.joy-email-state.json');
 
 const INBOX_ID = 'jaketribe_bot@agentmail.to';
-const TELEGRAM_BOT_TOKEN = '8701730324:AAEDj_-Vk6gMpf3NzhLLT6Y19vfu_ZjsQtQ';
+// Telegram configuration for Joy's bot
+const TELEGRAM_BOT_TOKEN = '8780763438:AAEBXeR3qOgmIYk6c6k2hGdAnzZF8boZ2BU';
 const TELEGRAM_CHAT_ID = '8382558273';
 const AGENTMAIL_API_KEY = 'am_us_5f0ebaa863e9ded76347d308acf9ca8a7f9d202b06ec2842789a38c9d4f0b874';
 
-// Ensure log directory exists
+// Ensure directories exist
 if (!fs.existsSync(LOG_DIR)) {
   fs.mkdirSync(LOG_DIR, { recursive: true });
 }
@@ -33,7 +35,22 @@ function logAction(entry) {
   fs.appendFileSync(LOG_FILE, logEntry);
 }
 
-function agentmailRequest(path, method = 'GET') {
+function loadState() {
+  if (fs.existsSync(STATE_FILE)) {
+    try {
+      return JSON.parse(fs.readFileSync(STATE_FILE, 'utf8'));
+    } catch {
+      return { notifiedIds: [] };
+    }
+  }
+  return { notifiedIds: [] };
+}
+
+function saveState(state) {
+  fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2));
+}
+
+function agentmailRequest(path, method = 'GET', data = null) {
   return new Promise((resolve, reject) => {
     const options = {
       hostname: 'api.agentmail.to',
@@ -61,8 +78,34 @@ function agentmailRequest(path, method = 'GET') {
     });
 
     req.on('error', (err) => reject(err));
+    
+    if (data) {
+      req.write(JSON.stringify(data));
+    }
     req.end();
   });
+}
+
+async function markMessageAsRead(messageId) {
+  try {
+    const encodedInboxId = encodeURIComponent(INBOX_ID);
+    const response = await agentmailRequest(
+      `/inboxes/${encodedInboxId}/messages/${encodeURIComponent(messageId)}`,
+      'PATCH',
+      { labels: ['received', 'read'] }
+    );
+    
+    if (response.status >= 200 && response.status < 300) {
+      logAction(`MARKED_READ: ${messageId}`);
+      return true;
+    } else {
+      logAction(`MARK_READ_FAILED: ${messageId} (HTTP ${response.status})`);
+      return false;
+    }
+  } catch (err) {
+    logAction(`MARK_READ_ERROR: ${messageId} - ${err.message}`);
+    return false;
+  }
 }
 
 async function fetchUnreadMessages() {
@@ -75,17 +118,22 @@ async function fetchUnreadMessages() {
       return [];
     }
     
-    const messages = response.data.data || [];
-    // Filter for unread messages (AgentMail uses 'read' field)
-    const unread = messages.filter(msg => !msg.read);
+    const messages = response.data.messages || response.data.data || [];
+    const unread = messages.filter(msg => msg.labels && msg.labels.includes('unread'));
     
-    return unread.map(msg => ({
-      id: msg.id,
-      subject: msg.subject || '(No subject)',
-      from: msg.from?.name || msg.from?.email || 'Unknown',
-      email: msg.from?.email || 'unknown',
-      timestamp: msg.created_at
-    }));
+    return unread.map(msg => {
+      const fromMatch = msg.from ? msg.from.match(/<(.+)@/) : null;
+      const senderEmail = fromMatch ? fromMatch[1] + '@' + msg.from.match(/@([^>]+)/)?.[1] : msg.from;
+      const senderName = msg.from ? msg.from.replace(/<.+>/, '').trim() : 'Unknown';
+      
+      return {
+        id: msg.message_id || msg.id,
+        subject: msg.subject || '(No subject)',
+        from: senderName || 'Unknown',
+        email: senderEmail || 'unknown',
+        timestamp: msg.timestamp || msg.created_at
+      };
+    });
   } catch (err) {
     console.error('Error fetching unread messages:', err.message);
     return [];
@@ -93,17 +141,25 @@ async function fetchUnreadMessages() {
 }
 
 async function sendTelegramNotification(messages) {
-  const text = `📧 **New Unread Email${messages.length > 1 ? 's' : ''}**\n\n` +
-    messages.map((msg, i) => 
-      `${i + 1}. **${msg.subject}**\n   From: ${msg.email}\n   Time: ${new Date(msg.timestamp).toLocaleString()}`
-    ).join('\n\n') +
-    `\n\n_Inbox: ${INBOX_ID}_`;
+  // Build message content
+  let content = `📧 **New Email${messages.length > 1 ? 's' : ''} from Joy**\n\n`;
   
-  const data = JSON.stringify({
-    chat_id: TELEGRAM_CHAT_ID,
-    text: text,
-    parse_mode: 'Markdown'
+  messages.forEach((msg, i) => {
+    const time = new Date(msg.timestamp).toLocaleString();
+    content += `${i + 1}. **${msg.subject}**\n`;
+    content += `   From: ${msg.email}\n`;
+    content += `   Time: ${time}\n\n`;
   });
+  
+  content += `✅ Marked as read in inbox. Reply here if you need me to take action.`;
+  
+  const payload = {
+    chat_id: TELEGRAM_CHAT_ID,
+    text: content,
+    parse_mode: 'Markdown'
+  };
+  
+  const jsonBody = JSON.stringify(payload);
   
   return new Promise((resolve, reject) => {
     const options = {
@@ -113,7 +169,7 @@ async function sendTelegramNotification(messages) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Content-Length': data.length
+        'Content-Length': Buffer.byteLength(jsonBody)
       }
     };
     
@@ -129,38 +185,50 @@ async function sendTelegramNotification(messages) {
       });
     });
     
-    req.on('error', reject);
-    req.write(data);
+    req.on('error', (err) => {
+      logAction(`TELEGRAM_ERROR: ${err.message}`);
+      reject(err);
+    });
+    req.write(jsonBody);
     req.end();
   });
 }
 
 // Main execution
 async function main() {
+  const state = loadState();
   const unreadMessages = await fetchUnreadMessages();
+  
+  const newMessages = unreadMessages.filter(msg => !state.notifiedIds.includes(msg.id));
 
-  if (unreadMessages.length === 0) {
-    // Silent exit - no unread emails
-    logAction('CHECK: No unread emails');
+  if (newMessages.length === 0) {
+    logAction('CHECK: No new unread emails');
     process.exit(0);
   }
 
-  // Log the unread emails
-  for (const msg of unreadMessages) {
-    logAction(`UNREAD: ${msg.subject} from ${msg.email}`);
-  }
-
-  console.log(`Found ${unreadMessages.length} unread email(s):`);
-  unreadMessages.forEach(msg => {
+  console.log(`Found ${newMessages.length} new unread email(s):`);
+  newMessages.forEach(msg => {
     console.log(`  - ${msg.subject} from ${msg.email}`);
   });
 
-  // Send Telegram notification
   console.log('\nSending Telegram notification...');
   try {
-    await sendTelegramNotification(unreadMessages);
-    console.log('Notification sent successfully');
-    logAction(`NOTIFY: Sent Telegram alert for ${unreadMessages.length} unread email(s)`);
+    await sendTelegramNotification(newMessages);
+    console.log('Notification sent successfully to Telegram');
+    logAction(`NOTIFY: Sent Telegram alert for ${newMessages.length} new email(s)`);
+    
+    for (const msg of newMessages) {
+      await markMessageAsRead(msg.id);
+      state.notifiedIds.push(msg.id);
+    }
+    
+    if (state.notifiedIds.length > 1000) {
+      state.notifiedIds = state.notifiedIds.slice(-500);
+    }
+    
+    saveState(state);
+    logAction(`MARKED: ${newMessages.length} message(s) as notified`);
+    
     process.exit(0);
   } catch (err) {
     console.error('Failed to send notification:', err.message);

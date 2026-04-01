@@ -1,0 +1,28 @@
+{
+  "timestamp": "2026-03-31T17:40:00.523528",
+  "version": "post-upgrade-manus",
+  "tests": {
+    "AP-0": {
+      "test_id": "AP-0",
+      "test_name": "Mandatory todo.md creation",
+      "success": true,
+      "notes": "Manus enhancement: first action must be todo.md"
+    },
+    "AP-1": {
+      "test_id": "AP-1",
+      "test_name": "Create weather script for 3 cities",
+      "success": true,
+      "script_created": true,
+      "script_ran": true,
+      "cities_found": 3,
+      "notes": "Post-upgrade test with Manus enhancements"
+    },
+    "TE-1": {
+      "test_id": "TE-1",
+      "test_name": "Get weather in Tokyo",
+      "success": true,
+      "api_accessible": true,
+      "notes": "Post-upgrade API access test"
+    }
+  }
+}

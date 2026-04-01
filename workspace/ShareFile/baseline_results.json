@@ -1,0 +1,188 @@
+{
+  "generated_at": "2026-03-31T17:18:15.719037",
+  "version": "pre-upgrade",
+  "notes": "Run each task manually and score PASS (2), PARTIAL (1), or FAIL (0)",
+  "tasks": {
+    "AP-1": {
+      "category": "Autonomy & Planning",
+      "description": "Autonomy: Create weather script for 3 cities",
+      "score": "NOT_TESTED",
+      "points": 0,
+      "notes": ""
+    },
+    "AP-2": {
+      "category": "Autonomy & Planning",
+      "description": "Autonomy: Research and compare 3 JS frameworks",
+      "score": "NOT_TESTED",
+      "points": 0,
+      "notes": ""
+    },
+    "AP-3": {
+      "category": "Autonomy & Planning",
+      "description": "Autonomy: Build calculator web app",
+      "score": "NOT_TESTED",
+      "points": 0,
+      "notes": ""
+    },
+    "AP-4": {
+      "category": "Autonomy & Planning",
+      "description": "Autonomy: Fix broken script with 3 bugs",
+      "score": "NOT_TESTED",
+      "points": 0,
+      "notes": ""
+    },
+    "AP-5": {
+      "category": "Autonomy & Planning",
+      "description": "Autonomy: Analyze CSV and create report",
+      "score": "NOT_TESTED",
+      "points": 0,
+      "notes": ""
+    },
+    "TE-1": {
+      "category": "Tool Ecosystem",
+      "description": "Tools: Get weather in Tokyo",
+      "score": "NOT_TESTED",
+      "points": 0,
+      "notes": ""
+    },
+    "TE-2": {
+      "category": "Tool Ecosystem",
+      "description": "Tools: Screenshot example.com",
+      "score": "NOT_TESTED",
+      "points": 0,
+      "notes": ""
+    },
+    "TE-3": {
+      "category": "Tool Ecosystem",
+      "description": "Tools: Deploy hello world web app",
+      "score": "NOT_TESTED",
+      "points": 0,
+      "notes": ""
+    },
+    "TE-4": {
+      "category": "Tool Ecosystem",
+      "description": "Tools: Search AI news and summarize",
+      "score": "NOT_TESTED",
+      "points": 0,
+      "notes": ""
+    },
+    "TE-5": {
+      "category": "Tool Ecosystem",
+      "description": "Tools: Create and query SQLite DB",
+      "score": "NOT_TESTED",
+      "points": 0,
+      "notes": ""
+    },
+    "MC-1": {
+      "category": "Memory & Context",
+      "description": "Memory: Remember and recall info",
+      "score": "NOT_TESTED",
+      "points": 0,
+      "notes": ""
+    },
+    "MC-2": {
+      "category": "Memory & Context",
+      "description": "Memory: Long research with file saves",
+      "score": "NOT_TESTED",
+      "points": 0,
+      "notes": ""
+    },
+    "MC-3": {
+      "category": "Memory & Context",
+      "description": "Memory: Reference earlier discussion",
+      "score": "NOT_TESTED",
+      "points": 0,
+      "notes": ""
+    },
+    "MC-4": {
+      "category": "Memory & Context",
+      "description": "Memory: Multi-step context switching",
+      "score": "NOT_TESTED",
+      "points": 0,
+      "notes": ""
+    },
+    "MC-5": {
+      "category": "Memory & Context",
+      "description": "Memory: Summarize last 3 tasks",
+      "score": "NOT_TESTED",
+      "points": 0,
+      "notes": ""
+    },
+    "VF-1": {
+      "category": "Verification",
+      "description": "Verify: Write and test Python function",
+      "score": "NOT_TESTED",
+      "points": 0,
+      "notes": ""
+    },
+    "VF-2": {
+      "category": "Verification",
+      "description": "Verify: Factual question with citation",
+      "score": "NOT_TESTED",
+      "points": 0,
+      "notes": ""
+    },
+    "VF-3": {
+      "category": "Verification",
+      "description": "Verify: Create and verify file exists",
+      "score": "NOT_TESTED",
+      "points": 0,
+      "notes": ""
+    },
+    "VF-4": {
+      "category": "Verification",
+      "description": "Verify: Fix broken code (loop detection)",
+      "score": "NOT_TESTED",
+      "points": 0,
+      "notes": ""
+    },
+    "VF-5": {
+      "category": "Verification",
+      "description": "Verify: Install and verify package",
+      "score": "NOT_TESTED",
+      "points": 0,
+      "notes": ""
+    },
+    "DQ-1": {
+      "category": "Delivery Quality",
+      "description": "Delivery: Explain Docker simply",
+      "score": "NOT_TESTED",
+      "points": 0,
+      "notes": ""
+    },
+    "DQ-2": {
+      "category": "Delivery Quality",
+      "description": "Delivery: Compare 3 databases (table)",
+      "score": "NOT_TESTED",
+      "points": 0,
+      "notes": ""
+    },
+    "DQ-3": {
+      "category": "Delivery Quality",
+      "description": "Delivery: Write 500-word AI report",
+      "score": "NOT_TESTED",
+      "points": 0,
+      "notes": ""
+    },
+    "DQ-4": {
+      "category": "Delivery Quality",
+      "description": "Delivery: Show disk usage (CLI)",
+      "score": "NOT_TESTED",
+      "points": 0,
+      "notes": ""
+    },
+    "DQ-5": {
+      "category": "Delivery Quality",
+      "description": "Delivery: Debug error message",
+      "score": "NOT_TESTED",
+      "points": 0,
+      "notes": ""
+    }
+  },
+  "summary": {
+    "earned_points": 0,
+    "total_possible": 50,
+    "percentage": 0.0,
+    "status": "BASELINE_TEMPLATE"
+  }
+}
