@@ -15,6 +15,7 @@ const HARLAN_DIR = path.join(WORKSPACE_DIR, 'agents', 'harlan');
 const LOG_DIR = path.join(WORKSPACE_DIR, 'logs');
 const LOG_FILE = path.join(LOG_DIR, 'harlan-actions.log');
 const MEMORY_DIR = path.join(HARLAN_DIR, 'memory');
+const MEETINGS_DIR = path.join(HARLAN_DIR, 'meetings');
 const STATE_FILE = path.join(WORKSPACE_DIR, '.harlan-bee-state.json');
 
 const TELEGRAM_BOT_TOKEN = '8701730324:AAEDj_-Vk6gMpf3NzhLLT6Y19vfu_ZjsQtQ';
@@ -26,6 +27,9 @@ if (!fs.existsSync(LOG_DIR)) {
 }
 if (!fs.existsSync(MEMORY_DIR)) {
   fs.mkdirSync(MEMORY_DIR, { recursive: true });
+}
+if (!fs.existsSync(MEETINGS_DIR)) {
+  fs.mkdirSync(MEETINGS_DIR, { recursive: true });
 }
 
 function getTimestamp() {
@@ -192,90 +196,223 @@ async function checkBeeFacts() {
   return { available: true, recentFacts, error: null };
 }
 
-// Save meeting notes to memory
-function saveMeetingsToMemory(meetings) {
-  if (!meetings || meetings.length === 0) {
-    logAction('MEMORY: No meetings to save');
-    return { saved: 0, file: null };
+// Get full transcript for a meeting using bee transcript command
+async function getMeetingTranscript(conversationId) {
+  if (!conversationId) {
+    return { success: false, transcript: null, error: 'No conversation ID' };
   }
   
-  const todayFile = path.join(MEMORY_DIR, `${getTodayDate()}.md`);
-  const localDate = getLocalDate();
+  logAction(`TRANSCRIPT: Fetching for conversation ${conversationId}`);
   
+  try {
+    const output = execSync(`bee transcript ${conversationId}`, { 
+      cwd: WORKSPACE_DIR,
+      encoding: 'utf8',
+      timeout: 30000
+    });
+    
+    if (!output || output.trim() === '') {
+      return { success: false, transcript: null, error: 'Empty transcript' };
+    }
+    
+    logAction(`TRANSCRIPT: Retrieved ${output.length} characters`);
+    return { success: true, transcript: output.trim(), error: null };
+  } catch (err) {
+    logAction(`TRANSCRIPT_ERROR: ${err.message}`);
+    return { success: false, transcript: null, error: err.message };
+  }
+}
+
+// Generate safe filename from title
+function sanitizeFilename(title) {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .substring(0, 50);
+}
+
+// Save individual meeting to meetings folder
+function saveMeetingToFile(meeting, transcript) {
+  const meetingId = meeting.id || meeting.conversation_id || meeting.meeting_id;
+  if (!meetingId) {
+    logAction(`MEETING_FILE: No ID for meeting`);
+    return { saved: false, file: null };
+  }
+  
+  const title = meeting.title || meeting.name || meeting.short_summary || 'untitled-meeting';
+  const timestamp = meeting.start_time || meeting.created_at || meeting.timestamp || Date.now();
+  const meetingDate = new Date(timestamp);
+  const dateStr = meetingDate.toISOString().split('T')[0];
+  const timeStr = meetingDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+  
+  const safeTitle = sanitizeFilename(title);
+  const filename = `${dateStr}_${timeStr}_${safeTitle}.md`;
+  const filepath = path.join(MEETINGS_DIR, filename);
+  
+  // Generate meeting content
+  let content = `---\n`;
+  content += `title: "${title}"\n`;
+  content += `date: ${meetingDate.toISOString()}\n`;
+  content += `local_date: ${meetingDate.toLocaleString('en-US', { timeZone: 'America/Chicago' })}\n`;
+  content += `meeting_id: ${meetingId}\n`;
+  content += `duration: ${meeting.duration || meeting.length || 'Unknown'}\n`;
+  content += `participants: ${JSON.stringify(meeting.participants || [])}\n`;
+  content += `tags: ${JSON.stringify(meeting.tags || [])}\n`;
+  content += `---\n\n`;
+  
+  content += `# ${title}\n\n`;
+  content += `**Date:** ${meetingDate.toLocaleString('en-US', { timeZone: 'America/Chicago', weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}\n`;
+  content += `**Duration:** ${meeting.duration || meeting.length || 'Unknown'}\n`;
+  content += `**Meeting ID:** \`${meetingId}\`\n\n`;
+  
+  // Summary if available
+  if (meeting.summary || meeting.short_summary) {
+    content += `## Summary\n\n`;
+    content += `${meeting.summary || meeting.short_summary}\n\n`;
+  }
+  
+  // Action items
+  if (meeting.todos && meeting.todos.length > 0) {
+    content += `## Action Items\n\n`;
+    meeting.todos.forEach(todo => {
+      const todoText = todo.text || todo.content || todo;
+      const assignee = todo.assignee || todo.assigned_to || '';
+      const due = todo.due_date || todo.due || '';
+      content += `- [ ] ${todoText}${assignee ? ` (assigned: ${assignee})` : ''}${due ? ` (due: ${due})` : ''}\n`;
+    });
+    content += `\n`;
+  }
+  
+  // Key facts
+  if (meeting.facts && meeting.facts.length > 0) {
+    content += `## Key Facts\n\n`;
+    meeting.facts.forEach(fact => {
+      const factText = fact.text || fact.content || fact;
+      content += `- ${factText}\n`;
+    });
+    content += `\n`;
+  }
+  
+  // Full transcript
+  if (transcript && transcript.success) {
+    content += `## Full Transcript\n\n`;
+    content += `\`\`\`\n`;
+    content += transcript.transcript;
+    content += `\n\`\`\`\n\n`;
+  } else if (meeting.transcript || meeting.full_transcript) {
+    content += `## Full Transcript\n\n`;
+    content += `\`\`\`\n`;
+    content += meeting.transcript || meeting.full_transcript;
+    content += `\n\`\`\`\n\n`;
+  }
+  
+  // Raw data for debugging
+  content += `---\n\n`;
+  content += `## Metadata\n\n`;
+  content += `\`\`\`json\n`;
+  content += JSON.stringify(meeting, null, 2);
+  content += `\n\`\`\`\n`;
+  
+  fs.writeFileSync(filepath, content);
+  logAction(`MEETING_FILE: Saved to ${filepath}`);
+  
+  return { saved: true, file: filename, filepath };
+}
+
+// Save meeting summary to general memory
+function saveMeetingSummaryToMemory(meeting, meetingFile) {
+  const memoryFile = path.join(MEMORY_DIR, 'meetings-index.md');
+  
+  const meetingId = meeting.id || meeting.conversation_id || meeting.meeting_id;
+  const title = meeting.title || meeting.name || meeting.short_summary || 'Untitled Meeting';
+  const timestamp = meeting.start_time || meeting.created_at || meeting.timestamp || Date.now();
+  const meetingDate = new Date(timestamp);
+  const localDateTime = meetingDate.toLocaleString('en-US', { 
+    timeZone: 'America/Chicago',
+    weekday: 'short',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+  
+  // Create memory entry
+  const summary = meeting.summary || meeting.short_summary || 'No summary available';
+  const entry = `## Meeting: ${title}\n\n`;
+  const entryContent = `- **Date:** ${localDateTime}\n` +
+    `- **Meeting ID:** ${meetingId}\n` +
+    `- **Summary:** ${summary.substring(0, 200)}${summary.length > 200 ? '...' : ''}\n` +
+    `- **Meeting Notes:** [View full notes](meetings/${meetingFile})\n` +
+    `- **Added to memory:** ${getLocalTimestamp()}\n\n`;
+  
+  // Read existing content or create header
   let memoryContent = '';
-  
-  // Check if file exists and read existing content
-  if (fs.existsSync(todayFile)) {
-    memoryContent = fs.readFileSync(todayFile, 'utf8');
+  if (fs.existsSync(memoryFile)) {
+    memoryContent = fs.readFileSync(memoryFile, 'utf8');
   } else {
-    memoryContent = `# ${localDate} — Harlan Daily Log\n\n`;
-    memoryContent += `**Generated:** ${getLocalTimestamp()}\n`;
-    memoryContent += `**Source:** Bee Meeting Notes\n\n`;
+    memoryContent = `# Harlan's Meeting Memory Index\n\n`;
+    memoryContent += `A searchable index of all Bee meetings with links to full transcripts.\n\n`;
     memoryContent += `---\n\n`;
   }
   
-  // Add meetings section
-  memoryContent += `## Bee Meetings — ${localDate}\n\n`;
+  // Add new entry at the top (after header)
+  const headerEnd = memoryContent.indexOf('---\n\n') + 5;
+  memoryContent = memoryContent.slice(0, headerEnd) + 
+    `## ${localDateTime.split(',')[0]} — ${title}\n\n` +
+    entryContent +
+    `---\n\n` +
+    memoryContent.slice(headerEnd);
+  
+  fs.writeFileSync(memoryFile, memoryContent);
+  logAction(`MEMORY_INDEX: Updated ${memoryFile}`);
+  
+  return { updated: true, file: memoryFile };
+}
+
+// Save meeting notes to memory
+async function saveMeetingsToMemory(meetings) {
+  if (!meetings || meetings.length === 0) {
+    logAction('MEMORY: No meetings to save');
+    return { saved: 0, files: [], memoryUpdated: false };
+  }
   
   const state = loadState();
   let newMeetingsCount = 0;
+  const savedFiles = [];
   
-  meetings.forEach((meeting, i) => {
-    const meetingId = meeting.id || meeting.conversation_id || `meeting-${i}`;
+  for (const meeting of meetings) {
+    const meetingId = meeting.id || meeting.conversation_id || `meeting-${newMeetingsCount}`;
     
     // Skip if already processed
     if (state.processedMeetings.includes(meetingId)) {
       logAction(`MEMORY: Skipping already processed meeting ${meetingId}`);
-      return;
+      continue;
     }
     
-    const title = meeting.title || meeting.name || meeting.short_summary || 'Untitled Meeting';
-    // Format date from timestamp (milliseconds since epoch)
-    const timestamp = meeting.start_time || meeting.created_at || meeting.timestamp;
-    const date = timestamp ? new Date(timestamp).toLocaleString('en-US', { timeZone: 'America/Chicago' }) : getLocalTimestamp();
-    const duration = meeting.duration || meeting.length || 'Unknown';
-    const notes = meeting.summary || meeting.notes || meeting.text || meeting.content || '';
+    // Get full transcript
+    const transcript = await getMeetingTranscript(meetingId);
     
-    memoryContent += `### Meeting ${i + 1}: ${title}\n`;
-    memoryContent += `- **Date:** ${date}\n`;
-    memoryContent += `- **Duration:** ${duration}\n`;
-    memoryContent += `- **ID:** ${meetingId}\n\n`;
-    
-    if (notes) {
-      memoryContent += `**Notes:**\n`;
-      memoryContent += `${notes}\n\n`;
+    // Save individual meeting file
+    const fileResult = saveMeetingToFile(meeting, transcript);
+    if (fileResult.saved) {
+      savedFiles.push(fileResult.file);
+      
+      // Update memory index with summary and link
+      saveMeetingSummaryToMemory(meeting, fileResult.file);
     }
-    
-    if (meeting.todos && meeting.todos.length > 0) {
-      memoryContent += `**Action Items:**\n`;
-      meeting.todos.forEach(todo => {
-        memoryContent += `- [ ] ${todo.text || todo.content || todo}\n`;
-      });
-      memoryContent += `\n`;
-    }
-    
-    if (meeting.facts && meeting.facts.length > 0) {
-      memoryContent += `**Key Facts:**\n`;
-      meeting.facts.forEach(fact => {
-        memoryContent += `- ${fact.text || fact.content || fact}\n`;
-      });
-      memoryContent += `\n`;
-    }
-    
-    memoryContent += `---\n\n`;
     
     // Mark as processed
     state.processedMeetings.push(meetingId);
     newMeetingsCount++;
-  });
+  }
   
-  // Save to memory file
-  fs.writeFileSync(todayFile, memoryContent);
   saveState(state);
   
-  logAction(`MEMORY: Saved ${newMeetingsCount} new meetings to ${todayFile}`);
+  logAction(`MEMORY: Saved ${newMeetingsCount} new meetings, ${savedFiles.length} files created`);
   
-  return { saved: newMeetingsCount, file: todayFile };
+  return { saved: newMeetingsCount, files: savedFiles, memoryUpdated: true };
 }
 
 async function sendTelegramNotification(meetings, todos, facts) {
@@ -294,7 +431,9 @@ async function sendTelegramNotification(meetings, todos, facts) {
       text += `...and ${meetings.meetings.length - 5} more\n`;
     }
     text += `\n`;
-    text += `💾 Saved to memory: ${meetings.meetings.length} meetings\n\n`;
+    text += `💾 Saved to:\n`;
+    text += `  • agents/harlan/meetings/\n`;
+    text += `  • agents/harlan/memory/meetings-index.md\n\n`;
   }
   
   if (!todos.available) {
@@ -329,8 +468,8 @@ async function sendTelegramNotification(meetings, todos, facts) {
     
     // Response instruction
     if (todos.newTodos.length > 0 || (meetings.available && meetings.meetings.length > 0)) {
-      text += `All meetings saved to Harlan's memory system.\n`;
-      text += `View at: agents/harlan/memory/${getTodayDate()}.md`;
+      text += `✅ Meetings saved with full transcripts\n`;
+      text += `✅ Memory index updated with summaries\n`;
     } else {
       text += `✅ No new items. All caught up!`;
     }
@@ -386,7 +525,7 @@ async function main() {
   const facts = await checkBeeFacts();
   
   // Save meetings to memory
-  const memoryResult = saveMeetingsToMemory(meetings.meetings);
+  const memoryResult = await saveMeetingsToMemory(meetings.meetings);
   
   // Send notification
   await sendTelegramNotification(meetings, todos, facts);
@@ -394,9 +533,13 @@ async function main() {
   logAction('');
   logAction(`SUMMARY:`);
   logAction(`  Meetings: ${meetings.meetings?.length || 0} total, ${memoryResult.saved} new saved`);
+  logAction(`  Meeting Files: ${memoryResult.files?.length || 0} created`);
+  logAction(`  Memory Index: ${memoryResult.memoryUpdated ? 'Updated' : 'No changes'}`);
   logAction(`  Todos: ${todos.newTodos?.length || 0} new, ${todos.totalIncomplete || 0} incomplete`);
   logAction(`  Facts: ${facts.recentFacts?.length || 0} recent`);
-  logAction(`  Memory: ${memoryResult.file || 'None'}`);
+  logAction(`  Locations:`);
+  logAction(`    • agents/harlan/meetings/`);
+  logAction(`    • agents/harlan/memory/meetings-index.md`);
   logAction('');
   logAction('CHECK_COMPLETE');
   logAction('═══════════════════════════════════════');
