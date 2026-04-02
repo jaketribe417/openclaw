@@ -18,6 +18,7 @@ const LOG_FILE = path.join(LOG_DIR, 'harlan-actions.log');
 const MEMORY_DIR = path.join(HARLAN_DIR, 'memory');
 const MEETINGS_DIR = path.join(HARLAN_DIR, 'meetings');
 const STATE_FILE = path.join(WORKSPACE_DIR, '.harlan-bee-state.json');
+const MEETINGS_INDEX_FILE = path.join(HARLAN_DIR, 'meetings', 'index.json');
 
 const TELEGRAM_BOT_TOKEN = '8701730324:AAEDj_-Vk6gMpf3NzhLLT6Y19vfu_ZjsQtQ';
 const TELEGRAM_CHAT_ID = '8382558273';
@@ -76,13 +77,16 @@ function loadState() {
         lastCheck: state.lastCheck || null,
         lastTodoCount: state.lastTodoCount || 0,
         notifiedIds: state.notifiedIds || [],
-        processedMeetings: state.processedMeetings || []
+        processedMeetings: state.processedMeetings || [],
+        knownMeetingIds: state.knownMeetingIds || [],
+        totalMeetingsKnown: state.totalMeetingsKnown || 0,
+        fullSyncCompleted: state.fullSyncCompleted || false
       };
     } catch {
-      return { lastCheck: null, lastTodoCount: 0, notifiedIds: [], processedMeetings: [] };
+      return { lastCheck: null, lastTodoCount: 0, notifiedIds: [], processedMeetings: [], knownMeetingIds: [], totalMeetingsKnown: 0, fullSyncCompleted: false };
     }
   }
-  return { lastCheck: null, lastTodoCount: 0, notifiedIds: [], processedMeetings: [] };
+  return { lastCheck: null, lastTodoCount: 0, notifiedIds: [], processedMeetings: [], knownMeetingIds: [], totalMeetingsKnown: 0, fullSyncCompleted: false };
 }
 
 function saveState(state) {
@@ -103,47 +107,109 @@ function execBee(command, timeout = 30000) {
   }
 }
 
-// Get recent conversations/meetings from Bee
-async function getBeeMeetings() {
-  logAction('BEE_CHECK: Fetching recent meetings/conversations');
+// Get ALL meetings from Bee (full sync mode)
+async function getAllBeeMeetings(fullSync = false) {
+  logAction(fullSync ? 'BEE_SYNC: Full sync - fetching all meetings' : 'BEE_CHECK: Fetching recent meetings/conversations');
   
-  // Try 'changed' first, then fall back to 'now'
-  let conversations = execBee('changed', 15000);
+  const state = loadState();
+  const knownIds = new Set(state.knownMeetingIds || []);
+  
+  // Try 'changed' for recent, 'list' for full history
+  let conversations = execBee('changed', 30000);
   
   if (!conversations || !conversations.conversations) {
     logAction('BEE_CHECK: Using fallback to now');
-    conversations = execBee('now', 15000);
+    conversations = execBee('now', 30000);
   }
   
   if (!conversations || !conversations.conversations) {
     logAction('BEE_CHECK: No conversations data available');
-    return { available: false, meetings: [], error: 'Bee CLI error' };
+    return { available: false, meetings: [], newMeetings: [], error: 'Bee CLI error', totalKnown: knownIds.size };
   }
   
   const allConversations = conversations.conversations || [];
+  logAction(`BEE_CHECK: Retrieved ${allConversations.length} conversations from Bee`);
   
-  // Filter to today's conversations (Bee timestamps are in milliseconds since epoch)
-  const todayStart = new Date();
-  todayStart.setHours(0, 0, 0, 0);
-  const todayStartMs = todayStart.getTime();
-  const todayEndMs = todayStartMs + (24 * 60 * 60 * 1000);
-  
-  const todayConversations = allConversations.filter(c => {
+  // Filter to new meetings we haven't processed
+  const newMeetings = allConversations.filter(c => {
     if (!c) return false;
-    const timestamp = c.start_time || c.created_at || c.timestamp;
-    if (!timestamp) return false;
-    // Handle both millisecond timestamps and ISO date strings
-    const convTime = typeof timestamp === 'number' ? timestamp : new Date(timestamp).getTime();
-    return convTime >= todayStartMs && convTime < todayEndMs;
+    const meetingId = c.id || c.conversation_id || c.meeting_id;
+    if (!meetingId) return false;
+    return !knownIds.has(meetingId);
   });
   
-  logAction(`BEE_CHECK: ${allConversations.length} total, ${todayConversations.length} from today (${new Date(todayStartMs).toISOString().split('T')[0]})`);
+  // Update known IDs
+  const newIds = newMeetings.map(c => c.id || c.conversation_id || c.meeting_id).filter(Boolean);
+  const updatedKnownIds = [...knownIds, ...newIds];
+  
+  // Filter to today's conversations if not doing full sync
+  let filteredMeetings = newMeetings;
+  if (!fullSync) {
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const todayStartMs = todayStart.getTime();
+    const todayEndMs = todayStartMs + (24 * 60 * 60 * 1000);
+    
+    filteredMeetings = newMeetings.filter(c => {
+      if (!c) return false;
+      const timestamp = c.start_time || c.created_at || c.timestamp;
+      if (!timestamp) return false;
+      const convTime = typeof timestamp === 'number' ? timestamp : new Date(timestamp).getTime();
+      return convTime >= todayStartMs && convTime < todayEndMs;
+    });
+    
+    logAction(`BEE_CHECK: ${filteredMeetings.length} new meetings from today (${new Date(todayStartMs).toISOString().split('T')[0]})`);
+  } else {
+    logAction(`BEE_SYNC: ${newMeetings.length} new meetings found in full sync`);
+  }
+  
+  // Save updated state
+  try {
+    state.knownMeetingIds = updatedKnownIds;
+    state.totalMeetingsKnown = updatedKnownIds.length;
+    state.lastFullSync = fullSync ? getTimestamp() : state.lastFullSync;
+    if (fullSync) state.fullSyncCompleted = true;
+    saveState(state);
+    logAction(`BEE_STATE: Saved ${updatedKnownIds.length} known meeting IDs`);
+  } catch (err) {
+    logAction(`BEE_STATE_ERROR: Failed to save state: ${err.message}`);
+  }
+  
+  // Save meetings index
+  saveMeetingsIndex(allConversations, newMeetings);
   
   return { 
     available: true, 
-    meetings: todayConversations,
+    meetings: filteredMeetings,
+    newMeetings: newMeetings,
+    totalAvailable: allConversations.length,
+    totalNew: newMeetings.length,
+    totalKnown: updatedKnownIds.length,
     error: null 
   };
+}
+
+// Save meetings index for reference
+function saveMeetingsIndex(allMeetings, newMeetings) {
+  const index = {
+    lastUpdated: getTimestamp(),
+    totalMeetings: allMeetings.length,
+    newMeetingsCount: newMeetings.length,
+    meetings: allMeetings.map(m => ({
+      id: m.id || m.conversation_id || m.meeting_id,
+      title: m.title || m.name || 'Untitled',
+      date: m.start_time || m.created_at || m.timestamp,
+      duration: m.duration || m.length || 'Unknown'
+    }))
+  };
+  
+  fs.writeFileSync(MEETINGS_INDEX_FILE, JSON.stringify(index, null, 2));
+  logAction(`BEE_INDEX: Saved ${index.meetings.length} meetings to index`);
+}
+
+// Legacy function for backward compatibility
+async function getBeeMeetings() {
+  return getAllBeeMeetings(false);
 }
 
 async function checkBeeTodos() {
@@ -584,7 +650,53 @@ async function main() {
   logAction('═══════════════════════════════════════');
 }
 
-main().catch(err => {
-  logAction(`FATAL_ERROR: ${err.message}`);
-  process.exit(1);
-});
+// CLI usage for full sync
+if (require.main === module) {
+  const args = process.argv.slice(2);
+  const fullSync = args.includes('--full-sync') || args.includes('-f');
+  
+  if (fullSync) {
+    // Run full sync
+    (async () => {
+      logAction('═══════════════════════════════════════');
+      logAction('HARLAN QUILL — FULL BEE SYNC');
+      logAction('═══════════════════════════════════════');
+      
+      const result = await getAllBeeMeetings(true);
+      
+      if (result.available) {
+        logAction(`Full sync complete:`);
+        logAction(`  Total available: ${result.totalAvailable}`);
+        logAction(`  New meetings: ${result.totalNew}`);
+        logAction(`  Total known in memory: ${result.totalKnown}`);
+        
+        // Process new meetings if any
+        if (result.newMeetings.length > 0) {
+          const todoManager = require('./todo-manager.js');
+          const meetingTodos = todoManager.extractAllTodos(result.newMeetings);
+          const reviewResult = todoManager.createPendingReview(meetingTodos);
+          
+          if (reviewResult.created) {
+            await todoManager.sendApprovalRequest(reviewResult.newTodos);
+          }
+          
+          await saveMeetingsToMemory(result.newMeetings);
+          
+          logAction(`Processed ${result.newMeetings.length} new meetings`);
+          logAction(`Extracted ${meetingTodos.length} todos`);
+          logAction(`Created ${reviewResult.count} new review items`);
+        }
+      } else {
+        logAction(`Error: ${result.error}`);
+      }
+      
+      logAction('═══════════════════════════════════════');
+    })();
+  } else {
+    // Run normal check
+    main().catch(err => {
+      logAction(`FATAL_ERROR: ${err.message}`);
+      process.exit(1);
+    });
+  }
+}
