@@ -1,42 +1,56 @@
->📧 Email Check: jaketribe_bot@agentmail.to
->   Total messages: 23
->   Unread: 21
->   
->   ✅ Trusted sender emails (14):
->   - 📧 From jason@hansentribe.com
->   - 📧 From thehansentribe@gmail.com
->   - 📧 From jhansen@trustlineage.com
->   
-> ⏳ Other emails queued for review (9):
->   - 📧 From jhansen@joy-joy.com
->   - 📧 From jhansen@hansentribe.com (from trusted sender)
->   - ⏳ From jhansen@johnsmith.com
->   - ⏳ From jhansen@jason@example.org
->   - ⏳ From jhansen@johnsmith.com (duplicate sender)
->   - ⏳ From jhansen@johnsmith.com (duplicate sender)
->   - ⏳ From jhansen@johnsmith.com (duplicate sender)
->   - ⏳ From jhansen@johnsmith.com (duplicate sender)
->   - ⏳ From jhansen@johnsmith.com (duplicate sender)
+# Tasks Tab Implementation - Todo List
 
-Step 1 (DONE): Done - Created todo.md and sent email summary to trusted senders
+## Step 1: Clone and Explore Repository
+- [x] Clone jaketribe417/jake-mission-control repo (repo already exists)
+- [x] Explore codebase structure (Next.js, shadcn/ui, existing patterns)
+- [x] Identify navigation, theming, and component patterns
 
-Step 2 (DONE): Verified 3 trusted senders are confirmed
-   - ✅ jason@hansentribe.com confirmed
-   - ✅ thehansentribe@gmail.com confirmed  
-   - ✅ jhansen@trustlineage.com confirmed
+## Step 2: Set Up Local Development
+- [x] Install dependencies (npm install)
+- [x] Identify existing API patterns and database setup (localStorage-based, using JSON file for tasks)
+- [x] Check for existing task/backlog data (created ~/.openclaw/backlog/tasks.json)
 
-Step 3 (DONE): Identified all unread messages
-   - Unread count: 21/23 total
-   - 14 from trusted senders (auto-processed)
-   - 9 other messages queued for human review
+## Step 2: Set Up Local Development
+- [x] Install dependencies (npm install)
+- [x] Identify existing API patterns and database setup
+- [x] Check for existing task/backlog data
 
-Step 4 (DONE): Sent summary email to all trusted senders
-   - jason@hansentribe.com: "23 total messages, 21 unread; 14 trusted sender emails (3 from trusted senders), 9 queued"
-   - thehansentribe@gmail.com: "23 total messages, 21 unread; 14 trusted sender emails (3 from trusted senders), 9 queued"
-   - jhansen@trustlineage.com: "23 total messages, 21 unread; 14 trusted sender emails (3 from trusted senders), 9 queued"
+## Step 3: Create Data Layer
+- [x] Create ~/.openclaw/backlog/tasks.json for persistence
+- [x] Create task types/interfaces
+- [x] Create task data access layer
 
-Step 5 (PENDING): Document findings
-   - todo.md created with action items and results
-   - Emails categorized by trusted sender status
-   - 9 non-trusted emails for human review
-   - Email summary sent to all confirmed senders
+## Step 4: Build API Endpoints
+- [x] Create GET /api/tasks endpoint
+- [x] Create POST /api/tasks endpoint
+- [x] Create PATCH /api/tasks/:id endpoint
+- [x] Create DELETE /api/tasks/:id endpoint
+
+## Step 5: Build UI Components
+- [x] Create TaskCard component
+- [x] Create TaskColumn component (droppable)
+- [x] Create CreateTaskDialog component
+- [x] Create EditTaskDialog component
+
+## Step 6: Create Tasks Page
+- [x] Add "Tasks" navigation tab
+- [x] Create tasks page with three columns (Backlog, In Progress, Completed)
+- [x] Implement drag-and-drop functionality
+- [x] Match dark/light theme
+
+## Step 7: Add Command Palette Integration
+- [x] Add task actions to Command Palette
+- [x] Implement task command parsing (add, complete, update)
+
+## Step 8: Test and Verify
+- [x] Test locally
+- [x] Verify all functionality works
+- [x] Check theme consistency
+
+## Step 9: Commit and Push
+- [x] Commit changes
+- [x] Push to GitHub main branch
+
+## Step 10: Final Verification
+- [ ] Verify push successful
+- [ ] Confirm all requirements met
