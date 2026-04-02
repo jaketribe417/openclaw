@@ -1,5 +1,5 @@
 {
-  "lastCheck": "2026-04-02T18:00:23.743Z",
+  "lastCheck": "2026-04-02T19:00:27.062Z",
   "lastTodoCount": 15,
   "notifiedIds": [
     26753942,
@@ -61,7 +61,8 @@
     6661419,
     6658846,
     6505687,
-    7325193
+    7325193,
+    7327996
   ],
   "knownMeetingIds": [
     7307676,
@@ -106,8 +107,9 @@
     6661419,
     6658846,
     6505687,
-    7325193
+    7325193,
+    7327996
   ],
-  "totalMeetingsKnown": 43,
+  "totalMeetingsKnown": 44,
   "fullSyncCompleted": true
 }
