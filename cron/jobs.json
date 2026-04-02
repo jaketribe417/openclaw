@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775134205080,
+      "updatedAtMs": 1775134807491,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -26,11 +26,11 @@
         "to": "8382558273"
       },
       "state": {
-        "nextRunAtMs": 1775134800000,
-        "lastRunAtMs": 1775134200007,
+        "nextRunAtMs": 1775135400000,
+        "lastRunAtMs": 1775134800017,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 5073,
+        "lastDurationMs": 7474,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -145,7 +145,7 @@
       "name": "harlan-bee-check",
       "enabled": true,
       "createdAtMs": 1774929904841,
-      "updatedAtMs": 1775131239067,
+      "updatedAtMs": 1775134834811,
       "schedule": {
         "expr": "0 7-21 * * *",
         "kind": "cron",
@@ -162,11 +162,11 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775134800000,
-        "lastRunAtMs": 1775131209084,
+        "nextRunAtMs": 1775138400000,
+        "lastRunAtMs": 1775134807491,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 29983,
+        "lastDurationMs": 27320,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
