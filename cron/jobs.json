@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775062851996,
+      "updatedAtMs": 1775096293855,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -18,8 +18,7 @@
       "payload": {
         "kind": "agentTurn",
         "message": "Check emails using the joy-email-check script. Run: node /Users/Jack/.openclaw/workspace/skills/agentmail-mail/scripts/joy-email-check.js\n\nIMPORTANT: Only report results if there are NEW unread emails. If no unread emails, reply with NO_REPLY (nothing else).",
-        "model": "ollama/qwen3.5:0.8b",
-        "timeoutSeconds": 60
+        "timeoutSeconds": 120
       },
       "delivery": {
         "mode": "none",
@@ -27,14 +26,14 @@
         "to": "8382558273"
       },
       "state": {
-        "nextRunAtMs": 1775063400000,
-        "lastRunAtMs": 1775062800027,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 51969,
-        "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 0,
-        "lastDelivered": false
+        "nextRunAtMs": 1775098503139,
+        "lastRunAtMs": 1775094902797,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 342,
+        "lastDeliveryStatus": "not-requested",
+        "consecutiveErrors": 12,
+        "lastError": "Error: Unable to resolve bundled plugin public surface image-generation-core/runtime-api.js"
       }
     },
     {
@@ -44,7 +43,7 @@
       "name": "joy-morning-news",
       "enabled": true,
       "createdAtMs": 1774823201842,
-      "updatedAtMs": 1775039537725,
+      "updatedAtMs": 1775096293915,
       "schedule": {
         "expr": "30 5 * * *",
         "kind": "cron",
@@ -55,8 +54,7 @@
       "payload": {
         "kind": "agentTurn",
         "message": "Run the morning news script: node /Users/Jack/.openclaw/workspace/skills/agentmail-mail/scripts/joy-morning-news.js\n\nThis fetches top 10 news stories and sends them via email to jason@hansentribe.com. Run silently - only report errors.",
-        "model": "ollama/qwen3.5:0.8b",
-        "timeoutSeconds": 120
+        "timeoutSeconds": 180
       },
       "delivery": {
         "mode": "none"
@@ -91,8 +89,7 @@
       "payload": {
         "kind": "agentTurn",
         "message": "Run daily calendar summary script and send email from Joy. Execute: node /Users/Jack/.openclaw/workspace/skills/agentmail-mail/scripts/joy-calendar-summary.js daily\n\nSend daily calendar summary at 6:00 AM to jhansen@trustlineage.com from your inbox. Sign the email as Joy.",
-        "model": "ollama/qwen3.5:0.8b",
-        "timeoutSeconds": 60
+        "timeoutSeconds": 120
       },
       "delivery": {
         "mode": "none"
@@ -115,7 +112,7 @@
       "name": "joy-calendar-weekly",
       "enabled": true,
       "createdAtMs": 1774825328081,
-      "updatedAtMs": 1774864837361,
+      "updatedAtMs": 1775096294024,
       "schedule": {
         "expr": "0 5 * * 1",
         "kind": "cron",
@@ -126,8 +123,7 @@
       "payload": {
         "kind": "agentTurn",
         "message": "Run weekly calendar summary script and send email from Joy. Execute: node /Users/Jack/.openclaw/workspace/skills/agentmail-mail/scripts/joy-calendar-summary.js weekly\n\nSend weekly calendar summary at 5:00 AM Monday to jhansen@trustlineage.com from your inbox. Sign the email as Joy.",
-        "model": "ollama/qwen3.5:0.8b",
-        "timeoutSeconds": 60
+        "timeoutSeconds": 180
       },
       "delivery": {
         "mode": "none"
@@ -152,7 +148,7 @@
       "name": "harlan-bee-check",
       "enabled": true,
       "createdAtMs": 1774929904841,
-      "updatedAtMs": 1775062887149,
+      "updatedAtMs": 1775096293970,
       "schedule": {
         "expr": "0 7-21 * * *",
         "kind": "cron",
@@ -163,21 +159,20 @@
       "payload": {
         "kind": "agentTurn",
         "message": "Run Harlan's Bee meeting check. Execute: node /Users/Jack/.openclaw/workspace/agents/harlan/scripts/bee-meeting-check.js",
-        "model": "ollama/qwen3.5:0.8b",
-        "timeoutSeconds": 120
+        "timeoutSeconds": 180
       },
       "delivery": {
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775066400000,
-        "lastRunAtMs": 1775062851996,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 35153,
-        "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 0,
-        "lastDelivered": false
+        "nextRunAtMs": 1775131200000,
+        "lastRunAtMs": 1775095201464,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 376,
+        "lastDeliveryStatus": "not-requested",
+        "consecutiveErrors": 9,
+        "lastError": "Error: Unable to resolve bundled plugin public surface image-generation-core/runtime-api.js"
       }
     },
     {
@@ -187,7 +182,7 @@
       "name": "git-auto-push",
       "enabled": true,
       "createdAtMs": 1775007924606,
-      "updatedAtMs": 1775059487288,
+      "updatedAtMs": 1775096293861,
       "schedule": {
         "expr": "0 * * * *",
         "kind": "cron",
@@ -198,21 +193,20 @@
       "payload": {
         "kind": "agentTurn",
         "message": "Auto-push any uncommitted changes to GitHub. Steps:\n1. cd /Users/Jack/.openclaw\n2. Check git status\n3. If changes exist: git add -A && git commit -m \"Auto-commit: $(date)\" && git push origin main\n4. Report success or failure concisely.",
-        "timeoutSeconds": 60
+        "timeoutSeconds": 120
       },
       "delivery": {
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775063071643,
-        "lastRunAtMs": 1775059471664,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 15624,
-        "lastDelivered": false,
-        "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 0,
-        "runningAtMs": 1775063071650
+        "nextRunAtMs": 1775099073128,
+        "lastRunAtMs": 1775095472846,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 282,
+        "lastDeliveryStatus": "not-requested",
+        "consecutiveErrors": 9,
+        "lastError": "Error: Unable to resolve bundled plugin public surface image-generation-core/runtime-api.js"
       }
     }
   ]
