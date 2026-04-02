@@ -121,6 +121,7 @@
 |----|------|--------|-------|
 | BAK-001 | Bidding website for government/envelope/statement work | Icebox | Lineage business idea |
 | BAK-002 | Envelope-focused website for Lineage | Icebox | Marketing initiative |
+| BAK-003 | Bid tracking solution | Active | Track government/state/local bids (Angie Cramblett); procurement opportunity management |
 
 ---
 
