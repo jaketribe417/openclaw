@@ -9,6 +9,7 @@ const path = require('path');
 const fs = require('fs');
 const https = require('https');
 const { execSync } = require('child_process');
+const TodoManager = require('./todo-manager.js');
 
 const WORKSPACE_DIR = path.resolve(__dirname, '../../../..');
 const HARLAN_DIR = path.join(WORKSPACE_DIR, 'agents', 'harlan');
@@ -415,7 +416,7 @@ async function saveMeetingsToMemory(meetings) {
   return { saved: newMeetingsCount, files: savedFiles, memoryUpdated: true };
 }
 
-async function sendTelegramNotification(meetings, todos, facts) {
+async function sendTelegramNotification(meetings, todos, facts, reviewResult, todoSummary) {
   const date = getLocalTimestamp();
   
   let text = `📋 **Harlan's Check-in — ${date}**\n\n`;
@@ -436,14 +437,37 @@ async function sendTelegramNotification(meetings, todos, facts) {
     text += `  • agents/harlan/memory/meetings-index.md\n\n`;
   }
   
+  // New todos from meetings section
+  if (reviewResult.created && reviewResult.count > 0) {
+    text += `📝 **New Todos for Approval:** ${reviewResult.count}\n\n`;
+    reviewResult.newTodos.slice(0, 3).forEach((todo, i) => {
+      const shortText = todo.text.substring(0, 80) + (todo.text.length > 80 ? '...' : '');
+      text += `${i + 1}. ${shortText}\n`;
+    });
+    if (reviewResult.count > 3) {
+      text += `...and ${reviewResult.count - 3} more\n`;
+    }
+    text += `\n`;
+    text += `📁 Review: agents/harlan/todos/pending-review-*.md\n`;
+    text += `Reply: approve 1 | reject 1 | modify 1 new text\n\n`;
+  }
+  
+  // Todo summary
+  if (todoSummary.counts.total > 0) {
+    text += `📊 **Todo Status:**\n`;
+    text += `  • Pending: ${todoSummary.counts.pending}\n`;
+    text += `  • Approved: ${todoSummary.counts.approved}\n`;
+    text += `  • Completed: ${todoSummary.counts.completed}\n\n`;
+  }
+  
   if (!todos.available) {
     text += `⚠️ **Bee System Issue**\n`;
     text += `${todos.error}\n\n`;
     text += `Please check Bee CLI status.`;
   } else {
-    // New todos section
+    // New todos section (from Bee system)
     if (todos.newTodos.length > 0) {
-      text += `🎯 **New Action Items:** ${todos.newTodos.length}\n\n`;
+      text += `🎯 **New Bee Action Items:** ${todos.newTodos.length}\n\n`;
       todos.newTodos.forEach((todo, i) => {
         const todoText = todo.text || todo.content || '(No text)';
         text += `${i + 1}. ${todoText.substring(0, 150)}${todoText.length > 150 ? '...' : ''}\n`;
@@ -453,7 +477,7 @@ async function sendTelegramNotification(meetings, todos, facts) {
     
     // Total incomplete todos
     if (todos.totalIncomplete > 0) {
-      text += `📊 **Total Incomplete:** ${todos.totalIncomplete}\n\n`;
+      text += `📊 **Total Incomplete (Bee):** ${todos.totalIncomplete}\n\n`;
     }
     
     // Recent facts
@@ -469,6 +493,7 @@ async function sendTelegramNotification(meetings, todos, facts) {
     // Response instruction
     if (todos.newTodos.length > 0 || (meetings.available && meetings.meetings.length > 0)) {
       text += `✅ Meetings saved with full transcripts\n`;
+      text += `✅ Todos extracted and waiting for approval\n`;
       text += `✅ Memory index updated with summaries\n`;
     } else {
       text += `✅ No new items. All caught up!`;
@@ -516,7 +541,7 @@ async function sendTelegramNotification(meetings, todos, facts) {
 async function main() {
   logAction('');
   logAction('═══════════════════════════════════════');
-  logAction('HARLAN QUILL — BEE CHECK WITH MEMORY');
+  logAction('HARLAN QUILL — BEE CHECK WITH MEMORY & TODOS');
   logAction('═══════════════════════════════════════');
   
   // Get meetings, todos, and facts
@@ -524,22 +549,36 @@ async function main() {
   const todos = await checkBeeTodos();
   const facts = await checkBeeFacts();
   
+  // Extract and manage todos from meetings
+  const meetingTodos = TodoManager.extractAllTodos(meetings.meetings);
+  const reviewResult = TodoManager.createPendingReview(meetingTodos);
+  
+  if (reviewResult.created && reviewResult.count > 0) {
+    await TodoManager.sendApprovalRequest(reviewResult.newTodos);
+  }
+  
   // Save meetings to memory
   const memoryResult = await saveMeetingsToMemory(meetings.meetings);
   
+  // Generate todo summary
+  const todoSummary = TodoManager.generateSummary();
+  
   // Send notification
-  await sendTelegramNotification(meetings, todos, facts);
+  await sendTelegramNotification(meetings, todos, facts, reviewResult, todoSummary);
   
   logAction('');
   logAction(`SUMMARY:`);
   logAction(`  Meetings: ${meetings.meetings?.length || 0} total, ${memoryResult.saved} new saved`);
   logAction(`  Meeting Files: ${memoryResult.files?.length || 0} created`);
   logAction(`  Memory Index: ${memoryResult.memoryUpdated ? 'Updated' : 'No changes'}`);
-  logAction(`  Todos: ${todos.newTodos?.length || 0} new, ${todos.totalIncomplete || 0} incomplete`);
+  logAction(`  Todos: ${meetingTodos.length} extracted, ${reviewResult.count} new for review`);
+  logAction(`  Todo Status: ${todoSummary.counts.pending} pending, ${todoSummary.counts.approved} approved, ${todoSummary.counts.completed} completed`);
+  logAction(`  Todos (Bee): ${todos.newTodos?.length || 0} new, ${todos.totalIncomplete || 0} incomplete`);
   logAction(`  Facts: ${facts.recentFacts?.length || 0} recent`);
   logAction(`  Locations:`);
   logAction(`    • agents/harlan/meetings/`);
   logAction(`    • agents/harlan/memory/meetings-index.md`);
+  logAction(`    • agents/harlan/todos/`);
   logAction('');
   logAction('CHECK_COMPLETE');
   logAction('═══════════════════════════════════════');
