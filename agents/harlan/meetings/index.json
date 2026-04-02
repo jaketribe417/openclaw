@@ -1,7 +1,7 @@
 {
-  "lastUpdated": "2026-04-02T19:00:26.682Z",
+  "lastUpdated": "2026-04-02T20:00:34.135Z",
   "totalMeetings": 2,
-  "newMeetingsCount": 1,
+  "newMeetingsCount": 0,
   "missingMeetingsCount": 0,
   "allMeetings": [
     {
@@ -19,12 +19,6 @@
       "status": "unknown"
     }
   ],
-  "newMeetings": [
-    {
-      "id": 7327996,
-      "title": "Untitled",
-      "date": 1775154643798
-    }
-  ],
+  "newMeetings": [],
   "missingMeetings": []
 }
