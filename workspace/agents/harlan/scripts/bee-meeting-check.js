@@ -107,61 +107,109 @@ function execBee(command, timeout = 30000) {
   }
 }
 
-// Get ALL meetings from Bee (full sync mode)
-async function getAllBeeMeetings(fullSync = false) {
-  logAction(fullSync ? 'BEE_SYNC: Full sync - fetching all meetings' : 'BEE_CHECK: Fetching recent meetings/conversations');
+// Get ALL meetings from Bee with extended history
+async function getAllBeeMeetings(fullSync = false, historyDays = 60) {
+  logAction(fullSync ? `BEE_SYNC: Full sync - fetching ${historyDays} days of meetings` : 'BEE_CHECK: Fetching recent meetings');
   
   const state = loadState();
   const knownIds = new Set(state.knownMeetingIds || []);
+  const processedIds = new Set(state.processedMeetings || []);
   
-  // Try 'changed' for recent, 'list' for full history
-  let conversations = execBee('changed', 30000);
+  // Try multiple commands to get comprehensive history
+  let allConversations = [];
+  const commands = ['changed', 'now', 'list'];
   
-  if (!conversations || !conversations.conversations) {
-    logAction('BEE_CHECK: Using fallback to now');
-    conversations = execBee('now', 30000);
+  for (const cmd of commands) {
+    try {
+      logAction(`BEE_SYNC: Trying command '${cmd}'`);
+      const result = execBee(cmd, 60000);
+      if (result && result.conversations && result.conversations.length > 0) {
+        allConversations = result.conversations;
+        logAction(`BEE_SYNC: '${cmd}' returned ${result.conversations.length} conversations`);
+        break;
+      }
+    } catch (err) {
+      logAction(`BEE_SYNC: '${cmd}' failed: ${err.message}`);
+    }
   }
   
-  if (!conversations || !conversations.conversations) {
-    logAction('BEE_CHECK: No conversations data available');
-    return { available: false, meetings: [], newMeetings: [], error: 'Bee CLI error', totalKnown: knownIds.size };
+  // Also try to get extended history
+  try {
+    logAction('BEE_SYNC: Attempting extended history fetch');
+    // Try with different time ranges
+    const timeRanges = ['--days 60', '--days 30', '--days 7'];
+    for (const range of timeRanges) {
+      try {
+        const output = execSync(`bee conversations ${range} --json 2>/dev/null || echo "[]"`, {
+          cwd: WORKSPACE_DIR,
+          encoding: 'utf8',
+          timeout: 60000,
+          maxBuffer: 50 * 1024 * 1024 // 50MB buffer
+        });
+        const result = JSON.parse(output);
+        if (result && result.length > allConversations.length) {
+          allConversations = result;
+          logAction(`BEE_SYNC: 'conversations ${range}' returned ${result.length} conversations`);
+          break;
+        }
+      } catch (e) {
+        // Continue to next range
+      }
+    }
+  } catch (err) {
+    logAction(`BEE_SYNC: Extended history fetch failed: ${err.message}`);
   }
   
-  const allConversations = conversations.conversations || [];
-  logAction(`BEE_CHECK: Retrieved ${allConversations.length} conversations from Bee`);
+  if (allConversations.length === 0) {
+    logAction('BEE_CHECK: No conversations retrieved from any command');
+    return { 
+      available: false, 
+      meetings: [], 
+      newMeetings: [], 
+      missingMeetings: [],
+      error: 'Bee CLI error - no data retrieved',
+      totalKnown: knownIds.size 
+    };
+  }
   
-  // Filter to new meetings we haven't processed
-  const newMeetings = allConversations.filter(c => {
+  logAction(`BEE_SYNC: Total ${allConversations.length} conversations available from Bee`);
+  
+  // Filter to specified history range
+  const cutoffDate = new Date();
+  cutoffDate.setDate(cutoffDate.getDate() - historyDays);
+  const cutoffMs = cutoffDate.getTime();
+  
+  const recentConversations = allConversations.filter(c => {
+    if (!c) return false;
+    const timestamp = c.start_time || c.created_at || c.timestamp;
+    if (!timestamp) return true; // Include if no timestamp
+    const convTime = typeof timestamp === 'number' ? timestamp : new Date(timestamp).getTime();
+    return convTime >= cutoffMs;
+  });
+  
+  logAction(`BEE_SYNC: ${recentConversations.length} conversations within ${historyDays} days`);
+  
+  // Find new meetings we haven't seen
+  const newMeetings = recentConversations.filter(c => {
     if (!c) return false;
     const meetingId = c.id || c.conversation_id || c.meeting_id;
     if (!meetingId) return false;
     return !knownIds.has(meetingId);
   });
   
-  // Update known IDs
-  const newIds = newMeetings.map(c => c.id || c.conversation_id || c.meeting_id).filter(Boolean);
-  const updatedKnownIds = [...knownIds, ...newIds];
+  // Find meetings that are known but not processed (missing from memory)
+  const missingMeetings = recentConversations.filter(c => {
+    if (!c) return false;
+    const meetingId = c.id || c.conversation_id || c.meeting_id;
+    if (!meetingId) return false;
+    return knownIds.has(meetingId) && !processedIds.has(meetingId);
+  });
   
-  // Filter to today's conversations if not doing full sync
-  let filteredMeetings = newMeetings;
-  if (!fullSync) {
-    const todayStart = new Date();
-    todayStart.setHours(0, 0, 0, 0);
-    const todayStartMs = todayStart.getTime();
-    const todayEndMs = todayStartMs + (24 * 60 * 60 * 1000);
-    
-    filteredMeetings = newMeetings.filter(c => {
-      if (!c) return false;
-      const timestamp = c.start_time || c.created_at || c.timestamp;
-      if (!timestamp) return false;
-      const convTime = typeof timestamp === 'number' ? timestamp : new Date(timestamp).getTime();
-      return convTime >= todayStartMs && convTime < todayEndMs;
-    });
-    
-    logAction(`BEE_CHECK: ${filteredMeetings.length} new meetings from today (${new Date(todayStartMs).toISOString().split('T')[0]})`);
-  } else {
-    logAction(`BEE_SYNC: ${newMeetings.length} new meetings found in full sync`);
-  }
+  logAction(`BEE_SYNC: ${newMeetings.length} new meetings, ${missingMeetings.length} known but unprocessed`);
+  
+  // Update known IDs with ALL meetings seen
+  const allIds = recentConversations.map(c => c.id || c.conversation_id || c.meeting_id).filter(Boolean);
+  const updatedKnownIds = [...new Set([...knownIds, ...allIds])];
   
   // Save updated state
   try {
@@ -170,41 +218,67 @@ async function getAllBeeMeetings(fullSync = false) {
     state.lastFullSync = fullSync ? getTimestamp() : state.lastFullSync;
     if (fullSync) state.fullSyncCompleted = true;
     saveState(state);
-    logAction(`BEE_STATE: Saved ${updatedKnownIds.length} known meeting IDs`);
+    logAction(`BEE_STATE: Updated with ${updatedKnownIds.length} known meeting IDs`);
   } catch (err) {
     logAction(`BEE_STATE_ERROR: Failed to save state: ${err.message}`);
   }
   
-  // Save meetings index
-  saveMeetingsIndex(allConversations, newMeetings);
+  // Save comprehensive meetings index
+  saveMeetingsIndex(recentConversations, newMeetings, missingMeetings);
+  
+  // Filter meetings to process (new + missing)
+  const meetingsToProcess = fullSync 
+    ? [...newMeetings, ...missingMeetings]
+    : newMeetings.filter(c => {
+        const timestamp = c.start_time || c.created_at || c.timestamp;
+        if (!timestamp) return false;
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+        const convTime = typeof timestamp === 'number' ? timestamp : new Date(timestamp).getTime();
+        return convTime >= todayStart.getTime();
+      });
   
   return { 
     available: true, 
-    meetings: filteredMeetings,
+    meetings: meetingsToProcess,
     newMeetings: newMeetings,
-    totalAvailable: allConversations.length,
+    missingMeetings: missingMeetings,
+    totalAvailable: recentConversations.length,
     totalNew: newMeetings.length,
+    totalMissing: missingMeetings.length,
     totalKnown: updatedKnownIds.length,
     error: null 
   };
 }
 
 // Save meetings index for reference
-function saveMeetingsIndex(allMeetings, newMeetings) {
+function saveMeetingsIndex(allMeetings, newMeetings, missingMeetings = []) {
   const index = {
     lastUpdated: getTimestamp(),
     totalMeetings: allMeetings.length,
     newMeetingsCount: newMeetings.length,
-    meetings: allMeetings.map(m => ({
+    missingMeetingsCount: missingMeetings.length,
+    allMeetings: allMeetings.map(m => ({
       id: m.id || m.conversation_id || m.meeting_id,
       title: m.title || m.name || 'Untitled',
       date: m.start_time || m.created_at || m.timestamp,
-      duration: m.duration || m.length || 'Unknown'
+      duration: m.duration || m.length || 'Unknown',
+      status: m.status || 'unknown'
+    })),
+    newMeetings: newMeetings.map(m => ({
+      id: m.id || m.conversation_id || m.meeting_id,
+      title: m.title || m.name || 'Untitled',
+      date: m.start_time || m.created_at || m.timestamp
+    })),
+    missingMeetings: missingMeetings.map(m => ({
+      id: m.id || m.conversation_id || m.meeting_id,
+      title: m.title || m.name || 'Untitled',
+      date: m.start_time || m.created_at || m.timestamp
     }))
   };
   
   fs.writeFileSync(MEETINGS_INDEX_FILE, JSON.stringify(index, null, 2));
-  logAction(`BEE_INDEX: Saved ${index.meetings.length} meetings to index`);
+  logAction(`BEE_INDEX: Saved ${index.allMeetings.length} meetings to index (${index.newMeetingsCount} new, ${index.missingMeetingsCount} missing)`);
 }
 
 // Legacy function for backward compatibility
