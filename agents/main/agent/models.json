@@ -18,7 +18,7 @@
             "cacheRead": 0,
             "cacheWrite": 0
           },
-          "contextWindow": 128000,
+          "contextWindow": 262144,
           "maxTokens": 8192,
           "api": "ollama"
         },
@@ -53,6 +53,57 @@
             "cacheWrite": 0
           },
           "contextWindow": 128000,
+          "maxTokens": 8192,
+          "api": "ollama"
+        },
+        {
+          "id": "Krakekai/qwen3-reranker-8b:latest",
+          "name": "Krakekai/qwen3-reranker-8b:latest",
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "contextWindow": 40960,
+          "maxTokens": 8192,
+          "api": "ollama"
+        },
+        {
+          "id": "embeddinggemma:300m",
+          "name": "embeddinggemma:300m",
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "contextWindow": 2048,
+          "maxTokens": 2048,
+          "api": "ollama"
+        },
+        {
+          "id": "qwen3.5:0.8b",
+          "name": "qwen3.5:0.8b",
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "contextWindow": 262144,
           "maxTokens": 8192,
           "api": "ollama"
         },
@@ -193,40 +244,6 @@
           "api": "ollama"
         },
         {
-          "id": "qwen3-reranker-8b:latest",
-          "name": "qwen3-reranker-8b:latest",
-          "reasoning": false,
-          "input": [
-            "text"
-          ],
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          },
-          "contextWindow": 32768,
-          "maxTokens": 8192,
-          "api": "ollama"
-        },
-        {
-          "id": "gemma:300m",
-          "name": "gemma:300m",
-          "reasoning": false,
-          "input": [
-            "text"
-          ],
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          },
-          "contextWindow": 2048,
-          "maxTokens": 2048,
-          "api": "ollama"
-        },
-        {
           "id": "tinyllama:latest",
           "name": "tinyllama:latest",
           "reasoning": false,
@@ -280,23 +297,6 @@
         {
           "id": "lfm2:latest",
           "name": "lfm2:latest",
-          "reasoning": false,
-          "input": [
-            "text"
-          ],
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          },
-          "contextWindow": 32768,
-          "maxTokens": 8192,
-          "api": "ollama"
-        },
-        {
-          "id": "qwen3.5:0.8b",
-          "name": "qwen3.5:0.8b",
           "reasoning": false,
           "input": [
             "text"

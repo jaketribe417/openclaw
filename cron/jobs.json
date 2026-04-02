@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775096293855,
+      "updatedAtMs": 1775097465744,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -26,14 +26,14 @@
         "to": "8382558273"
       },
       "state": {
-        "nextRunAtMs": 1775098503139,
-        "lastRunAtMs": 1775094902797,
-        "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 342,
-        "lastDeliveryStatus": "not-requested",
-        "consecutiveErrors": 12,
-        "lastError": "Error: Unable to resolve bundled plugin public surface image-generation-core/runtime-api.js"
+        "nextRunAtMs": 1775097600000,
+        "lastRunAtMs": 1775097461305,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 4439,
+        "lastDeliveryStatus": "not-delivered",
+        "consecutiveErrors": 0,
+        "lastDelivered": false
       }
     },
     {
@@ -206,7 +206,7 @@
         "lastDurationMs": 282,
         "lastDeliveryStatus": "not-requested",
         "consecutiveErrors": 9,
-        "lastError": "Error: Unable to resolve bundled plugin public surface image-generation-core/runtime-api.js"
+        "runningAtMs": 1775097465819
       }
     }
   ]
