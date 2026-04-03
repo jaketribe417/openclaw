@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775181607557,
+      "updatedAtMs": 1775182206869,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -26,11 +26,11 @@
         "to": "8382558273"
       },
       "state": {
-        "nextRunAtMs": 1775182200000,
-        "lastRunAtMs": 1775181600021,
+        "nextRunAtMs": 1775182800000,
+        "lastRunAtMs": 1775182200016,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 7536,
+        "lastDurationMs": 6853,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -179,7 +179,7 @@
       "name": "git-auto-push",
       "enabled": true,
       "createdAtMs": 1775007924606,
-      "updatedAtMs": 1775181891832,
+      "updatedAtMs": 1775182083275,
       "schedule": {
         "expr": "0 * * * *",
         "kind": "cron",
@@ -189,7 +189,7 @@
       "wakeMode": "now",
       "payload": {
         "kind": "agentTurn",
-        "message": "Auto-push any uncommitted changes to GitHub. Steps:\n1. cd /Users/Jack/.openclaw\n2. Check git status\n3. If changes exist: git add -A && git commit -m \"Auto-commit: $(date)\" && git push origin main\n4. Report success or failure concisely.",
+        "message": "Auto-push any uncommitted changes to GitHub. Steps:\n1. cd /Users/Jack/.openclaw\n2. Check git status\n3. If changes exist: git add -A -- ':!openclaw-config-setup-discord.md' -- ':!*.env' -- ':!secrets.*' -- ':!config/*.local' && git commit -m \"Auto-commit: $(date)\" && git push origin main\n4. Report success or failure concisely.\n\nExcluded files: Discord config, .env files, secrets, and local configs.",
         "timeoutSeconds": 120
       },
       "delivery": {
