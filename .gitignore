@@ -54,3 +54,5 @@ workspace/jake-mission-control/
 # --- OS ---
 .DS_Store
 Thumbs.db
+discord-tokens.json
+openclawbeforesecurity.json
