@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775203206836,
+      "updatedAtMs": 1775205007844,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -26,11 +26,11 @@
         "to": "8382558273"
       },
       "state": {
-        "nextRunAtMs": 1775203800000,
-        "lastRunAtMs": 1775203200028,
+        "nextRunAtMs": 1775205600000,
+        "lastRunAtMs": 1775205000034,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 6808,
+        "lastDurationMs": 7810,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
