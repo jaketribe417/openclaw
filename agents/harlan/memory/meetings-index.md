@@ -4,6 +4,30 @@ A searchable index of all Bee meetings with links to full transcripts.
 
 ---
 
+## Fri — Childcare and work flexibility discussion
+
+- **Date:** Fri, Apr 3, 2026, 01:42 PM
+- **Meeting ID:** 7346395
+- **Summary:** ## Summary
+
+Angela called Jason with a quick question about picking up their son Jonah from school. She had just realized Jonah doesn't have Boys & Girls Club (BGC) after-school care today, which she ...
+- **Meeting Notes:** [View full notes](meetings/2026-04-03_13:42_childcare-and-work-flexibility-discussion.md)
+- **Added to memory:** Fri, Apr 3, 02:00 PM
+
+---
+
+## Fri — Mail service presentation meeting
+
+- **Date:** Fri, Apr 3, 2026, 01:02 PM
+- **Meeting ID:** 7345661
+- **Summary:** ## Summary
+
+Jason led a sales presentation with KDOT (Kansas Department of Transportation) public involvement staff to discuss full-service mailing solutions for their transportation project outreach....
+- **Meeting Notes:** [View full notes](meetings/2026-04-03_13:02_mail-service-presentation-meeting.md)
+- **Added to memory:** Fri, Apr 3, 02:00 PM
+
+---
+
 ## Thu — Jason asks about sending large documents, and someone confirms they do, setting the stage for a detailed discussion on envelope selection and mailing procedures.
 
 - **Date:** Thu, Apr 2, 2026, 01:30 PM
