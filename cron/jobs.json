@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775226606819,
+      "updatedAtMs": 1775228464950,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -26,14 +26,17 @@
         "to": "8382558273"
       },
       "state": {
-        "nextRunAtMs": 1775227200000,
-        "lastRunAtMs": 1775226600033,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 6786,
+        "nextRunAtMs": 1775229000000,
+        "lastRunAtMs": 1775228400022,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 64928,
         "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 0,
-        "lastDelivered": false
+        "consecutiveErrors": 1,
+        "lastDelivered": false,
+        "lastError": "Request timed out before a response was generated. Please try again, or increase `agents.defaults.timeoutSeconds` in your config.",
+        "lastErrorReason": "timeout",
+        "lastDeliveryError": "Request timed out before a response was generated. Please try again, or increase `agents.defaults.timeoutSeconds` in your config."
       }
     },
     {
@@ -145,7 +148,7 @@
       "name": "harlan-bee-check",
       "enabled": true,
       "createdAtMs": 1774929904841,
-      "updatedAtMs": 1775224823068,
+      "updatedAtMs": 1775228477174,
       "schedule": {
         "expr": "0 7-21 * * *",
         "kind": "cron",
@@ -162,11 +165,11 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775228400000,
-        "lastRunAtMs": 1775224809983,
+        "nextRunAtMs": 1775232000000,
+        "lastRunAtMs": 1775228464950,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 13085,
+        "lastDurationMs": 12224,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -203,7 +206,8 @@
         "lastDurationMs": 29193,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
-        "lastDelivered": false
+        "lastDelivered": false,
+        "runningAtMs": 1775228671645
       }
     }
   ]
