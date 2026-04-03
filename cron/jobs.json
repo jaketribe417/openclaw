@@ -179,7 +179,7 @@
       "name": "git-auto-push",
       "enabled": true,
       "createdAtMs": 1775007924606,
-      "updatedAtMs": 1775221494825,
+      "updatedAtMs": 1775225100962,
       "schedule": {
         "expr": "0 * * * *",
         "kind": "cron",
@@ -196,15 +196,14 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775225071643,
-        "lastRunAtMs": 1775221471653,
+        "nextRunAtMs": 1775228671643,
+        "lastRunAtMs": 1775225071769,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 23172,
+        "lastDurationMs": 29193,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
-        "lastDelivered": false,
-        "runningAtMs": 1775225071767
+        "lastDelivered": false
       }
     }
   ]
