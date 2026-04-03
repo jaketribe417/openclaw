@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775228464950,
+      "updatedAtMs": 1775230210463,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -26,17 +26,14 @@
         "to": "8382558273"
       },
       "state": {
-        "nextRunAtMs": 1775229000000,
-        "lastRunAtMs": 1775228400022,
-        "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 64928,
+        "nextRunAtMs": 1775230800000,
+        "lastRunAtMs": 1775230200023,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 10440,
         "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 1,
-        "lastDelivered": false,
-        "lastError": "Request timed out before a response was generated. Please try again, or increase `agents.defaults.timeoutSeconds` in your config.",
-        "lastErrorReason": "timeout",
-        "lastDeliveryError": "Request timed out before a response was generated. Please try again, or increase `agents.defaults.timeoutSeconds` in your config."
+        "consecutiveErrors": 0,
+        "lastDelivered": false
       }
     },
     {
