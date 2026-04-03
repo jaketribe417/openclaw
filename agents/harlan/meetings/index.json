@@ -1,16 +1,9 @@
 {
-  "lastUpdated": "2026-04-03T19:00:40.646Z",
-  "totalMeetings": 3,
-  "newMeetingsCount": 2,
+  "lastUpdated": "2026-04-03T20:00:12.991Z",
+  "totalMeetings": 2,
+  "newMeetingsCount": 0,
   "missingMeetingsCount": 0,
   "allMeetings": [
-    {
-      "id": 7327996,
-      "title": "Untitled",
-      "date": 1775154643798,
-      "duration": "Unknown",
-      "status": "unknown"
-    },
     {
       "id": 7345661,
       "title": "Untitled",
@@ -26,17 +19,6 @@
       "status": "unknown"
     }
   ],
-  "newMeetings": [
-    {
-      "id": 7345661,
-      "title": "Untitled",
-      "date": 1775239331150
-    },
-    {
-      "id": 7346395,
-      "title": "Untitled",
-      "date": 1775241753792
-    }
-  ],
+  "newMeetings": [],
   "missingMeetings": []
 }

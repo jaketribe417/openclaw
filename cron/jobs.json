@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775244614202,
+      "updatedAtMs": 1775246406924,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -26,11 +26,11 @@
         "to": "8382558273"
       },
       "state": {
-        "nextRunAtMs": 1775245200000,
-        "lastRunAtMs": 1775244600024,
+        "nextRunAtMs": 1775247000000,
+        "lastRunAtMs": 1775246400033,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 14178,
+        "lastDurationMs": 6891,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -145,7 +145,7 @@
       "name": "harlan-bee-check",
       "enabled": true,
       "createdAtMs": 1774929904841,
-      "updatedAtMs": 1775242848983,
+      "updatedAtMs": 1775246419462,
       "schedule": {
         "expr": "0 7-21 * * *",
         "kind": "cron",
@@ -162,11 +162,11 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775246400000,
-        "lastRunAtMs": 1775242813176,
+        "nextRunAtMs": 1775250000000,
+        "lastRunAtMs": 1775246406924,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 35807,
+        "lastDurationMs": 12538,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -203,8 +203,8 @@
         "lastDurationMs": 120023,
         "lastDeliveryStatus": "not-requested",
         "consecutiveErrors": 1,
-        "lastError": "cron: job execution timed out",
-        "lastErrorReason": "timeout"
+        "lastErrorReason": "timeout",
+        "runningAtMs": 1775246671648
       }
     }
   ]
