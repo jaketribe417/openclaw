@@ -32,6 +32,9 @@
     },
     "joy": {
       "allowlist": []
+    },
+    "jake": {
+      "allowlist": []
     }
   }
 }

@@ -89,7 +89,7 @@ async function checkEmails() {
       return;
     }
     
-    const messages = response.data.data || [];
+    const messages = response.data.messages || [];
     
     if (messages.length === 0) {
       logAction('No messages in inbox');
