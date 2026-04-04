@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775319604817,
+      "updatedAtMs": 1775321404772,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -26,11 +26,11 @@
         "to": "8382558273"
       },
       "state": {
-        "nextRunAtMs": 1775320200000,
-        "lastRunAtMs": 1775319600022,
+        "nextRunAtMs": 1775322000000,
+        "lastRunAtMs": 1775321400032,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 4795,
+        "lastDurationMs": 4740,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -231,40 +231,6 @@
       },
       "state": {
         "nextRunAtMs": 1775390400000
-      }
-    },
-    {
-      "id": "c8beb75b-9cdd-468e-8ac6-badfb5f0816c",
-      "agentId": "jake",
-      "sessionKey": "agent:jake:main",
-      "name": "HEP Check-in - 10 min intervals",
-      "enabled": true,
-      "createdAtMs": 1775316218817,
-      "updatedAtMs": 1775319254914,
-      "schedule": {
-        "everyMs": 600000,
-        "kind": "every",
-        "anchorMs": 1775316218817
-      },
-      "sessionTarget": "session:agent:jake:main",
-      "wakeMode": "now",
-      "payload": {
-        "kind": "agentTurn",
-        "message": "Check on HEP's progress for the Mission Control Dashboard project. Read PROJECT_PLAN.md to see current phase. Ask HEP for status update in format: 1. Current Phase 2. Tasks Completed 3. Blockers 4. Next Tasks 5. Time Remaining. Update PROJECT_PLAN.md with progress. If HEP is off track, reprompt with clear instructions.",
-        "timeoutSeconds": 120
-      },
-      "delivery": {
-        "mode": "announce"
-      },
-      "state": {
-        "nextRunAtMs": 1775320154914,
-        "lastRunAtMs": 1775319218846,
-        "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 36068,
-        "lastDeliveryStatus": "unknown",
-        "consecutiveErrors": 4,
-        "runningAtMs": 1775320154918
       }
     }
   ]
