@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775318404542,
+      "updatedAtMs": 1775319604817,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -26,11 +26,11 @@
         "to": "8382558273"
       },
       "state": {
-        "nextRunAtMs": 1775319000000,
-        "lastRunAtMs": 1775318400034,
+        "nextRunAtMs": 1775320200000,
+        "lastRunAtMs": 1775319600022,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 4508,
+        "lastDurationMs": 4795,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -179,7 +179,7 @@
       "name": "git-auto-push",
       "enabled": true,
       "createdAtMs": 1775007924606,
-      "updatedAtMs": 1775315091333,
+      "updatedAtMs": 1775318705828,
       "schedule": {
         "expr": "0 * * * *",
         "kind": "cron",
@@ -196,15 +196,14 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775318671643,
-        "lastRunAtMs": 1775315071661,
+        "nextRunAtMs": 1775322271643,
+        "lastRunAtMs": 1775318679010,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 19672,
+        "lastDurationMs": 26818,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
-        "lastDelivered": false,
-        "runningAtMs": 1775318679004
+        "lastDelivered": false
       }
     },
     {
@@ -241,7 +240,7 @@
       "name": "HEP Check-in - 10 min intervals",
       "enabled": true,
       "createdAtMs": 1775316218817,
-      "updatedAtMs": 1775318676998,
+      "updatedAtMs": 1775319254914,
       "schedule": {
         "everyMs": 600000,
         "kind": "every",
@@ -258,14 +257,14 @@
         "mode": "announce"
       },
       "state": {
-        "nextRunAtMs": 1775319218841,
-        "lastRunAtMs": 1775318618841,
+        "nextRunAtMs": 1775320154914,
+        "lastRunAtMs": 1775319218846,
         "lastRunStatus": "error",
         "lastStatus": "error",
-        "lastDurationMs": 58157,
+        "lastDurationMs": 36068,
         "lastDeliveryStatus": "unknown",
-        "consecutiveErrors": 3,
-        "lastError": "Channel is required when multiple channels are configured: telegram, discord Set delivery.channel explicitly or use a main session with a previous channel."
+        "consecutiveErrors": 4,
+        "runningAtMs": 1775320154918
       }
     }
   ]
