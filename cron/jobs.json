@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775325612979,
+      "updatedAtMs": 1775326823899,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -27,11 +27,11 @@
         "accountId": "Joy-email"
       },
       "state": {
-        "nextRunAtMs": 1775326200000,
-        "lastRunAtMs": 1775325600031,
+        "nextRunAtMs": 1775327400000,
+        "lastRunAtMs": 1775326800033,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 12948,
+        "lastDurationMs": 23866,
         "lastDeliveryStatus": "delivered",
         "consecutiveErrors": 0,
         "lastDelivered": true
@@ -180,7 +180,7 @@
       "name": "git-auto-push",
       "enabled": true,
       "createdAtMs": 1775007924606,
-      "updatedAtMs": 1775322288824,
+      "updatedAtMs": 1775325887106,
       "schedule": {
         "expr": "0 * * * *",
         "kind": "cron",
@@ -197,15 +197,14 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775325871643,
-        "lastRunAtMs": 1775322271661,
+        "nextRunAtMs": 1775329471643,
+        "lastRunAtMs": 1775325871650,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 17163,
+        "lastDurationMs": 15456,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
-        "lastDelivered": false,
-        "runningAtMs": 1775325871646
+        "lastDelivered": false
       }
     },
     {
