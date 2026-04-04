@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
  * Joy Email Checker
- * Checks inbox, logs to file, outputs summary to current chat only
+ * Checks inbox, logs to file, outputs summary to console (for cron delivery)
  * No orphan sessions created
  */
 
@@ -115,39 +115,45 @@ async function checkEmails() {
     // Log summary
     logAction(`Unread: ${unreadMessages.length} total (${trustedMessages.length} trusted, ${otherMessages.length} other)`);
     
-    // Output summary to console (current chat only)
-    console.log(`📧 Email Check: jaketribe_bot@agentmail.to`);
-    console.log(`   Total messages: ${messages.length}`);
-    console.log(`   Unread: ${unreadMessages.length}`);
-    
-    if (trustedMessages.length > 0) {
-      console.log(`\n✅ Trusted sender emails (${trustedMessages.length}):`);
-      for (const msg of trustedMessages) {
-        const from = msg.from?.email || msg.from || 'unknown';
-        console.log(`   - "${msg.subject}" from ${from}`);
-        logAction(`TRUSTED: "${msg.subject}" from ${from}`);
-      }
-    }
-    
-    if (otherMessages.length > 0) {
-      console.log(`\n⏳ Other emails queued for review (${otherMessages.length}):`);
-      for (const msg of otherMessages) {
-        const from = msg.from?.email || msg.from || 'unknown';
-        console.log(`   - "${msg.subject}" from ${from}`);
-        logAction(`QUEUED: "${msg.subject}" from ${from}`);
-      }
-    }
-    
-    if (unreadMessages.length === 0) {
-      console.log('   All caught up!');
-    }
+    // Build output for cron delivery
+    const output = buildOutput(trustedMessages, otherMessages, messages.length, unreadMessages.length);
+    console.log(output);
     
     logAction('Email check complete');
     
   } catch (err) {
     logAction(`Error: ${err.message}`);
-    console.log(`Email check failed: ${err.message}`);
+    console.log(`❌ Email check failed: ${err.message}`);
   }
+}
+
+function buildOutput(trusted, other, total, unread) {
+  const lines = [];
+  lines.push(`📧 Email Check: jaketribe_bot@agentmail.to`);
+  lines.push(`Total messages: ${total} | Unread: ${unread}`);
+  
+  if (trusted.length > 0) {
+    lines.push('');
+    lines.push(`✅ Trusted sender emails (${trusted.length}):`);
+    for (const msg of trusted) {
+      const from = msg.from?.email || msg.from || 'unknown';
+      lines.push(`   • "${msg.subject}" from ${from}`);
+    }
+  }
+  
+  if (other.length > 0) {
+    lines.push('');
+    lines.push(`⏳ Other emails (${other.length}):`);
+    for (const msg of other.slice(0, 5)) {
+      const from = msg.from?.email || msg.from || 'unknown';
+      lines.push(`   • "${msg.subject}" from ${from}`);
+    }
+    if (other.length > 5) {
+      lines.push(`   ... and ${other.length - 5} more`);
+    }
+  }
+  
+  return lines.join('\n');
 }
 
 checkEmails();
