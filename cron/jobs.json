@@ -3,12 +3,12 @@
   "jobs": [
     {
       "id": "288001f9-1969-4d35-a2b3-9c8b6401dc92",
-      "agentId": "main",
+      "agentId": "joy",
       "sessionKey": "agent:main:main",
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775323206268,
+      "updatedAtMs": 1775325212194,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -17,23 +17,24 @@
       "wakeMode": "now",
       "payload": {
         "kind": "agentTurn",
-        "message": "Check emails using the joy-email-check script. Run: node /Users/Jack/.openclaw/workspace/skills/agentmail-mail/scripts/joy-email-check.js\n\nIMPORTANT: Only report results if there are NEW unread emails. If no unread emails, reply with NO_REPLY (nothing else).",
+        "message": "Check emails using the joy-email-check script. Run: node /Users/Jack/.openclaw/workspace/skills/agentmail-mail/scripts/joy-email-check.js\n\nOnly report results if there are unread emails. If no unread emails, output NO_REPLY exactly.",
         "timeoutSeconds": 120
       },
       "delivery": {
-        "mode": "none",
-        "channel": "telegram",
-        "to": "8382558273"
+        "mode": "announce",
+        "channel": "discord",
+        "to": "1488711436380147793",
+        "accountId": "Joy-email"
       },
       "state": {
-        "nextRunAtMs": 1775323800000,
-        "lastRunAtMs": 1775323200033,
+        "nextRunAtMs": 1775325600000,
+        "lastRunAtMs": 1775325200600,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 6235,
-        "lastDeliveryStatus": "not-delivered",
+        "lastDurationMs": 11594,
+        "lastDeliveryStatus": "delivered",
         "consecutiveErrors": 0,
-        "lastDelivered": false
+        "lastDelivered": true
       }
     },
     {
