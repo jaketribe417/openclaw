@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775309408790,
+      "updatedAtMs": 1775311209202,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -26,11 +26,11 @@
         "to": "8382558273"
       },
       "state": {
-        "nextRunAtMs": 1775310000000,
-        "lastRunAtMs": 1775309400046,
+        "nextRunAtMs": 1775311800000,
+        "lastRunAtMs": 1775311200009,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 8744,
+        "lastDurationMs": 9193,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -145,7 +145,7 @@
       "name": "harlan-bee-check",
       "enabled": true,
       "createdAtMs": 1774929904841,
-      "updatedAtMs": 1775307624200,
+      "updatedAtMs": 1775311228044,
       "schedule": {
         "expr": "0 7-21 * * *",
         "kind": "cron",
@@ -162,11 +162,11 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775311200000,
-        "lastRunAtMs": 1775307608983,
+        "nextRunAtMs": 1775314800000,
+        "lastRunAtMs": 1775311209202,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 15217,
+        "lastDurationMs": 18842,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -179,7 +179,7 @@
       "name": "git-auto-push",
       "enabled": true,
       "createdAtMs": 1775007924606,
-      "updatedAtMs": 1775307890279,
+      "updatedAtMs": 1775311484067,
       "schedule": {
         "expr": "0 * * * *",
         "kind": "cron",
@@ -196,14 +196,41 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775311471643,
-        "lastRunAtMs": 1775307871651,
+        "nextRunAtMs": 1775315071643,
+        "lastRunAtMs": 1775311471648,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 18628,
+        "lastDurationMs": 12419,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
+      }
+    },
+    {
+      "id": "b4c58288-f53a-499e-a5a8-b96d67c52268",
+      "agentId": "joy",
+      "sessionKey": "agent:jake:telegram:direct:8382558273",
+      "name": "joy-daily-system-update",
+      "enabled": true,
+      "createdAtMs": 1775309997258,
+      "updatedAtMs": 1775310249555,
+      "schedule": {
+        "expr": "0 7 * * *",
+        "kind": "cron",
+        "tz": "America/Chicago"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Generate and send a daily system update to Jason.\n\nTASK: Send a simple daily system update via Discord to channel 1488391200917553162.\n\nGATHER STATUS:\n1. Check session list for completed agent tasks from yesterday\n2. List cron jobs to verify all Joy jobs are running (email checks, calendar summaries)\n3. Check memory files for recent activity\n\nCREATE MESSAGE (keep it simple):\n```\n📊 Daily System Update — [Date]\n\nAgent Tasks Completed Yesterday: [list any]\nCron Jobs: All running ✓\n  • Email check every 10 min\n  • Morning news at 5:30 AM\n  • Daily calendar at 6:00 AM\n  • Weekly calendar Monday 5:00 AM\n```\n\nSEND TO:\n- Discord channel: 1488391200917553162\n- Use the Discord message tool with action=send, channel=discord, to=1488391200917553162\n\nKeep it concise.",
+        "timeoutSeconds": 180
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "nextRunAtMs": 1775390400000
       }
     }
   ]

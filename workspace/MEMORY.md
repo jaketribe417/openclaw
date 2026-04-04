@@ -5,8 +5,7 @@ This is Jake's curated memory for important information.
 ## Important Facts
 - Discord was disabled after update on March 29, 2026
 - Memory-braid plugin was removed
-- Memory is now configured with Ollama embeddings using gemma:300m (upgraded from nomic-embed-text)
-- Qwen3-reranker-8b added for memory reranking (15GB model)
+- Enhanced memory system implemented (local file-based memory, no external services)
 
 ## Agents
 - **Jake** — Main agent, conductor/orchestrator (direct, efficient persona)

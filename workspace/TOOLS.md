@@ -80,26 +80,6 @@ node skills/agentmail-mail/scripts/joy-email-check.js
 
 **Setup:** API key hardcoded. Console at https://console.agentmail.to
 
-### Mem0 Memory
 
-Hybrid memory: local memory-core + Mem0 OSS for cross-session persistence.
-
-**Location:** `skills/mem0-memory/`
-
-**Scripts:**
-- `scripts/mem0-client.js` — Mem0 HTTP client (capture, search, list, delete)
-- `scripts/demo.js` — Demo script
-
-**Usage:**
-```bash
-node skills/mem0-memory/scripts/mem0-client.js capture --content "memory text"
-node skills/mem0-memory/scripts/mem0-client.js search --query "term"
-```
-
-**Requires:** Mem0 OSS configured with Ollama embedder (not OpenAI)
-
-**Status:** ⚠️ Needs Mem0 embedder configuration
-
----
 
 Add whatever helps you do your job. This is your cheat sheet.
