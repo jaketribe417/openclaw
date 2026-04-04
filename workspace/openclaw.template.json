@@ -1,0 +1,448 @@
+{
+  "meta": {
+    "lastTouchedVersion": "2026.4.1",
+    "lastTouchedAt": "2026-04-02T02:15:38.615Z"
+  },
+  "wizard": {
+    "lastRunAt": "2026-04-02T02:15:38.548Z",
+    "lastRunVersion": "2026.4.1",
+    "lastRunCommand": "onboard",
+    "lastRunMode": "local"
+  },
+  "models": {
+    "mode": "merge",
+    "providers": {
+      "ollama": {
+        "baseUrl": "http://127.0.0.1:11434",
+        "apiKey": "OLLAMA_API_KEY",
+        "api": "ollama",
+        "models": [
+          {
+            "id": "kimi-k2.5:cloud",
+            "name": "kimi-k2.5:cloud",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 262144,
+            "maxTokens": 8192
+          },
+          {
+            "id": "minimax-m2.5:cloud",
+            "name": "minimax-m2.5:cloud",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 204800,
+            "maxTokens": 8192
+          },
+          {
+            "id": "glm-5:cloud",
+            "name": "glm-5:cloud",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 128000,
+            "maxTokens": 8192
+          },
+          {
+            "id": "Krakekai/qwen3-reranker-8b:latest",
+            "name": "Krakekai/qwen3-reranker-8b:latest",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 40960,
+            "maxTokens": 8192
+          },
+          {
+            "id": "embeddinggemma:300m",
+            "name": "embeddinggemma:300m",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 2048,
+            "maxTokens": 8192
+          },
+          {
+            "id": "qwen3.5:0.8b",
+            "name": "qwen3.5:0.8b",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 262144,
+            "maxTokens": 8192
+          },
+          {
+            "id": "qwen3-coder:480b-cloud",
+            "name": "qwen3-coder:480b-cloud",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 262144,
+            "maxTokens": 8192
+          },
+          {
+            "id": "qwen3.5:397b-cloud",
+            "name": "qwen3.5:397b-cloud",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 262144,
+            "maxTokens": 8192
+          },
+          {
+            "id": "qwen3-vl:235b-cloud",
+            "name": "qwen3-vl:235b-cloud",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 262144,
+            "maxTokens": 8192
+          },
+          {
+            "id": "nemotron-3-nano:30b",
+            "name": "nemotron-3-nano:30b",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 1048576,
+            "maxTokens": 8192
+          },
+          {
+            "id": "qwen2:7b-instruct",
+            "name": "qwen2:7b-instruct",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 32768,
+            "maxTokens": 8192
+          },
+          {
+            "id": "nomic-embed-text:latest",
+            "name": "nomic-embed-text:latest",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 2048,
+            "maxTokens": 8192
+          },
+          {
+            "id": "qwen3:14b",
+            "name": "qwen3:14b",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 40960,
+            "maxTokens": 8192
+          },
+          {
+            "id": "gemma2:9b",
+            "name": "gemma2:9b",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 8192,
+            "maxTokens": 8192
+          },
+          {
+            "id": "tinyllama:latest",
+            "name": "tinyllama:latest",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 2048,
+            "maxTokens": 8192
+          },
+          {
+            "id": "qwen3:30b",
+            "name": "qwen3:30b",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 262144,
+            "maxTokens": 8192
+          },
+          {
+            "id": "minimax-m2:cloud",
+            "name": "minimax-m2:cloud",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 204800,
+            "maxTokens": 8192
+          },
+          {
+            "id": "lfm2:latest",
+            "name": "lfm2:latest",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 32768,
+            "maxTokens": 8192
+          }
+        ]
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "ollama/kimi-k2.5:cloud"
+      },
+      "workspace": "/Users/Jack/.openclaw/workspace",
+      "memorySearch": {
+        "enabled": true,
+        "provider": "ollama",
+        "model": "gemma:300m",
+        "query": {
+          "hybrid": {
+            "enabled": true,
+            "vectorWeight": 0.7,
+            "textWeight": 0.3
+          }
+        },
+        "cache": {
+          "enabled": true
+        }
+      },
+      "compaction": {
+        "mode": "safeguard",
+        "reserveTokensFloor": 40000,
+        "memoryFlush": {
+          "enabled": true,
+          "softThresholdTokens": 4000,
+          "systemPrompt": "Session nearing compaction. Store durable memories now.",
+          "prompt": "Write any lasting notes to memory/YYYY-MM-DD.md; reply with NO_REPLY if nothing to store."
+        }
+      },
+      "contextPruning": {
+        "mode": "cache-ttl",
+        "ttl": "5m"
+      }
+    },
+    "list": [
+      {
+        "id": "jake",
+        "workspace": "/Users/Jack/.openclaw/workspace"
+      },
+      {
+        "id": "joy",
+        "workspace": "/Users/Jack/.openclaw/workspace/agents/joy"
+      },
+      {
+        "id": "harlan",
+        "workspace": "/Users/Jack/.openclaw/workspace/agents/harlan"
+      },
+      {
+        "id": "hep",
+        "workspace": "/Users/Jack/.openclaw/workspace/agents/hep"
+      }
+    ]
+  },
+  "tools": {
+    "profile": "full",
+    "allow": [
+      "*"
+    ],
+    "exec": {
+      "host": "gateway",
+      "security": "full",
+      "ask": "off",
+      "strictInlineEval": false
+    },
+    "web": {
+      "search": {
+        "provider": "duckduckgo",
+        "enabled": true
+      }
+    }
+  },
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto",
+    "restart": true,
+    "ownerDisplay": "raw"
+  },
+  "session": {
+    "dmScope": "per-channel-peer"
+  },
+  "cron": {},
+  "gateway": {
+    "port": 18789,
+    "mode": "local",
+    "bind": "loopback",
+    "controlUi": {
+      "allowInsecureAuth": false
+    },
+    "nodes": {
+      "denyCommands": [
+        "camera.snap",
+        "camera.clip",
+        "screen.record",
+        "contacts.add",
+        "calendar.add",
+        "reminders.add",
+        "sms.send"
+      ]
+    }
+  },
+  "skills": {
+    "entries": {
+      "obsidian": {
+        "enabled": false
+      }
+    }
+  },
+  "plugins": {
+    "allow": [
+      "discord",
+      "telegram",
+      "duckduckgo"
+    ],
+    "slots": {},
+    "entries": {
+      "memory-core": {
+        "enabled": false
+      },
+      "memory-lancedb": {
+        "enabled": false
+      },
+      "discord": {
+        "enabled": true,
+        "config": {}
+      },
+      "telegram": {
+        "enabled": true,
+        "config": {}
+      },
+      "duckduckgo": {
+        "enabled": true
+      }
+    }
+  }
+}
