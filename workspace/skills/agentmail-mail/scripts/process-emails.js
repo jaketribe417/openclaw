@@ -58,6 +58,38 @@ try {
   const otherMessages = [];
   
   for (const msg of data.messages) {
+    // Skip archived messages
+    if (msg.labels && msg.labels.includes('archived')) {
+      continue;
+    }
+    
+    // Skip sent messages (outgoing mail)
+    if (msg.labels && msg.labels.includes('sent')) {
+      continue;
+    }
+    
+    // Skip read messages (already reviewed)
+    if (msg.labels && msg.labels.includes('read')) {
+      continue;
+    }
+    
+    // Auto-mark todo items as read so they're processed but hidden from reports
+    if (msg.labels && msg.labels.includes('todo')) {
+      // Mark as read via API call
+      const encodedMessageId = encodeURIComponent(msg.message_id);
+      try {
+        const { execSync } = require('child_process');
+        const path = require('path');
+        execSync(
+          `node "${path.join(SCRIPT_DIR, 'mail-client.js')}" update --inbox_id "${INBOX_ID}" --message_id "${msg.message_id}" --add-labels read`,
+          { encoding: 'utf8', timeout: 10000 }
+        );
+      } catch (err) {
+        // Silent fail - don't block processing if update fails
+      }
+      continue;
+    }
+    
     if (isTrustedSender(msg.from)) {
       trustedMessages.push(msg);
     } else {
@@ -96,8 +128,14 @@ try {
   }
   
   console.log('\n\n=== Summary ===');
+  const archivedCount = data.messages.filter(msg => msg.labels && msg.labels.includes('archived')).length;
+  const sentCount = data.messages.filter(msg => msg.labels && msg.labels.includes('sent')).length;
+  const readCount = data.messages.filter(msg => msg.labels && msg.labels.includes('read')).length;
   console.log(`Trusted messages to process: ${trustedMessages.length}`);
   console.log(`Messages for human review: ${otherMessages.length}`);
+  console.log(`Read messages (hidden): ${readCount}`);
+  console.log(`Sent messages (hidden): ${sentCount}`);
+  console.log(`Archived messages (hidden): ${archivedCount}`);
   console.log(`\nActive inbox: ${INBOX_ID}`);
   
 } catch (err) {

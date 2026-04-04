@@ -82,6 +82,13 @@ const commands = {
     
     const response = await makeRequest(`/inboxes/${args.inbox_id}/messages/send`, 'POST', data);
     if (response.status >= 200 && response.status < 300) {
+      // Explicitly add 'sent' label to ensure proper categorization
+      if (response.data && response.data.message_id) {
+        const encodedMessageId = encodeURIComponent(response.data.message_id);
+        await makeRequest(`/inboxes/${args.inbox_id}/messages/${encodedMessageId}`, 'PATCH', {
+          add_labels: ['sent']
+        });
+      }
       console.log(JSON.stringify(response.data, null, 2));
     } else {
       console.error(`Error: HTTP ${response.status}`);
@@ -140,6 +147,13 @@ const commands = {
     
     const response = await makeRequest(`/inboxes/${args.inbox_id}/messages/${args.message_id}/reply`, 'POST', data);
     if (response.status >= 200 && response.status < 300) {
+      // Explicitly add 'sent' label to ensure proper categorization
+      if (response.data && response.data.message_id) {
+        const encodedMessageId = encodeURIComponent(response.data.message_id);
+        await makeRequest(`/inboxes/${args.inbox_id}/messages/${encodedMessageId}`, 'PATCH', {
+          add_labels: ['sent']
+        });
+      }
       console.log(JSON.stringify(response.data, null, 2));
     } else {
       console.error(`Error: HTTP ${response.status}`);
@@ -158,6 +172,48 @@ const commands = {
     if (args.text) data.text = args.text;
     
     const response = await makeRequest(`/inboxes/${args.inbox_id}/messages/${args.message_id}/forward`, 'POST', data);
+    if (response.status >= 200 && response.status < 300) {
+      // Explicitly add 'sent' label to ensure proper categorization
+      if (response.data && response.data.message_id) {
+        const encodedMessageId = encodeURIComponent(response.data.message_id);
+        await makeRequest(`/inboxes/${args.inbox_id}/messages/${encodedMessageId}`, 'PATCH', {
+          add_labels: ['sent']
+        });
+      }
+      console.log(JSON.stringify(response.data, null, 2));
+    } else {
+      console.error(`Error: HTTP ${response.status}`);
+      console.error(response.data);
+      process.exit(1);
+    }
+  },
+
+  async update(args) {
+    if (!args.inbox_id || !args.message_id) {
+      console.error('Required: --inbox_id, --message_id, and at least one of: --add-labels or --remove-labels');
+      process.exit(1);
+    }
+    
+    // The parser keeps dashes in key names
+    const addLabelsArg = args['add-labels'];
+    const removeLabelsArg = args['remove-labels'];
+    
+    if (!addLabelsArg && !removeLabelsArg) {
+      console.error('Required: --add-labels or --remove-labels');
+      console.error('Got args:', Object.keys(args).join(', '));
+      process.exit(1);
+    }
+    
+    const data = {};
+    if (addLabelsArg) {
+      data.add_labels = String(addLabelsArg).split(',').map(l => l.trim());
+    }
+    if (removeLabelsArg) {
+      data.remove_labels = String(removeLabelsArg).split(',').map(l => l.trim());
+    }
+    
+    const encodedMessageId = encodeURIComponent(args.message_id);
+    const response = await makeRequest(`/inboxes/${args.inbox_id}/messages/${encodedMessageId}`, 'PATCH', data);
     if (response.status >= 200 && response.status < 300) {
       console.log(JSON.stringify(response.data, null, 2));
     } else {
@@ -244,6 +300,9 @@ Commands:
 
   list-inboxes
     List all inboxes
+
+  update --inbox_id ID --message_id ID --add-labels "label1,label2" [--remove-labels "label3,label4"]
+    Update message labels (add/remove labels from a message)
 `);
     process.exit(0);
   }
