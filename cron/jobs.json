@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775293209590,
+      "updatedAtMs": 1775295061981,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -26,14 +26,17 @@
         "to": "8382558273"
       },
       "state": {
-        "nextRunAtMs": 1775293800000,
-        "lastRunAtMs": 1775293200036,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 9554,
+        "nextRunAtMs": 1775295600000,
+        "lastRunAtMs": 1775295000023,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 61958,
         "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 0,
-        "lastDelivered": false
+        "consecutiveErrors": 1,
+        "lastDelivered": false,
+        "lastError": "Request timed out before a response was generated. Please try again, or increase `agents.defaults.timeoutSeconds` in your config.",
+        "lastErrorReason": "timeout",
+        "lastDeliveryError": "Request timed out before a response was generated. Please try again, or increase `agents.defaults.timeoutSeconds` in your config."
       }
     },
     {
@@ -179,7 +182,7 @@
       "name": "git-auto-push",
       "enabled": true,
       "createdAtMs": 1775007924606,
-      "updatedAtMs": 1775289899102,
+      "updatedAtMs": 1775293493275,
       "schedule": {
         "expr": "0 * * * *",
         "kind": "cron",
@@ -196,15 +199,14 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775293471643,
-        "lastRunAtMs": 1775289871678,
+        "nextRunAtMs": 1775297071643,
+        "lastRunAtMs": 1775293471665,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 27424,
+        "lastDurationMs": 21610,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
-        "lastDelivered": false,
-        "runningAtMs": 1775293471647
+        "lastDelivered": false
       }
     }
   ]
