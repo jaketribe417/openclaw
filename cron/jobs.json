@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775314811586,
+      "updatedAtMs": 1775318404542,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -26,11 +26,11 @@
         "to": "8382558273"
       },
       "state": {
-        "nextRunAtMs": 1775315400000,
-        "lastRunAtMs": 1775314800034,
+        "nextRunAtMs": 1775319000000,
+        "lastRunAtMs": 1775318400034,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 11552,
+        "lastDurationMs": 4508,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -145,7 +145,7 @@
       "name": "harlan-bee-check",
       "enabled": true,
       "createdAtMs": 1774929904841,
-      "updatedAtMs": 1775314829921,
+      "updatedAtMs": 1775318414750,
       "schedule": {
         "expr": "0 7-21 * * *",
         "kind": "cron",
@@ -162,11 +162,11 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775318400000,
-        "lastRunAtMs": 1775314811586,
+        "nextRunAtMs": 1775322000000,
+        "lastRunAtMs": 1775318404542,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 18335,
+        "lastDurationMs": 10208,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -203,7 +203,8 @@
         "lastDurationMs": 19672,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
-        "lastDelivered": false
+        "lastDelivered": false,
+        "runningAtMs": 1775318679004
       }
     },
     {
@@ -231,6 +232,40 @@
       },
       "state": {
         "nextRunAtMs": 1775390400000
+      }
+    },
+    {
+      "id": "c8beb75b-9cdd-468e-8ac6-badfb5f0816c",
+      "agentId": "jake",
+      "sessionKey": "agent:jake:main",
+      "name": "HEP Check-in - 10 min intervals",
+      "enabled": true,
+      "createdAtMs": 1775316218817,
+      "updatedAtMs": 1775318676998,
+      "schedule": {
+        "everyMs": 600000,
+        "kind": "every",
+        "anchorMs": 1775316218817
+      },
+      "sessionTarget": "session:agent:jake:main",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Check on HEP's progress for the Mission Control Dashboard project. Read PROJECT_PLAN.md to see current phase. Ask HEP for status update in format: 1. Current Phase 2. Tasks Completed 3. Blockers 4. Next Tasks 5. Time Remaining. Update PROJECT_PLAN.md with progress. If HEP is off track, reprompt with clear instructions.",
+        "timeoutSeconds": 120
+      },
+      "delivery": {
+        "mode": "announce"
+      },
+      "state": {
+        "nextRunAtMs": 1775319218841,
+        "lastRunAtMs": 1775318618841,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 58157,
+        "lastDeliveryStatus": "unknown",
+        "consecutiveErrors": 3,
+        "lastError": "Channel is required when multiple channels are configured: telegram, discord Set delivery.channel explicitly or use a main session with a previous channel."
       }
     }
   ]
