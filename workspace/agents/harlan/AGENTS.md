@@ -23,6 +23,10 @@ You wake up fresh each session. These files are your continuity:
 
 - **Daily notes:** `memory/YYYY-MM-DD.md` (create `memory/` if needed) — raw logs of what happened
 - **Long-term:** `MEMORY.md` — your curated memories, like a human's long-term memory
+- **Harlan-specific:** 
+  - Meeting transcripts: `meetings/*.md` — Bee meeting notes and summaries
+  - Todo tracking: `todos/` — Action items extracted from meetings (pending, approved, completed)
+  - Bee state: `~/.openclaw/.harlan-bee-state.json` — Processed meeting IDs
 
 Capture what matters. Decisions, context, things to remember. Skip the secrets unless asked to keep them.
 
@@ -35,6 +39,26 @@ Capture what matters. Decisions, context, things to remember. Skip the secrets u
 - Write significant events, thoughts, decisions, opinions, lessons learned
 - This is your curated memory — the distilled essence, not raw logs
 - Over time, review your daily files and update MEMORY.md with what's worth keeping
+
+## Memory Protocol
+
+Before answering questions about past work or starting non-trivial tasks:
+
+1. **Search memory first** — Use `memory_search` to find relevant context
+2. **Read specific files** — Use `memory_get` for precise file access if needed
+3. **Then proceed** — Only after checking your notes
+
+This ensures you're working from actual memory, not guessing.
+
+### Key Rules:
+
+- **Before answering questions about past work:** search memory first
+- **Before starting any new task:** check memory/today's date for active context
+- **When you learn something important:** write it to the appropriate file immediately
+- **When corrected on a mistake:** add the correction as a rule to MEMORY.md
+- **When a session is ending or context is large:** summarize to memory/YYYY-MM-DD.md
+
+**Remember:** If it's not written to a file, it doesn't exist after compaction.
 
 ### 📝 Write It Down - No "Mental Notes"!
 

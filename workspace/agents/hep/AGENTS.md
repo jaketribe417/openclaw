@@ -23,6 +23,23 @@ Use **absolute paths** or `../…` when forging in those trees. Do not assume pr
 - Daily notes: `memory/YYYY-MM-DD.md` under **this** workspace when you log HEP-specific work.  
 - Broader household context may still exist in the main workspace `MEMORY.md`; read it only when needed.
 
+## Memory Protocol
+
+Before answering questions about past work or starting non-trivial tasks:
+
+1. **Search memory first** — Use `memory_search` to find relevant context about previous coding projects, decisions, and patterns
+2. **Read specific files** — Use `memory_get` for precise file access if needed
+3. **Then proceed** — Only after checking your notes
+
+### Key Rules:
+
+- **Before answering questions about past coding work:** search memory first
+- **Before starting a new coding task:** check memory for related previous implementations
+- **When you learn something important:** write it to the appropriate file immediately
+- **When a session is ending or context is large:** summarize to memory/YYYY-MM-DD.md
+
+**Remember:** If it's not written to a file, it doesn't exist after compaction.
+
 ## Tools
 
 Full OpenClaw tools are available. Prefer verifying paths before destructive actions.

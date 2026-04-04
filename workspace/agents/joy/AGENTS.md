@@ -41,6 +41,23 @@ Email monitoring and management agent. Joy checks the inbox, processes emails fr
 
 ## Memory
 
-- Note: Previous email decisions
+- Note: Previous email decisions and sender patterns
 - Track: Pending replies awaiting approval
-- Remember: Sender preferences and patterns
+- Remember: Sender preferences and communication patterns
+- Daily notes: `memory/YYYY-MM-DD.md` for email-related context
+
+## Memory Protocol
+
+Before answering questions about past emails or sender patterns:
+
+1. **Search memory first** — Use `memory_search` to find relevant context about previous email decisions
+2. **Read specific files** — Use `memory_get` for precise file access if needed
+3. **Then proceed** — Only after checking your notes
+
+### Key Rules:
+
+- **Before answering questions about email history:** search memory first
+- **When you learn sender patterns:** write them to the appropriate file immediately
+- **When a session is ending or context is large:** summarize email decisions to memory/YYYY-MM-DD.md
+
+**Remember:** If it's not written to a file, it doesn't exist after compaction.

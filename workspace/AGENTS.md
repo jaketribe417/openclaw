@@ -57,6 +57,26 @@ Capture what matters. Decisions, context, things to remember. Skip the secrets u
 - This is your curated memory — the distilled essence, not raw logs
 - Over time, review your daily files and update MEMORY.md with what's worth keeping
 
+## Memory Protocol
+
+Before answering questions about past work or starting non-trivial tasks:
+
+1. **Search memory first** — Use `memory_search` to find relevant context
+2. **Read specific files** — Use `memory_get` for precise file access if needed
+3. **Then proceed** — Only after checking your notes
+
+This ensures you're working from actual memory, not guessing.
+
+### Key Rules:
+
+- **Before answering questions about past work:** search memory first
+- **Before starting any new task:** check memory/today's date for active context
+- **When you learn something important:** write it to the appropriate file immediately
+- **When corrected on a mistake:** add the correction as a rule to MEMORY.md
+- **When a session is ending or context is large:** summarize to memory/YYYY-MM-DD.md
+
+**Remember:** If it's not written to a file, it doesn't exist after compaction.
+
 ### 📝 Write It Down - No "Mental Notes"!
 
 - **Memory is limited** — if you want to remember something, WRITE IT TO A FILE
