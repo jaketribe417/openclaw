@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775296809383,
+      "updatedAtMs": 1775298608741,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -26,11 +26,11 @@
         "to": "8382558273"
       },
       "state": {
-        "nextRunAtMs": 1775297400000,
-        "lastRunAtMs": 1775296800034,
+        "nextRunAtMs": 1775299200000,
+        "lastRunAtMs": 1775298600032,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 9349,
+        "lastDurationMs": 8709,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -43,7 +43,7 @@
       "name": "joy-morning-news",
       "enabled": true,
       "createdAtMs": 1774823201842,
-      "updatedAtMs": 1775212216050,
+      "updatedAtMs": 1775298617270,
       "schedule": {
         "expr": "30 5 * * *",
         "kind": "cron",
@@ -60,11 +60,11 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775298600000,
-        "lastRunAtMs": 1775212207842,
+        "nextRunAtMs": 1775385000000,
+        "lastRunAtMs": 1775298608741,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 8208,
+        "lastDurationMs": 8529,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
