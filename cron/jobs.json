@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775343033060,
+      "updatedAtMs": 1775343668535,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -27,15 +27,16 @@
         "accountId": "Joy-email"
       },
       "state": {
-        "nextRunAtMs": 1775343600000,
-        "lastRunAtMs": 1775343000038,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 33022,
+        "nextRunAtMs": 1775344200000,
+        "lastRunAtMs": 1775343600033,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 68502,
         "lastDeliveryStatus": "delivered",
-        "consecutiveErrors": 0,
+        "consecutiveErrors": 1,
         "lastDelivered": true,
-        "runningAtMs": 1775343600029
+        "lastError": "Request timed out before a response was generated. Please try again, or increase `agents.defaults.timeoutSeconds` in your config.",
+        "lastErrorReason": "timeout"
       }
     },
     {
@@ -147,7 +148,7 @@
       "name": "harlan-bee-check",
       "enabled": true,
       "createdAtMs": 1774929904841,
-      "updatedAtMs": 1775340025156,
+      "updatedAtMs": 1775343686653,
       "schedule": {
         "expr": "0 7-21 * * *",
         "kind": "cron",
@@ -164,15 +165,14 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775343600000,
-        "lastRunAtMs": 1775340006935,
+        "nextRunAtMs": 1775347200000,
+        "lastRunAtMs": 1775343668535,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 18221,
+        "lastDurationMs": 18118,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
-        "lastDelivered": false,
-        "runningAtMs": 1775343600029
+        "lastDelivered": false
       }
     },
     {
@@ -206,7 +206,8 @@
         "lastDurationMs": 9159,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
-        "lastDelivered": false
+        "lastDelivered": false,
+        "runningAtMs": 1775343871647
       }
     },
     {
