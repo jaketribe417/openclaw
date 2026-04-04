@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775334605942,
+      "updatedAtMs": 1775336405523,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -27,11 +27,11 @@
         "accountId": "Joy-email"
       },
       "state": {
-        "nextRunAtMs": 1775335200000,
-        "lastRunAtMs": 1775334600028,
+        "nextRunAtMs": 1775337000000,
+        "lastRunAtMs": 1775336400022,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 5914,
+        "lastDurationMs": 5501,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -146,7 +146,7 @@
       "name": "harlan-bee-check",
       "enabled": true,
       "createdAtMs": 1774929904841,
-      "updatedAtMs": 1775332827282,
+      "updatedAtMs": 1775336423733,
       "schedule": {
         "expr": "0 7-21 * * *",
         "kind": "cron",
@@ -163,11 +163,11 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775336400000,
-        "lastRunAtMs": 1775332806052,
+        "nextRunAtMs": 1775340000000,
+        "lastRunAtMs": 1775336405523,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 21230,
+        "lastDurationMs": 18210,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
