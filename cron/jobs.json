@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775343668535,
+      "updatedAtMs": 1775345411507,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -27,16 +27,14 @@
         "accountId": "Joy-email"
       },
       "state": {
-        "nextRunAtMs": 1775344200000,
-        "lastRunAtMs": 1775343600033,
-        "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 68502,
-        "lastDeliveryStatus": "delivered",
-        "consecutiveErrors": 1,
-        "lastDelivered": true,
-        "lastError": "Request timed out before a response was generated. Please try again, or increase `agents.defaults.timeoutSeconds` in your config.",
-        "lastErrorReason": "timeout"
+        "nextRunAtMs": 1775346000000,
+        "lastRunAtMs": 1775345400032,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 11475,
+        "lastDeliveryStatus": "not-delivered",
+        "consecutiveErrors": 0,
+        "lastDelivered": false
       }
     },
     {
@@ -182,7 +180,7 @@
       "name": "git-auto-push",
       "enabled": true,
       "createdAtMs": 1775007924606,
-      "updatedAtMs": 1775340280816,
+      "updatedAtMs": 1775343885977,
       "schedule": {
         "expr": "0 * * * *",
         "kind": "cron",
@@ -199,15 +197,14 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775343871643,
-        "lastRunAtMs": 1775340271657,
+        "nextRunAtMs": 1775347471643,
+        "lastRunAtMs": 1775343871653,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 9159,
+        "lastDurationMs": 14324,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
-        "lastDelivered": false,
-        "runningAtMs": 1775343871647
+        "lastDelivered": false
       }
     },
     {
