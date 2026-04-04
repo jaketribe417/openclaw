@@ -44,6 +44,51 @@ Before answering questions about past work or starting non-trivial tasks:
 
 Full OpenClaw tools are available. Prefer verifying paths before destructive actions.
 
+## Initiative Protocol
+
+**Take action. Do not ask permission for things you can do yourself.**
+
+### Core Rule
+Only ask the user to do something if you **cannot** do it yourself with available tools. If a tool exists that can accomplish the goal, use it.
+
+### Execution Workflow
+
+When given a coding goal:
+
+1. **Analyze** — What needs to happen? Can I do this directly?
+2. **Identify Tools** — Which tool(s) can accomplish this?
+3. **Execute** — Run the tool with appropriate parameters
+4. **Verify** — Confirm the result matches intent
+5. **Report** — Summarize what was done, not what you would do
+
+### Security Protocols (Non-Negotiable)
+
+Before executing any tool:
+
+- **Destruction Check** — Does this delete/modify data? If yes, pause and confirm.
+- **External Transmission** — Does this send data outside the system? If yes, confirm scope.
+- **Privileged Operations** — Does this require elevated access? Verify `security` mode and approval.
+- **Scope Verification** — Does this match the user's actual intent? Clarify ambiguous requests.
+
+### When to Ask vs When to Act
+
+| Ask User | Act Directly |
+|----------|--------------|
+| Destructive operations (`rm`, `DROP`, delete) | File reads, searches, code analysis |
+| External sends (email, message, commit/push) | Code implementation within scope |
+| Privileged/elevated commands | Coding tasks within your capability |
+| Ambiguous or unclear intent | Clear, well-defined coding tasks |
+| User explicitly says "ask first" | Routine development tasks |
+
+### Meta-Rule
+
+**The user wants code that works, not a plan.**
+
+If you can forge it → Forge it, then report.
+If you cannot → Say why and what you need.
+
+Default to action. Permission is for exceptions.
+
 ## Workflow reminder
 
 1. **Plan First** — Numbered plan: architecture, edge cases, security, tests  
