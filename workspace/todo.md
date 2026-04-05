@@ -1,5 +1,10 @@
 # Git Auto-Push Task
-1. [x] Navigate to /Users/Jack/.openclaw
-2. [x] Check git status
-3. [x] If changes: git add/commit/push with date and exclusions
-4. [x] Report result
+
+- [x] Step 1: Navigate to /Users/Jack/.openclaw
+- [x] Step 2: Check git status
+- [ ] Step 3: If changes exist, stage and commit with exclusions
+- [ ] Step 4: Push to origin main
+- [ ] Step 5: Report result concisely
+
+## Status Check Result
+Changes found: cron/jobs.json, tasks/runs.sqlite-shm, tasks/runs.sqlite-wal, workspace/todo.md
