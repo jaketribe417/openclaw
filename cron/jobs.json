@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775358005044,
+      "updatedAtMs": 1775361605060,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -27,11 +27,11 @@
         "accountId": "Joy-email"
       },
       "state": {
-        "nextRunAtMs": 1775358600000,
-        "lastRunAtMs": 1775358000029,
+        "nextRunAtMs": 1775362200000,
+        "lastRunAtMs": 1775361600015,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 5015,
+        "lastDurationMs": 5045,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -144,9 +144,9 @@
       "agentId": "main",
       "sessionKey": "agent:main:main",
       "name": "harlan-bee-check",
-      "enabled": true,
+      "enabled": false,
       "createdAtMs": 1774929904841,
-      "updatedAtMs": 1775354422693,
+      "updatedAtMs": 1775359711971,
       "schedule": {
         "expr": "0 7-21 * * *",
         "kind": "cron",
@@ -163,7 +163,6 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775390400000,
         "lastRunAtMs": 1775354405660,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
@@ -180,7 +179,7 @@
       "name": "git-auto-push",
       "enabled": true,
       "createdAtMs": 1775007924606,
-      "updatedAtMs": 1775354689240,
+      "updatedAtMs": 1775358280787,
       "schedule": {
         "expr": "0 * * * *",
         "kind": "cron",
@@ -197,15 +196,15 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775358271643,
-        "lastRunAtMs": 1775354671654,
+        "nextRunAtMs": 1775361871643,
+        "lastRunAtMs": 1775358271653,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 17586,
+        "lastDurationMs": 9134,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false,
-        "runningAtMs": 1775358271647
+        "runningAtMs": 1775361871648
       }
     },
     {
