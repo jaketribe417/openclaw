@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775642405944,
+      "updatedAtMs": 1775646007232,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -27,11 +27,11 @@
         "accountId": "Joy-email"
       },
       "state": {
-        "nextRunAtMs": 1775643000000,
-        "lastRunAtMs": 1775642400029,
+        "nextRunAtMs": 1775646600000,
+        "lastRunAtMs": 1775646000043,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 5915,
+        "lastDurationMs": 7189,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -44,7 +44,7 @@
       "name": "joy-morning-news",
       "enabled": true,
       "createdAtMs": 1774823201842,
-      "updatedAtMs": 1775557816216,
+      "updatedAtMs": 1775644211704,
       "schedule": {
         "expr": "30 5 * * *",
         "kind": "cron",
@@ -61,11 +61,11 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775644200000,
-        "lastRunAtMs": 1775557811607,
+        "nextRunAtMs": 1775730600000,
+        "lastRunAtMs": 1775644206201,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 4609,
+        "lastDurationMs": 5503,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -78,7 +78,7 @@
       "name": "joy-calendar-daily",
       "enabled": true,
       "createdAtMs": 1774825321770,
-      "updatedAtMs": 1775559685366,
+      "updatedAtMs": 1775646044053,
       "schedule": {
         "expr": "0 6 * * 1-5",
         "kind": "cron",
@@ -95,11 +95,11 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775646000000,
-        "lastRunAtMs": 1775559606183,
+        "nextRunAtMs": 1775732400000,
+        "lastRunAtMs": 1775646007232,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 79183,
+        "lastDurationMs": 36821,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -179,7 +179,7 @@
       "name": "git-auto-push",
       "enabled": true,
       "createdAtMs": 1775007924606,
-      "updatedAtMs": 1775639083318,
+      "updatedAtMs": 1775642696225,
       "schedule": {
         "expr": "0 * * * *",
         "kind": "cron",
@@ -196,15 +196,16 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775642671643,
-        "lastRunAtMs": 1775639071657,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 11661,
+        "nextRunAtMs": 1775646271643,
+        "lastRunAtMs": 1775642671653,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 24572,
         "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 0,
+        "consecutiveErrors": 1,
         "lastDelivered": false,
-        "runningAtMs": 1775642671647
+        "lastDeliveryError": "⚠️ 📝 Edit: `in ~/.openclaw/workspace/todo.md` failed",
+        "runningAtMs": 1775646271648
       }
     },
     {
