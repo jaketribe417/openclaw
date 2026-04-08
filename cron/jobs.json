@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775646007232,
+      "updatedAtMs": 1775649606389,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -27,11 +27,11 @@
         "accountId": "Joy-email"
       },
       "state": {
-        "nextRunAtMs": 1775646600000,
-        "lastRunAtMs": 1775646000043,
+        "nextRunAtMs": 1775650200000,
+        "lastRunAtMs": 1775649600022,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 7189,
+        "lastDurationMs": 6367,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -179,7 +179,7 @@
       "name": "git-auto-push",
       "enabled": true,
       "createdAtMs": 1775007924606,
-      "updatedAtMs": 1775642696225,
+      "updatedAtMs": 1775646286162,
       "schedule": {
         "expr": "0 * * * *",
         "kind": "cron",
@@ -196,16 +196,15 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775646271643,
-        "lastRunAtMs": 1775642671653,
-        "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 24572,
+        "nextRunAtMs": 1775649871643,
+        "lastRunAtMs": 1775646271653,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 14509,
         "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 1,
+        "consecutiveErrors": 0,
         "lastDelivered": false,
-        "lastDeliveryError": "⚠️ 📝 Edit: `in ~/.openclaw/workspace/todo.md` failed",
-        "runningAtMs": 1775646271648
+        "runningAtMs": 1775649871647
       }
     },
     {
@@ -215,7 +214,7 @@
       "name": "joy-daily-system-update",
       "enabled": true,
       "createdAtMs": 1775309997258,
-      "updatedAtMs": 1775563258648,
+      "updatedAtMs": 1775649638415,
       "schedule": {
         "expr": "0 7 * * *",
         "kind": "cron",
@@ -232,14 +231,16 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775649600000,
-        "lastRunAtMs": 1775563206059,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 52589,
+        "nextRunAtMs": 1775736000000,
+        "lastRunAtMs": 1775649606389,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 32026,
         "lastDelivered": false,
         "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 0
+        "consecutiveErrors": 1,
+        "lastError": "⚠️ ✉️ Message: `1488391200917553162` failed",
+        "lastDeliveryError": "⚠️ ✉️ Message: `1488391200917553162` failed"
       }
     }
   ]
