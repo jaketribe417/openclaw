@@ -1,0 +1,14 @@
+{
+  "id": "de238a9a-1edf-429e-a9a8-ad72958b1053",
+  "enqueuedAt": 1775861610461,
+  "channel": "discord",
+  "to": "1486918411534733454",
+  "payloads": [
+    {
+      "text": "⏱️ Exec approval expired. ID: a6960397-f593-43a6-9078-28c26df9de8e"
+    }
+  ],
+  "retryCount": 1,
+  "lastAttemptAt": 1775861610485,
+  "lastError": "Discord bot token missing for account \"default\" (set discord.accounts.default.token or DISCORD_BOT_TOKEN for default)."
+}
