@@ -134,9 +134,150 @@ The drag-and-drop floor map feature should be integrated into Phase 3 alongside 
 
 ---
 
+## FINALIZED REQUIREMENTS
+
+_Requirements collected via grill-me session on 2026-04-10_
+
+### Equipment Hierarchy & Identification
+
+**Structure:** 4-level hierarchy with parent-child relationships
+```
+Company
+└── Building
+    └── Floor
+        └── Zone
+            └── Equipment (parent)
+                └── Module (child)
+                    └── Component (grandchild)
+```
+
+**Identification Rules:**
+- **Equipment:** Admin-only creation via central management panel
+- **Modules/Components:** Technicians can add on-the-fly to existing equipment
+- Custom names with ID numbers at each level
+- Equipment and modules have status: **Running / Degraded / Down**
+- User-determined rollup logic (module down → equipment degraded, not necessarily down)
+
+### User Roles & Permissions
+
+| Role | Permissions |
+|------|-------------|
+| **Administrator** | Full CRUD on everything, user management, company/building/floor/zone creation |
+| **Supervisor** | View all, receive escalations, mark equipment back to operation, view reports |
+| **Technician** | Acknowledge repairs, log work, update status, add modules/components, mark equipment operational |
+| **Operator** | Report issues (critical & non-critical), view status/history, attach photos |
+
+### Downtime Event Lifecycle
+
+**Workflow:**
+1. Operator reports issue (with optional photo) → Equipment status updated
+2. Notification sent to technician pool + supervisor (email + in-app)
+3. First technician to acknowledge gets assignment
+4. Technician logs work (parts used, time, notes)
+5. Technician or supervisor marks equipment back to operation
+6. Full audit trail of all interactions
+
+**Escalation:** 15-minute timer to manager if unacknowledged
+
+**Non-Critical Errors:** Operators can log errors they resolved themselves (e.g., reboot fixed communication error) for pattern tracking
+
+### Floor Map Visualization
+
+**Features:**
+- Toggle between **Map View** and **List View**
+- Admin uploads floor plan image per floor
+- Drag-and-drop equipment positioning with coordinate storage
+- Generic equipment icons with color-coded status (red/yellow/green)
+- Click equipment on map → detail view with photo
+- Zoom/pan capabilities for large floor plans
+- Multi-location support: Company → Building → Floor → Zone
+
+**Locations:**
+- Main building: Floor 1, Floor 2
+- Additional building: Floor 1
+- Zones: Printer zone, Inserter zone, Jet zone, etc.
+
+### Mobile Operator Interface
+
+**Design:** Responsive web app (not PWA — reliable WiFi on-site)
+
+**Features:**
+- Equipment selection via zone list or quick search
+- One-tap issue reporting with severity selection
+- Photo attachment (error screens, machine messages)
+- View status and history
+- Large touch targets, minimal form complexity
+- Target: <30 seconds to submit report
+
+### Notifications
+
+**Phase 1 (MVP):**
+- Email notifications for all role-based alerts
+- In-app real-time updates for active users
+
+**Phase 2:**
+- Microsoft Teams integration for channel notifications
+
+**Phase 3 (Future):**
+- SMS for escalation scenarios
+
+### Parts & Cost Tracking
+
+**Simple Parts Catalog:**
+- Part name, part number, cost (optional)
+- Technicians select from dropdown when logging repairs
+- Cost rollup per repair, per equipment, per time period
+- Extensible design for future full inventory management
+
+### Reporting & Analytics
+
+**Live Dashboard:**
+- Real-time equipment/module status view
+- Color-coded status indicators
+- Filter by location, zone, equipment type
+
+**Executive Reports (configurable time period):**
+- MTTR (Mean Time To Repair)
+- MTBF (Mean Time Between Failures)
+- Downtime by equipment (top offenders)
+- Downtime by module/component
+- Technician performance metrics
+- Peak failure times / shift patterns
+- Repair cost summary
+
+### Authentication & Deployment
+
+**Authentication:**
+- Phase 1: Simple email/password user management
+- Phase 2: Microsoft Active Directory / Entra ID SSO integration
+
+**Deployment:**
+- Containerized web service (Docker)
+- Deployable on-premise OR cloud
+- Database: PostgreSQL
+- File storage: MinIO/S3 compatible
+- Frontend: React/Next.js
+- Backend: Node.js API
+
+### Data Model Summary
+
+**Core Entities:**
+- `Company` → `Building` → `Floor` → `Zone` → `Equipment` → `Module` → `Component`
+- `User` (role-based)
+- `DowntimeEvent` (status transitions, audit trail)
+- `WorkLog` (technician notes, parts used, time tracking)
+- `Part` (catalog, cost tracking)
+- `FloorMap` (image, coordinates)
+
+**Status Values:**
+- Equipment/Module: `running`, `degraded`, `down`
+- DowntimeEvent: `reported`, `acknowledged`, `in_repair`, `resolved`
+
+---
+
 ## Pending Requirements
 
-_This section will be populated as additional requirements are collected._
+_No pending requirements — all major branches resolved._
 
 ---
 
@@ -146,4 +287,13 @@ _This section will be populated as additional requirements are collected._
 |------|----------|-----------|
 | 2026-04-01 | Floor map drag-and-drop required | User needs visual equipment placement |
 | 2026-04-01 | Mobile-first operator interface required | Operators need quick on-floor reporting capability |
+| 2026-04-10 | Hierarchical multi-tenant architecture (Company→Building→Floor→Zone) | Multiple locations, future expansion capability |
+| 2026-04-10 | 3-tier status system (Running/Degraded/Down) | Captures partial failures, user-defined rollup |
+| 2026-04-10 | Parent-child equipment hierarchy (Equipment→Module→Component) | Flexible structure, admin-controlled equipment, tech-controlled sub-components |
+| 2026-04-10 | First-to-acknowledge assignment with 15-min escalation | Fair distribution, ensures response |
+| 2026-04-10 | Simple parts catalog with cost tracking | Captures repair costs without inventory complexity |
+| 2026-04-10 | Responsive web app (not PWA) | Reliable WiFi, simpler implementation |
+| 2026-04-10 | Email + Teams notifications (SMS later) | Cost-effective, integrates with existing Microsoft ecosystem |
+| 2026-04-10 | Containerized deployment, on-premise or cloud | Flexibility for IT infrastructure changes |
+| 2026-04-10 | Iterative development, fully-baked solution | Quality over speed, no hard deadline |
 
