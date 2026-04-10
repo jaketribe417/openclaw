@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775818883746,
+      "updatedAtMs": 1775822424110,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -27,11 +27,11 @@
         "accountId": "Joy-email"
       },
       "state": {
-        "nextRunAtMs": 1775819400000,
-        "lastRunAtMs": 1775818800037,
+        "nextRunAtMs": 1775823000000,
+        "lastRunAtMs": 1775822400034,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 83709,
+        "lastDurationMs": 24076,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -179,7 +179,7 @@
       "name": "git-auto-push",
       "enabled": true,
       "createdAtMs": 1775007924606,
-      "updatedAtMs": 1775815489619,
+      "updatedAtMs": 1775819088912,
       "schedule": {
         "expr": "0 * * * *",
         "kind": "cron",
@@ -196,15 +196,15 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775819071643,
-        "lastRunAtMs": 1775815471674,
+        "nextRunAtMs": 1775822671643,
+        "lastRunAtMs": 1775819071665,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 17945,
+        "lastDurationMs": 17247,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false,
-        "runningAtMs": 1775819071648
+        "runningAtMs": 1775822671647
       }
     },
     {
@@ -214,7 +214,7 @@
       "name": "joy-daily-system-update",
       "enabled": true,
       "createdAtMs": 1775309997258,
-      "updatedAtMs": 1775736033588,
+      "updatedAtMs": 1775822454690,
       "schedule": {
         "expr": "0 7 * * *",
         "kind": "cron",
@@ -231,14 +231,16 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775822400000,
-        "lastRunAtMs": 1775736006953,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 26635,
+        "nextRunAtMs": 1775908800000,
+        "lastRunAtMs": 1775822424110,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 30580,
         "lastDelivered": false,
         "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 0
+        "consecutiveErrors": 1,
+        "lastError": "⚠️ ✉️ Message: `1488391200917553162` failed",
+        "lastDeliveryError": "⚠️ ✉️ Message: `1488391200917553162` failed"
       }
     }
   ]
