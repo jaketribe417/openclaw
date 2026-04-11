@@ -4,6 +4,10 @@ openclaw.json.bak*
 credentials/
 identity/
 telegram/
+*.env
+secrets.*
+config/*.local
+openclaw-config-setup-discord.md
 
 # Device / operator tokens and pairing
 **/device-auth.json
