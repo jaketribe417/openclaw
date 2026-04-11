@@ -1,0 +1,370 @@
+From: Jason Hansen <thehansentribe@gmail.com>
+To: Jaketribe Bot <jaketribe_bot@agentmail.to>
+Subject: Database
+Date: 2026-04-11T01:40:01.000Z
+Message-ID: <1758375F-78E7-4D59-9F49-8C61A9170837@edison.tech>
+
+--------------------------------------------------------------------------------
+
+-- =============================================
+-- ENUMS
+-- =============================================
+CREATE TYPE user_role AS ENUM ('admin', 'supervisor', 'technician', 'operator');
+CREATE TYPE equipment_status AS ENUM ('running', 'degraded', 'down');
+CREATE TYPE downtime_severity AS ENUM ('critical', 'non_critical');
+CREATE TYPE downtime_status AS ENUM ('reported', 'acknowledged', 'in_repair', 'resolved');
+CREATE TYPE entity_type AS ENUM ('equipment', 'module', 'component');
+CREATE TYPE zone_type AS ENUM ('printer_zone', 'inserter_zone', 'jet_zone', 'finishing_zone', 'other');
+CREATE TYPE equipment_type AS ENUM ('printer', 'inserter', 'jet', 'finisher', 'other');
+
+-- =============================================
+-- TABLES
+-- =============================================
+
+-- Companies (top-level tenant)
+CREATE TABLE companies (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Users
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    role user_role NOT NULL,
+    active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Buildings
+CREATE TABLE buildings (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    address TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Floors
+CREATE TABLE floors (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    building_id UUID NOT NULL REFERENCES buildings(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    floor_number INTEGER NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Zones
+CREATE TABLE zones (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    floor_id UUID NOT NULL REFERENCES floors(id) ON DELETE CASCADE,
+    company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    zone_type zone_type NOT NULL DEFAULT 'other',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Equipment
+CREATE TABLE equipment (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    zone_id UUID NOT NULL REFERENCES zones(id) ON DELETE CASCADE,
+    company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    equipment_id VARCHAR(100) NOT NULL,    -- custom admin-defined identifier
+    type equipment_type NOT NULL DEFAULT 'other',
+    status equipment_status NOT NULL DEFAULT 'running',
+    photo_url TEXT,
+    floor_map_x FLOAT,
+    floor_map_y FLOAT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(company_id, equipment_id)
+);
+
+-- Modules
+CREATE TABLE modules (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    equipment_id UUID NOT NULL REFERENCES equipment(id) ON DELETE CASCADE,
+    company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    module_id VARCHAR(100) NOT NULL,
+    status equipment_status NOT NULL DEFAULT 'running',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(equipment_id, module_id)
+);
+
+-- Components
+CREATE TABLE components (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    module_id UUID NOT NULL REFERENCES modules(id) ON DELETE CASCADE,
+    company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    component_id VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(module_id, component_id)
+);
+
+-- Floor Maps
+CREATE TABLE floor_maps (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    floor_id UUID NOT NULL REFERENCES floors(id) ON DELETE CASCADE,
+    company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+    image_url TEXT NOT NULL,
+    uploaded_by UUID REFERENCES users(id),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Parts Catalog
+CREATE TABLE parts (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+    name VARCHAR(255) NOT NULL,
+    part_number VARCHAR(100) NOT NULL,
+    cost DECIMAL(12,2),
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    UNIQUE(company_id, part_number)
+);
+
+-- Downtime Events
+CREATE TABLE downtime_events (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    equipment_id UUID NOT NULL REFERENCES equipment(id) ON DELETE CASCADE,
+    company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+    module_id UUID REFERENCES modules(id) ON DELETE SET NULL,
+    reported_by UUID NOT NULL REFERENCES users(id),
+    acknowledged_by UUID REFERENCES users(id),
+    resolved_by UUID REFERENCES users(id),
+    severity downtime_severity NOT NULL,
+    status downtime_status NOT NULL DEFAULT 'reported',
+    description TEXT NOT NULL,
+    photo_url TEXT,
+    reported_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    acknowledged_at TIMESTAMP WITH TIME ZONE,
+    resolved_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Work Logs (during repairs)
+CREATE TABLE work_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    downtime_event_id UUID NOT NULL REFERENCES downtime_events(id) ON DELETE CASCADE,
+    technician_id UUID NOT NULL REFERENCES users(id),
+    description TEXT NOT NULL,
+    time_spent_minutes INTEGER NOT NULL CHECK (time_spent_minutes > 0),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Parts Used in Repairs
+CREATE TABLE parts_used (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    work_log_id UUID NOT NULL REFERENCES work_logs(id) ON DELETE CASCADE,
+    part_id UUID NOT NULL REFERENCES parts(id),
+    quantity INTEGER NOT NULL CHECK (quantity > 0),
+    cost_at_time DECIMAL(12,2) NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Status History (critical for audit, rollups, MTBF)
+CREATE TABLE status_history (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+    entity_type entity_type NOT NULL,
+    entity_id UUID NOT NULL,
+    old_status equipment_status,
+    new_status equipment_status NOT NULL,
+    changed_by UUID NOT NULL REFERENCES users(id),
+    reason TEXT,    -- required for supervisor overrides
+    downtime_event_id UUID REFERENCES downtime_events(id) ON DELETE SET NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- General Audit Log (broader changes)
+CREATE TABLE audit_log (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    company_id UUID NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+    table_name TEXT NOT NULL,
+    record_id UUID NOT NULL,
+    operation TEXT NOT NULL CHECK (operation IN ('INSERT', 'UPDATE', 'DELETE')),
+    changed_by UUID REFERENCES users(id),
+    old_values JSONB,
+    new_values JSONB,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- =============================================
+-- INDEXES (performance-critical)
+-- =============================================
+CREATE INDEX idx_users_company_id ON users(company_id);
+CREATE INDEX idx_buildings_company_id ON buildings(company_id);
+CREATE INDEX idx_floors_building_id ON floors(building_id);
+CREATE INDEX idx_zones_floor_id ON zones(floor_id);
+CREATE INDEX idx_zones_company_id ON zones(company_id);
+CREATE INDEX idx_equipment_zone_id ON equipment(zone_id);
+CREATE INDEX idx_equipment_company_id ON equipment(company_id);
+CREATE INDEX idx_equipment_status ON equipment(status);
+CREATE INDEX idx_modules_equipment_id ON modules(equipment_id);
+CREATE INDEX idx_modules_company_id ON modules(company_id);
+CREATE INDEX idx_components_module_id ON components(module_id);
+CREATE INDEX idx_components_company_id ON components(company_id);
+CREATE INDEX idx_downtime_events_equipment_id ON downtime_events(equipment_id);
+CREATE INDEX idx_downtime_events_company_id ON downtime_events(company_id);
+CREATE INDEX idx_downtime_events_status ON downtime_events(status);
+CREATE INDEX idx_status_history_entity ON status_history(entity_type, entity_id);
+CREATE INDEX idx_status_history_company_id ON status_history(company_id);
+CREATE INDEX idx_status_history_created_at ON status_history(created_at);
+CREATE INDEX idx_audit_log_company_id ON audit_log(company_id);
+CREATE INDEX idx_audit_log_created_at ON audit_log(created_at);
+
+-- =============================================
+-- ROW LEVEL SECURITY (RLS) POLICIES
+-- =============================================
+ALTER TABLE companies ENABLE ROW LEVEL SECURITY;
+ALTER TABLE users ENABLE ROW LEVEL SECURITY;
+ALTER TABLE buildings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE floors ENABLE ROW LEVEL SECURITY;
+ALTER TABLE zones ENABLE ROW LEVEL SECURITY;
+ALTER TABLE equipment ENABLE ROW LEVEL SECURITY;
+ALTER TABLE modules ENABLE ROW LEVEL SECURITY;
+ALTER TABLE components ENABLE ROW LEVEL SECURITY;
+ALTER TABLE floor_maps ENABLE ROW LEVEL SECURITY;
+ALTER TABLE parts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE downtime_events ENABLE ROW LEVEL SECURITY;
+ALTER TABLE work_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE parts_used ENABLE ROW LEVEL SECURITY;
+ALTER TABLE status_history ENABLE ROW LEVEL SECURITY;
+ALTER TABLE audit_log ENABLE ROW LEVEL SECURITY;
+
+-- Example policy (repeat similar for all tables with company_id)
+CREATE POLICY tenant_isolation ON users
+    USING (company_id = current_setting('app.current_company_id', TRUE)::UUID);
+
+-- Add similar policies for every table that has company_id:
+-- CREATE POLICY tenant_isolation ON table_name USING (company_id = current_setting('app.current_company_id', TRUE)::UUID);
+-- For INSERT/UPDATE/DELETE, you can use the same or more restrictive policies.
+
+-- Force RLS (optional but recommended for stricter security)
+-- ALTER TABLE users FORCE ROW LEVEL SECURITY;    -- etc.
+
+-- =============================================
+-- TRIGGERS
+-- =============================================
+
+-- Trigger function for StatusHistory (on status changes)
+CREATE OR REPLACE FUNCTION log_status_change()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF (TG_OP = 'UPDATE' AND OLD.status IS DISTINCT FROM NEW.status) THEN
+        INSERT INTO status_history (
+            company_id, entity_type, entity_id, old_status, new_status,
+            changed_by, reason, downtime_event_id
+        ) VALUES (
+            NEW.company_id,
+            TG_TABLE_NAME::entity_type,
+            NEW.id,
+            OLD.status,
+            NEW.status,
+            current_setting('app.current_user_id', TRUE)::UUID,    -- set this in app session too
+            COALESCE(current_setting('app.change_reason', TRUE), NULL),
+            NULL    -- link to downtime_event if provided via session/app
+        );
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Attach to relevant tables
+CREATE TRIGGER trg_equipment_status
+    AFTER UPDATE ON equipment
+    FOR EACH ROW EXECUTE FUNCTION log_status_change();
+
+CREATE TRIGGER trg_module_status
+    AFTER UPDATE ON modules
+    FOR EACH ROW EXECUTE FUNCTION log_status_change();
+
+CREATE TRIGGER trg_component_status
+    AFTER UPDATE ON components
+    FOR EACH ROW EXECUTE FUNCTION log_status_change();
+
+-- Generic audit trigger function (for broad logging)
+CREATE OR REPLACE FUNCTION audit_log_changes()
+RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO audit_log (
+        company_id, table_name, record_id, operation,
+        changed_by, old_values, new_values
+    ) VALUES (
+        COALESCE(NEW.company_id, OLD.company_id),
+        TG_TABLE_NAME,
+        COALESCE(NEW.id, OLD.id),
+        TG_OP,
+        current_setting('app.current_user_id', TRUE)::UUID,
+        CASE WHEN TG_OP = 'DELETE' THEN to_jsonb(OLD) ELSE NULL END,
+        CASE WHEN TG_OP IN ('INSERT', 'UPDATE') THEN to_jsonb(NEW) ELSE NULL END
+    );
+    RETURN NULL;    -- AFTER trigger
+END;
+$$ LANGUAGE plpgsql;
+
+-- Example: attach to key tables (add more as needed; avoid high-volume tables to prevent bloat)
+CREATE TRIGGER trg_audit_downtime_events
+    AFTER INSERT OR UPDATE OR DELETE ON downtime_events
+    FOR EACH ROW EXECUTE FUNCTION audit_log_changes();
+
+-- =============================================
+-- HELPER VIEWS FOR REPORTING (MTTR / MTBF)
+-- =============================================
+
+-- Example MTTR view (Mean Time To Repair)
+CREATE VIEW vw_mttr AS
+SELECT 
+    e.company_id,
+    e.id AS equipment_id,
+    e.name AS equipment_name,
+    COUNT(de.id) FILTER (WHERE de.status = 'resolved') AS resolved_repairs,
+    SUM(wl.time_spent_minutes) AS total_repair_minutes,
+    ROUND(SUM(wl.time_spent_minutes)::NUMERIC / NULLIF(COUNT(de.id) FILTER (WHERE de.status = 'resolved'), 0), 2) AS mttr_minutes
+FROM equipment e
+JOIN downtime_events de ON de.equipment_id = e.id
+LEFT JOIN work_logs wl ON wl.downtime_event_id = de.id
+WHERE de.severity = 'critical'    -- or make configurable
+GROUP BY e.company_id, e.id, e.name;
+
+-- Example MTBF view (simplified; uses status history for uptime periods)
+-- This is more complex; refine based on exact business rules for "operational time"
+CREATE VIEW vw_mtbf AS
+SELECT 
+    company_id,
+    entity_id,
+    COUNT(*) AS failure_count,
+    -- Placeholder: calculate total uptime minutes between failures using lag on status_history
+    -- Full implementation often requires window functions or materialized views
+    'TBD - implement with window functions on status_history' AS mtbf_note
+FROM status_history
+WHERE new_status = 'down'
+GROUP BY company_id, entity_id;
+
+-- Additional reporting views can be added here (downtime by zone, technician performance, etc.)
+
+-- =============================================
+-- FINAL NOTES / BEST PRACTICES
+-- =============================================
+-- 1. In your Node.js app: Set session variables on every connection (company_id, current_user_id, change_reason).
+-- 2. Use transactions for status updates + downtime events to keep consistency.
+-- 3. For roll-up logic: Implement in app or via a stored procedure that checks child statuses.
+-- 4. Retention: Add a job to archive old downtime_events / audit_log (e.g., >2 years).
+-- 5. Testing: Verify RLS with different company contexts; test triggers with concurrent updates.
+-- 6. Extensions: Consider pg_cron for scheduled reports or TimescaleDB if high-volume time-series needed later.
+
+-- Run this script in order. Verify with \d+ in psql after creation.

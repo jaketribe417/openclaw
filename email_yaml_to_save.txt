@@ -1,0 +1,340 @@
+From: Jason Hansen <thehansentribe@gmail.com>
+To: Jaketribe Bot <jaketribe_bot@agentmail.to>
+Subject: Yaml to save
+Date: 2026-04-11T01:39:32.000Z
+Message-ID: <BC782788-7D48-44D3-8631-92222F92DF4D@edison.tech>
+
+--------------------------------------------------------------------------------
+
+# Equipment Downtime Tracking System
+# Complete Project Template - Updated 2026-04-10
+# Project: Lineage Connect Equipment Downtime Tracker
+# Updates: Added missing entities/tables, explicit formulas, RLS, import strategy,
+#                    real-time clarification, audit details, enums, testing notes, etc.
+#                    All critical/medium gaps closed with best-guess pragmatic choices.
+
+project:
+   name: equipment-downtime-tracker
+   version: 1.1.0
+   description: Real-time equipment downtime tracking system for production floor management
+   company: Lineage Connect
+    
+   approach:
+       - iterative_development: true
+       - quality_over_speed: true
+       - fully_baked_solution: true
+       - no_hard_deadline: true
+       - testing_strategy: unit + integration + E2E (Playwright/Cypress) + manual QA per phase
+
+architecture:
+   type: multi_tenant_hierarchical
+    
+   hierarchy:
+       levels:
+           - company:
+                   description: Top-level organization (supports multiple companies)
+                   can_create: [admin]
+           - building:
+                   description: Physical building location
+                   can_create: [admin]
+           - floor:
+                   description: Floor within building
+                   can_create: [admin]
+           - zone:
+                   description: Equipment zone (printer_zone, inserter_zone, jet_zone, finishing_zone)
+                   can_create: [admin]
+           - equipment:
+                   description: Physical equipment unit
+                   can_create: [admin]
+                   has_parent: zone
+           - module:
+                   description: Sub-component of equipment
+                   can_create: [technician, admin]
+                   has_parent: equipment
+           - component:
+                   description: Individual component within module
+                   can_create: [technician, admin]
+                   has_parent: module
+
+   deployment:
+       strategy: containerized
+       options:
+           - on_premise: supported
+           - cloud: supported
+           - migration_path: seamless
+       ops:
+           - monitoring: Prometheus + Grafana (or equivalent)
+           - logging: Structured logs + error tracking (Sentry)
+           - backup_restore: Automated PostgreSQL + MinIO backups
+           - ci_cd: GitHub Actions / GitLab CI (to be defined in phase 1)
+
+   stack:
+       frontend:
+           framework: React/Next.js
+           features:
+               - responsive_design: true
+               - interactive_floor_map: true
+               - real_time_updates: true
+               - drag_and_drop: true
+               - state_management: Zustand or Redux Toolkit (best guess: Zustand for simplicity)
+               - design_system: Shadcn/UI or Tailwind + custom components
+               - accessibility: WCAG 2.2 AA target
+        
+       backend:
+           framework: Node.js (Express or Fastify)
+           api_type: RESTful + OpenAPI/Swagger documentation
+           real_time:
+               recommendation: Server-Sent Events (SSE) for status/dashboard pushes (one-way efficient for dashboards)
+               fallback: WebSocket if bidirectional needs emerge later
+               conflict_resolution: Optimistic UI + last-write-wins with audit logging
+           authentication:
+               phase1: email_password
+               phase2: microsoft_entra_id_sso
+        
+       database:
+           type: PostgreSQL
+           features:
+               - relational_data: true
+               - jsonb_for_flexibility: true
+               - audit_trail: true (via dedicated table + triggers)
+               - row_level_security: enabled for multi-tenant isolation
+               - indexes: on all foreign keys, status, timestamps, tenant/company_id
+        
+       file_storage:
+           type: MinIO/S3_compatible
+           stores:
+               - floor_maps
+               - equipment_photos
+               - operator_attachments
+           security: signed URLs, retention policy (configurable per company, default 2 years)
+
+roles:
+   administrator:
+       permissions:
+           - full_crud: all_entities
+           - user_management: true
+           - company_building_floor_zone_creation: true
+           - system_configuration: true
+           - report_access: all
+           - bulk_import: true
+    
+   supervisor:
+       permissions:
+           - view: all_entities (within company)
+           - update: equipment_status
+           - mark_equipment_operational: true
+           - receive_escalations: true
+           - report_access: all
+           - export_reports: true
+    
+   technician:
+       permissions:
+           - acknowledge_repairs: true
+           - log_work: true
+           - update_status: true
+           - add_modules: true
+           - add_components: true
+           - mark_equipment_operational: true
+           - view_history: true
+           - view_dashboard: true
+    
+   operator:
+       permissions:
+           - report_issues: true
+           - view_status: true
+           - view_history: true (own + limited)
+           - attach_photos: true
+           - log_self_resolved_errors: true
+
+# New: Status History for full auditability
+status_history:
+   table: StatusHistory
+   purpose: Track every status change on Equipment/Module/Component with who, when, why
+   fields:
+       - id: uuid
+       - entity_type: enum [equipment, module, component]
+       - entity_id: uuid
+       - old_status: enum
+       - new_status: enum
+       - changed_by: foreign_key (User)
+       - reason: text (nullable, required for supervisor overrides)
+       - downtime_event_id: foreign_key (nullable)
+       - created_at: timestamp
+
+equipment:
+   identification:
+       format: custom_names_with_ids
+       admin_controlled: true
+       fields:
+           - id: auto_generated (uuid)
+           - name: custom_admin_defined
+           - description: optional
+           - location: hierarchical_reference
+           - photo: optional
+           - equipment_id: string (unique per company)
+           - type: enum [printer, inserter, jet, finisher, other]    # best-guess enums
+
+   status:
+       levels:
+           - running:
+                   description: Equipment fully operational
+                   color: green
+           - degraded:
+                   description: Equipment functioning with issues
+                   color: yellow
+           - down:
+                   description: Equipment stopped, requires attention
+                   color: red
+        
+       rollup_logic: semi_automatic_with_override
+       rules:
+           - if_any_child_down_then_equipment_degraded: true (configurable per zone/equipment)
+           - if_critical_downtime_event_open_then_down: true
+           - technician_or_supervisor_can_override: true (with mandatory reason logged to StatusHistory)
+           - UI_guidance: visual indicators for conflicting child statuses + override button with audit
+
+   lifecycle:
+       creation: admin_only
+       modules_components:
+           creation: [technician, admin]
+           on_the_fly: true
+
+   bulk_import:
+       supported: true
+       formats: CSV/Excel
+       template: provided per hierarchy level (with coordinates, photos via URL or later upload)
+       validation: required fields + duplicate checks
+
+downtime_events:
+   workflow: (unchanged core steps, with added audit on every transition)
+   non_critical_errors: (unchanged)
+
+mobile_interface: (unchanged, still responsive web app)
+
+floor_map:
+   views: (unchanged)
+   features:
+       - floor_plan_upload:
+               actor: admin
+               format: [png, jpg, svg]    # best guess practical formats
+               max_resolution: 4096x4096 recommended
+               versioning: simple (new upload creates new FloorMap record)
+       - equipment_positioning: drag_and_drop, x_y_coordinates, optional snap_to_grid
+       - equipment_representation: generic_icons with status colors
+       - interaction: click → open detail (includes photo + recent events)
+       - navigation: zoom, pan, mini_map optional
+       - multi_location_support: full hierarchy
+
+notifications: (unchanged core, with added in-app real-time via SSE)
+
+parts_tracking:
+   strategy: simple_catalog (extensible to full inventory)
+   part_attributes:
+       - name
+       - part_number (unique per company)
+       - cost: decimal (with history via PartsUsed.cost_at_time)
+       - description: optional
+       - version_note: optional (for price changes)
+   usage:
+       selection: dropdown_during_repair_log
+       recorded_per_repair: true
+   reporting: cost_per_repair, cost_per_equipment, cost_per_time_period, usage_frequency
+   extensibility: design supports future full inventory
+
+reporting:
+   live_dashboard:
+       features:
+           - real_time_status_view (via SSE)
+           - color_coded_indicators
+           - filter_by: location, zone, equipment_type, status
+    
+   executive_reports:
+       time_periods: configurable (shift, day, week, month, custom)
+       definitions:    # explicit formulas (best-guess standard manufacturing practice)
+           - mttr:
+                   description: Mean Time To Repair
+                   formula: Total repair time (sum of WorkLog.time_spent_minutes for resolved events) / Number of resolved repairs (critical + non-critical configurable)
+                   note: Excludes wait time unless explicitly logged; filterable by severity
+           - mtbf:
+                   description: Mean Time Between Failures
+                   formula: Total operational uptime (derived from resolved_at - previous resolved_at or running periods) / Number of failures (downtime events marked down)
+                   note: Uses StatusHistory for precise uptime calculation; excludes planned downtime if tagged later
+           - downtime_by_equipment:
+                   description: Top offending equipment (total downtime minutes)
+           - downtime_by_module:
+                   description: Component failure patterns
+           - technician_performance:
+                   description: Workload (events handled), average resolution time, parts cost
+           - peak_failure_times:
+                   description: Shift / hour pattern analysis
+           - repair_cost_summary:
+                   description: Financial impact (parts + optional labor rate)
+       export_formats: CSV, Excel, PDF (with charts via backend or frontend)
+       scheduling: future (phase 3+)
+       visibility: role-based (costs hidden from operators by default)
+
+authentication: (unchanged phases + added password reset in phase 1)
+
+data_model:    # expanded with missing pieces
+   entities:
+       Company: (unchanged)
+       Building: (unchanged)
+       Floor: (unchanged)
+       Zone:
+           fields: (added zone_type: enum [printer_zone, inserter_zone, jet_zone, finishing_zone, other])
+       Equipment: (unchanged + type enum)
+       Module: (unchanged)
+       Component: (unchanged)
+       User: (unchanged)
+       DowntimeEvent: (unchanged + status transitions logged)
+       WorkLog: (unchanged)
+       Part: (unchanged)
+       PartsUsed: (unchanged)
+       FloorMap: (unchanged)
+        
+       # New critical entities
+       StatusHistory: (as defined above)
+       AuditLog:    # general system actions if needed beyond status
+           fields:
+               - id: uuid
+               - user_id: foreign_key
+               - action: string
+               - entity_type: string
+               - entity_id: uuid
+               - details: jsonb
+               - created_at: timestamp
+
+implementation:
+   phase1_mvp: (4-6 weeks, core + basic dashboard + mobile reporting + email + user mgmt + StatusHistory)
+   phase2_visualization: (floor map, photos, zone mgmt, Teams via webhook, SSE real-time)
+   phase3_analytics: (reports with explicit formulas, cost tracking, MTTR/MTBF views)
+   phase4_integration: (Microsoft SSO, advanced notifications)
+    
+   additional:
+       - api_documentation: OpenAPI
+       - data_import: CSV bulk in phase 1
+       - testing: automated per phase
+
+technical:
+   wifi: reliable_everywhere
+   devices: [phones, tablets, computers]
+   camera_access: enabled_for_operators
+   offline_support: not_required
+   performance:
+       page_load:  <3_seconds
+       real_time_updates: SSE primary (WebSocket optional)
+       concurrent_users: 50+ (with DB indexing and connection pooling)
+   security:
+       - row_level_security: enabled on all tenant-linked tables (policy: company_id = current_setting('app.current_company_id')::uuid)
+       - encryption: at rest (PostgreSQL/MinIO), in transit (TLS)
+       - photo_attachments: optional PII redaction note; retention policy configurable
+       - audit: full via StatusHistory + general AuditLog
+
+success_criteria: (unchanged + added "accurate MTTR/MTBF per defined formulas", "RLS prevents cross-company data leaks", "import of 500+ items completes  <10 min")
+
+# Annoyances fixed:
+# - Explicit enums added where missing
+# - Password reset implied in phase 1 auth
+# - Floor map formats/resolution/versioning clarified
+# - Data retention note in file storage
+# - Accessibility target added

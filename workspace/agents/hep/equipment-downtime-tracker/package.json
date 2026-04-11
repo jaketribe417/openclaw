@@ -1,0 +1,31 @@
+{
+  "name": "equipment-downtime-tracker",
+  "version": "1.0.0",
+  "description": "Equipment Downtime Tracking System for Lineage Connect",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "db:generate": "cd packages/db && drizzle-kit generate",
+    "db:migrate": "cd packages/db && drizzle-kit migrate",
+    "db:studio": "cd packages/db && drizzle-kit studio",
+    "infra:up": "cd infrastructure && docker-compose up -d",
+    "infra:down": "cd infrastructure && docker-compose down",
+    "infra:logs": "cd infrastructure && docker-compose logs -f"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0",
+    "typescript": "^5.4.0"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0"
+}

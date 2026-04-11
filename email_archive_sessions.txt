@@ -1,0 +1,44 @@
+From: Jason Hansen <thehansentribe@gmail.com>
+To: Jaketribe Bot <jaketribe_bot@agentmail.to>
+Subject: Archive sessions
+Date: 2026-04-04T15:25:17.000Z
+Message-ID: <1AF16451-F47B-4E84-9CD4-9465DA6780F9@edison.tech>
+
+--------------------------------------------------------------------------------
+
+The archiveAfterMinutes config only prevents new sessions from accumulating — it doesn't retroactively prune sessions already on disk. The cleanup command removes orphaned index entries, but if your sessions have valid transcripts, it sees 0 -> 0 and skips them.
+
+Two-step fix:
+
+Step 1 — remove the actual transcript files older than 24h:
+
+# Dry run first
+find ~/.openclaw/sessions -name "*.json" -not -name "sessions.json" -mtime +1 -ls
+
+# Then delete
+find ~/.openclaw/sessions -name "*.json" -not -name "sessions.json" -mtime +1 -delete
+
+# Same for agent-scoped sessions
+find ~/.openclaw/agents -path "*/sessions/*.json" -not -name "sessions.json" -mtime +1 -delete
+
+# Re-run index cleanup after
+openclaw sessions cleanup --all-agents
+
+Step 2 — for the UI dropdown showing old subagent sessions: those live in the gateway's active session registry, not the filesystem. A gateway restart clears them:
+
+openclaw gateway restart
+# or: systemctl --user restart openclaw-gateway
+
+After restart only main and your channel sessions will appear.
+
+To prevent future accumulation, add maxSessions to your config — it's more reliable than archiveAfterMinutes:
+
+{
+   "sessions": {
+       "archiveAfterMinutes": 60,
+       "maxSessions": 50,
+       "cleanupOnStartup": true
+   }
+}
+
+You can also automate this with a daily cron: openclaw cron add with a systemEvent payload that runs the find/delete command every night at 3am.

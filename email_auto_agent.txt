@@ -1,0 +1,9 @@
+From: Jason Hansen <thehansentribe@gmail.com>
+To: Jaketribe Bot <jaketribe_bot@agentmail.to>
+Subject: Auto agent
+Date: 2026-04-04T16:43:27.000Z
+Message-ID: <2A060017-3E13-4FDE-AAB4-6101C3F1EAA5@edison.tech>
+
+--------------------------------------------------------------------------------
+
+https://github.com/kevinrgu/autoagent
