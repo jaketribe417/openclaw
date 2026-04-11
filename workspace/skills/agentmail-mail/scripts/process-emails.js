@@ -35,10 +35,6 @@ function extractEmailAddress(from) {
   return match ? match[1] : from;
 }
 
-console.log('=== Email Processor ===\n');
-console.log(`Checking inbox: ${INBOX_ID}`);
-console.log(`Trusted senders: ${TRUSTED_SENDERS.join(', ')}\n`);
-
 // Fetch messages
 try {
   const result = execSync(
@@ -48,11 +44,9 @@ try {
   const data = JSON.parse(result);
   
   if (!data.messages || data.messages.length === 0) {
-    console.log('No messages in inbox.');
+    // No messages at all - silent exit
     process.exit(0);
   }
-  
-  console.log(`Found ${data.count} message(s)\n`);
   
   const trustedMessages = [];
   const otherMessages = [];
@@ -97,6 +91,18 @@ try {
     }
   }
   
+  // Only output if there are actionable messages
+  const totalActionable = trustedMessages.length + otherMessages.length;
+  if (totalActionable === 0) {
+    // No new emails to report - silent exit
+    process.exit(0);
+  }
+  
+  console.log('=== Email Processor ===\n');
+  console.log(`Inbox: ${INBOX_ID}`);
+  console.log(`Trusted senders: ${TRUSTED_SENDERS.join(', ')}\n`);
+  console.log(`Found ${data.count} total message(s)\n`);
+  
   // Process trusted messages
   if (trustedMessages.length > 0) {
     console.log(`\n[TRUSTED] ${trustedMessages.length} message(s) from trusted senders:`);
@@ -128,16 +134,10 @@ try {
   }
   
   console.log('\n\n=== Summary ===');
-  const archivedCount = data.messages.filter(msg => msg.labels && msg.labels.includes('archived')).length;
-  const sentCount = data.messages.filter(msg => msg.labels && msg.labels.includes('sent')).length;
-  const readCount = data.messages.filter(msg => msg.labels && msg.labels.includes('read')).length;
   console.log(`Trusted messages to process: ${trustedMessages.length}`);
   console.log(`Messages for human review: ${otherMessages.length}`);
-  console.log(`Read messages (hidden): ${readCount}`);
-  console.log(`Sent messages (hidden): ${sentCount}`);
-  console.log(`Archived messages (hidden): ${archivedCount}`);
   console.log(`\nActive inbox: ${INBOX_ID}`);
-  
+
 } catch (err) {
   console.error('Error:', err.message);
   process.exit(1);
