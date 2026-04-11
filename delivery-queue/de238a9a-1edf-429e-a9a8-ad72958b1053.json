@@ -8,7 +8,7 @@
       "text": "⏱️ Exec approval expired. ID: a6960397-f593-43a6-9078-28c26df9de8e"
     }
   ],
-  "retryCount": 1,
-  "lastAttemptAt": 1775861610485,
+  "retryCount": 2,
+  "lastAttemptAt": 1775868550844,
   "lastError": "Discord bot token missing for account \"default\" (set discord.accounts.default.token or DISCORD_BOT_TOKEN for default)."
 }
