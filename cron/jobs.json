@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775862014155,
+      "updatedAtMs": 1775865629524,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -27,11 +27,11 @@
         "accountId": "Joy-email"
       },
       "state": {
-        "nextRunAtMs": 1775862600000,
-        "lastRunAtMs": 1775862000027,
+        "nextRunAtMs": 1775866200000,
+        "lastRunAtMs": 1775865600026,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 14128,
+        "lastDurationMs": 29498,
         "lastDeliveryStatus": "delivered",
         "consecutiveErrors": 0,
         "lastDelivered": true
@@ -179,7 +179,7 @@
       "name": "git-auto-push",
       "enabled": true,
       "createdAtMs": 1775007924606,
-      "updatedAtMs": 1775858686829,
+      "updatedAtMs": 1775862296054,
       "schedule": {
         "expr": "0 * * * *",
         "kind": "cron",
@@ -196,15 +196,16 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775862271643,
-        "lastRunAtMs": 1775858671662,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 15167,
+        "nextRunAtMs": 1775865871643,
+        "lastRunAtMs": 1775862271655,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 24399,
         "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 0,
+        "consecutiveErrors": 1,
         "lastDelivered": false,
-        "runningAtMs": 1775862271644
+        "lastDeliveryError": "⚠️ 📝 Edit: `in ~/.openclaw/workspace/todo.md` failed",
+        "runningAtMs": 1775865871646
       }
     },
     {
