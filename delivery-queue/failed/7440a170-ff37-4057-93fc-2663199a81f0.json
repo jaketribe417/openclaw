@@ -44,7 +44,7 @@
       }
     }
   ],
-  "retryCount": 4,
-  "lastAttemptAt": 1776030956524,
+  "retryCount": 5,
+  "lastAttemptAt": 1776031560606,
   "lastError": "Discord bot token missing for account \"default\" (set discord.accounts.default.token or DISCORD_BOT_TOKEN for default)."
 }
