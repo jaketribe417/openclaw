@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1775988010244,
+      "updatedAtMs": 1775991615576,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -27,11 +27,11 @@
         "accountId": "Joy-email"
       },
       "state": {
-        "nextRunAtMs": 1775988600000,
-        "lastRunAtMs": 1775988000031,
+        "nextRunAtMs": 1775992200000,
+        "lastRunAtMs": 1775991600029,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 10213,
+        "lastDurationMs": 15547,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -44,7 +44,7 @@
       "name": "joy-morning-news",
       "enabled": true,
       "createdAtMs": 1774823201842,
-      "updatedAtMs": 1775903440312,
+      "updatedAtMs": 1775989814223,
       "schedule": {
         "expr": "30 5 * * *",
         "kind": "cron",
@@ -61,11 +61,11 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775989800000,
-        "lastRunAtMs": 1775903433761,
+        "nextRunAtMs": 1776076200000,
+        "lastRunAtMs": 1775989806733,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 6551,
+        "lastDurationMs": 7490,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -179,7 +179,7 @@
       "name": "git-auto-push",
       "enabled": true,
       "createdAtMs": 1775007924606,
-      "updatedAtMs": 1775984689297,
+      "updatedAtMs": 1775988293908,
       "schedule": {
         "expr": "0 * * * *",
         "kind": "cron",
@@ -196,15 +196,15 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1775988271643,
-        "lastRunAtMs": 1775984671652,
+        "nextRunAtMs": 1775991871643,
+        "lastRunAtMs": 1775988271677,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 17645,
+        "lastDurationMs": 22231,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false,
-        "runningAtMs": 1775988271662
+        "runningAtMs": 1775991871654
       }
     },
     {
