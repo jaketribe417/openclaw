@@ -49,6 +49,9 @@ workspace/.openclaw/
 # --- Nested app project (separate git repo + build output) ---
 workspace/jake-mission-control/
 
+# MemPalace MCP (local Python 3.12 venv; recreate with `uv venv .venv-mempalace -p 3.12`)
+.venv-mempalace/
+
 # --- Dependencies & build ---
 **/node_modules/
 **/.next/

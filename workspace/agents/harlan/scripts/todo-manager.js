@@ -16,10 +16,10 @@ const path = require('path');
 const fs = require('fs');
 const https = require('https');
 
-const WORKSPACE_DIR = path.resolve(__dirname, '../../../..');
-const HARLAN_DIR = path.join(WORKSPACE_DIR, 'agents', 'harlan');
+const WORKSPACE_ROOT = path.resolve(__dirname, '../../..');
+const HARLAN_DIR = path.resolve(__dirname, '..');
 const TODOS_DIR = path.join(HARLAN_DIR, 'todos');
-const LOG_DIR = path.join(WORKSPACE_DIR, 'logs');
+const LOG_DIR = path.join(WORKSPACE_ROOT, 'logs');
 const LOG_FILE = path.join(LOG_DIR, 'harlan-todos.log');
 
 const TELEGRAM_BOT_TOKEN = '8701730324:AAEDj_-Vk6gMpf3NzhLLT6Y19vfu_ZjsQtQ';
@@ -215,7 +215,7 @@ async function sendApprovalRequest(todos) {
   text += `• \`modify 1 updated text\` — Change text\n`;
   text += `• \`priority 1 high\` — Set priority\n`;
   text += `• \`due 1 2026-04-05\` — Set due date\n\n`;
-  text += `📁 Review file: agents/harlan/todos/pending-review-*.md`;
+  text += `📁 Review file: workspace/agents/harlan/todos/pending-review-*.md`;
   
   const data = JSON.stringify({
     chat_id: TELEGRAM_CHAT_ID,

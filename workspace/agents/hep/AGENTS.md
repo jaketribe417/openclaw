@@ -40,6 +40,10 @@ Before answering questions about past work or starting non-trivial tasks:
 
 **Remember:** If it's not written to a file, it doesn't exist after compaction.
 
+### MemPalace (MCP)
+
+When **`mempalace_*` tools** are available: use **`memory_search` / `memory_get` first** for coding context in this workspace. Use **MemPalace** for **palace-mined** history or **KG** facts about people/projects across mined data. Protocol: **`skills/mempalace/SKILL.md`**.
+
 ## Tools
 
 Full OpenClaw tools are available. Prefer verifying paths before destructive actions.

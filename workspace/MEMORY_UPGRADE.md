@@ -56,9 +56,9 @@ Each protocol includes:
 ├─────────────────────────────────────────────────────────────┤
 │  LEVEL 3: Functional Storage                                  │
 │    Harlan:                                                  │
-│      ~/.openclaw/.harlan-bee-state.json                     │
-│      ~/.openclaw/agents/harlan/todos/*.json                 │
-│      ~/.openclaw/agents/harlan/meetings/*.md                │
+│      ~/.openclaw/workspace/.harlan-bee-state.json           │
+│      ~/.openclaw/workspace/agents/harlan/todos/*.json       │
+│      ~/.openclaw/workspace/agents/harlan/meetings/*.md      │
 │    Jake:                                                    │
 │      ~/.openclaw/workspace/memory/YYYY-MM-DD.md             │
 │      ~/.openclaw/workspace/MEMORY.md                        │

@@ -66,16 +66,16 @@ The todo system is automatically triggered when Harlan's Bee meeting check runs.
 
 ```bash
 # View summary
-node agents/harlan/scripts/todo-manager.js summary
+node workspace/agents/harlan/scripts/todo-manager.js summary
 
 # Approve a todo
-node agents/harlan/scripts/todo-manager.js approve <todo-id>
+node workspace/agents/harlan/scripts/todo-manager.js approve <todo-id>
 
 # Reject a todo
-node agents/harlan/scripts/todo-manager.js reject <todo-id> "reason"
+node workspace/agents/harlan/scripts/todo-manager.js reject <todo-id> "reason"
 
 # Complete a todo
-node agents/harlan/scripts/todo-manager.js complete <todo-id>
+node workspace/agents/harlan/scripts/todo-manager.js complete <todo-id>
 ```
 
 ## Todo Lifecycle
@@ -90,7 +90,7 @@ node agents/harlan/scripts/todo-manager.js complete <todo-id>
 
 All todo files are stored in:
 ```
-agents/harlan/todos/
+workspace/agents/harlan/todos/
 ```
 
 This directory is git-tracked for persistence.

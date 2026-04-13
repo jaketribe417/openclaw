@@ -77,6 +77,15 @@ This ensures you're working from actual memory, not guessing.
 
 **Remember:** If it's not written to a file, it doesn't exist after compaction.
 
+### MemPalace (MCP) — long-arc palace memory
+
+MemPalace is enabled **for all agents** when the gateway exposes the `mempalace` MCP server.
+
+- **`memory_search` / `memory_get`**, memory-core, LanceDB, daily files, `MEMORY.md` → **default** for this OpenClaw workspace and ingested notes.
+- **`mempalace_*` tools** → mined transcripts/exports, **wings/rooms**, **verbatim** cross-session history, **knowledge-graph** facts (`mempalace_kg_*`), optional **diary**.
+
+**Order:** Search native memory first; use MemPalace when the question needs **palace-ingested** data or KG time-filtered facts. Do not run the same semantic query in both systems unless native results are empty and the topic fits the palace. Details and tool list: **`skills/mempalace/SKILL.md`**.
+
 ### 📝 Write It Down - No "Mental Notes"!
 
 - **Memory is limited** — if you want to remember something, WRITE IT TO A FILE

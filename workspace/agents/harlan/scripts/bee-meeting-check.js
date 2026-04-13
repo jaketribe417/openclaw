@@ -11,14 +11,23 @@ const https = require('https');
 const { execSync } = require('child_process');
 const TodoManager = require('./todo-manager.js');
 
-const WORKSPACE_DIR = path.resolve(__dirname, '../../../..');
-const HARLAN_DIR = path.join(WORKSPACE_DIR, 'agents', 'harlan');
-const LOG_DIR = path.join(WORKSPACE_DIR, 'logs');
+const WORKSPACE_ROOT = path.resolve(__dirname, '../../..');
+const HARLAN_DIR = path.resolve(__dirname, '..');
+const LOG_DIR = path.join(WORKSPACE_ROOT, 'logs');
 const LOG_FILE = path.join(LOG_DIR, 'harlan-actions.log');
 const MEMORY_DIR = path.join(HARLAN_DIR, 'memory');
 const MEETINGS_DIR = path.join(HARLAN_DIR, 'meetings');
-const STATE_FILE = path.join(WORKSPACE_DIR, '.harlan-bee-state.json');
+const STATE_FILE = path.join(WORKSPACE_ROOT, '.harlan-bee-state.json');
 const MEETINGS_INDEX_FILE = path.join(HARLAN_DIR, 'meetings', 'index.json');
+const REPO_ROOT = path.resolve(__dirname, '../../../..');
+const OLD_STATE_FILE = path.join(REPO_ROOT, '.harlan-bee-state.json');
+if (!fs.existsSync(STATE_FILE) && fs.existsSync(OLD_STATE_FILE)) {
+  try {
+    fs.copyFileSync(OLD_STATE_FILE, STATE_FILE);
+  } catch {
+    /* ignore */
+  }
+}
 
 const TELEGRAM_BOT_TOKEN = '8701730324:AAEDj_-Vk6gMpf3NzhLLT6Y19vfu_ZjsQtQ';
 const TELEGRAM_CHAT_ID = '8382558273';
@@ -96,7 +105,7 @@ function saveState(state) {
 function execBee(command, timeout = 30000) {
   try {
     const output = execSync(`bee ${command} --json`, { 
-      cwd: WORKSPACE_DIR,
+      cwd: REPO_ROOT,
       encoding: 'utf8',
       timeout: timeout
     });
@@ -141,7 +150,7 @@ async function getAllBeeMeetings(fullSync = false, historyDays = 60) {
     for (const range of timeRanges) {
       try {
         const output = execSync(`bee conversations ${range} --json 2>/dev/null || echo "[]"`, {
-          cwd: WORKSPACE_DIR,
+          cwd: REPO_ROOT,
           encoding: 'utf8',
           timeout: 60000,
           maxBuffer: 50 * 1024 * 1024 // 50MB buffer
@@ -347,7 +356,7 @@ async function getMeetingTranscript(conversationId) {
   
   try {
     const output = execSync(`bee transcript ${conversationId}`, { 
-      cwd: WORKSPACE_DIR,
+      cwd: REPO_ROOT,
       encoding: 'utf8',
       timeout: 30000
     });
@@ -573,8 +582,8 @@ async function sendTelegramNotification(meetings, todos, facts, reviewResult, to
     }
     text += `\n`;
     text += `💾 Saved to:\n`;
-    text += `  • agents/harlan/meetings/\n`;
-    text += `  • agents/harlan/memory/meetings-index.md\n\n`;
+    text += `  • workspace/agents/harlan/meetings/\n`;
+    text += `  • workspace/agents/harlan/memory/meetings-index.md\n\n`;
   }
   
   // New todos from meetings section
@@ -588,7 +597,7 @@ async function sendTelegramNotification(meetings, todos, facts, reviewResult, to
       text += `...and ${reviewResult.count - 3} more\n`;
     }
     text += `\n`;
-    text += `📁 Review: agents/harlan/todos/pending-review-*.md\n`;
+    text += `📁 Review: workspace/agents/harlan/todos/pending-review-*.md\n`;
     text += `Reply: approve 1 | reject 1 | modify 1 new text\n\n`;
   }
   
@@ -716,9 +725,9 @@ async function main() {
   logAction(`  Todos (Bee): ${todos.newTodos?.length || 0} new, ${todos.totalIncomplete || 0} incomplete`);
   logAction(`  Facts: ${facts.recentFacts?.length || 0} recent`);
   logAction(`  Locations:`);
-  logAction(`    • agents/harlan/meetings/`);
-  logAction(`    • agents/harlan/memory/meetings-index.md`);
-  logAction(`    • agents/harlan/todos/`);
+  logAction(`    • workspace/agents/harlan/meetings/`);
+  logAction(`    • workspace/agents/harlan/memory/meetings-index.md`);
+  logAction(`    • workspace/agents/harlan/todos/`);
   logAction('');
   logAction('CHECK_COMPLETE');
   logAction('═══════════════════════════════════════');

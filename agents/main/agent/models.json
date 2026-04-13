@@ -129,7 +129,8 @@
           "name": "qwen3-vl:235b-cloud",
           "reasoning": false,
           "input": [
-            "text"
+            "text",
+            "image"
           ],
           "cost": {
             "input": 0,
@@ -188,7 +189,7 @@
             "cacheRead": 0,
             "cacheWrite": 0
           },
-          "contextWindow": 2048,
+          "contextWindow": 8192,
           "maxTokens": 2048,
           "api": "ollama"
         },

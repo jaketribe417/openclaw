@@ -15,11 +15,11 @@ Subsequent:    Check Bee → Compare to known IDs → Only process new
 
 | File | Location | Purpose |
 |------|----------|---------|
-| State | `~/.openclaw/.harlan-bee-state.json` | Tracks processed meeting IDs |
-| Index | `~/.openclaw/agents/harlan/meetings/index.json` | Full list of all meetings |
-| Notes | `~/.openclaw/agents/harlan/meetings/*.md` | Individual meeting transcripts |
-| Memory | `~/.openclaw/agents/harlan/memory/meetings-index.md` | Searchable summaries |
-| Todos | `~/.openclaw/agents/harlan/todos/*.json` | Todo management |
+| State | `~/.openclaw/workspace/.harlan-bee-state.json` | Tracks processed meeting IDs |
+| Index | `~/.openclaw/workspace/agents/harlan/meetings/index.json` | Full list of all meetings |
+| Notes | `~/.openclaw/workspace/agents/harlan/meetings/*.md` | Individual meeting transcripts |
+| Memory | `~/.openclaw/workspace/agents/harlan/memory/meetings-index.md` | Searchable summaries |
+| Todos | `~/.openclaw/workspace/agents/harlan/todos/*.json` | Todo management |
 
 ## State Tracking
 
@@ -33,20 +33,20 @@ The state file tracks:
 
 ### Normal Check (Today's meetings only)
 ```bash
-node agents/harlan/scripts/bee-meeting-check.js
+node workspace/agents/harlan/scripts/bee-meeting-check.js
 ```
 
 ### Full Sync (All meetings)
 ```bash
-node agents/harlan/scripts/bee-meeting-check.js --full-sync
+node workspace/agents/harlan/scripts/bee-meeting-check.js --full-sync
 # or
-node agents/harlan/scripts/bee-meeting-check.js -f
+node workspace/agents/harlan/scripts/bee-meeting-check.js -f
 ```
 
 ### Force Re-process (Clear state)
 ```bash
-rm ~/.openclaw/.harlan-bee-state.json
-node agents/harlan/scripts/bee-meeting-check.js --full-sync
+rm ~/.openclaw/workspace/.harlan-bee-state.json
+node workspace/agents/harlan/scripts/bee-meeting-check.js --full-sync
 ```
 
 ## What Gets Processed
@@ -100,14 +100,14 @@ If you need to re-process everything:
 
 ```bash
 # Remove state
-rm ~/.openclaw/.harlan-bee-state.json
+rm ~/.openclaw/workspace/.harlan-bee-state.json
 
 # Remove index
-rm ~/.openclaw/agents/harlan/meetings/index.json
+rm ~/.openclaw/workspace/agents/harlan/meetings/index.json
 
 # Remove all meeting notes (optional)
-rm ~/.openclaw/agents/harlan/meetings/*.md
+rm ~/.openclaw/workspace/agents/harlan/meetings/*.md
 
 # Re-run full sync
-node agents/harlan/scripts/bee-meeting-check.js --full-sync
+node workspace/agents/harlan/scripts/bee-meeting-check.js --full-sync
 ```

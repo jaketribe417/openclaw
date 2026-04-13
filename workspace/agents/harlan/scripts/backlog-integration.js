@@ -10,9 +10,9 @@
 const path = require('path');
 const fs = require('fs');
 
-const WORKSPACE_DIR = path.resolve(__dirname, '../../../..');
-const BACKLOG_DIR = path.join(WORKSPACE_DIR, 'backlog');
-const TODOS_DIR = path.join(WORKSPACE_DIR, 'agents', 'harlan', 'todos');
+const WORKSPACE_ROOT = path.resolve(__dirname, '../../..');
+const BACKLOG_DIR = path.join(WORKSPACE_ROOT, 'backlog');
+const TODOS_DIR = path.join(WORKSPACE_ROOT, 'agents', 'harlan', 'todos');
 
 // Ensure directories exist
 if (!fs.existsSync(BACKLOG_DIR)) fs.mkdirSync(BACKLOG_DIR, { recursive: true });

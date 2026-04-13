@@ -19,7 +19,8 @@
             "cacheWrite": 0
           },
           "contextWindow": 262144,
-          "maxTokens": 8192
+          "maxTokens": 8192,
+          "api": "ollama"
         },
         {
           "id": "minimax-m2.5:cloud",
@@ -35,23 +36,8 @@
             "cacheWrite": 0
           },
           "contextWindow": 204800,
-          "maxTokens": 8192
-        },
-        {
-          "id": "glm-5:cloud",
-          "name": "glm-5:cloud",
-          "reasoning": false,
-          "input": [
-            "text"
-          ],
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          },
-          "contextWindow": 128000,
-          "maxTokens": 8192
+          "maxTokens": 8192,
+          "api": "ollama"
         },
         {
           "id": "Krakekai/qwen3-reranker-8b:latest",
@@ -67,7 +53,8 @@
             "cacheWrite": 0
           },
           "contextWindow": 40960,
-          "maxTokens": 8192
+          "maxTokens": 8192,
+          "api": "ollama"
         },
         {
           "id": "embeddinggemma:300m",
@@ -83,7 +70,8 @@
             "cacheWrite": 0
           },
           "contextWindow": 2048,
-          "maxTokens": 8192
+          "maxTokens": 2048,
+          "api": "ollama"
         },
         {
           "id": "qwen3.5:0.8b",
@@ -99,7 +87,8 @@
             "cacheWrite": 0
           },
           "contextWindow": 262144,
-          "maxTokens": 8192
+          "maxTokens": 8192,
+          "api": "ollama"
         },
         {
           "id": "qwen3-coder:480b-cloud",
@@ -115,7 +104,8 @@
             "cacheWrite": 0
           },
           "contextWindow": 262144,
-          "maxTokens": 8192
+          "maxTokens": 8192,
+          "api": "ollama"
         },
         {
           "id": "qwen3.5:397b-cloud",
@@ -131,14 +121,16 @@
             "cacheWrite": 0
           },
           "contextWindow": 262144,
-          "maxTokens": 8192
+          "maxTokens": 8192,
+          "api": "ollama"
         },
         {
           "id": "qwen3-vl:235b-cloud",
           "name": "qwen3-vl:235b-cloud",
           "reasoning": false,
           "input": [
-            "text"
+            "text",
+            "image"
           ],
           "cost": {
             "input": 0,
@@ -147,7 +139,8 @@
             "cacheWrite": 0
           },
           "contextWindow": 262144,
-          "maxTokens": 8192
+          "maxTokens": 8192,
+          "api": "ollama"
         },
         {
           "id": "nemotron-3-nano:30b",
@@ -163,7 +156,8 @@
             "cacheWrite": 0
           },
           "contextWindow": 1048576,
-          "maxTokens": 8192
+          "maxTokens": 8192,
+          "api": "ollama"
         },
         {
           "id": "qwen2:7b-instruct",
@@ -179,7 +173,8 @@
             "cacheWrite": 0
           },
           "contextWindow": 32768,
-          "maxTokens": 8192
+          "maxTokens": 8192,
+          "api": "ollama"
         },
         {
           "id": "nomic-embed-text:latest",
@@ -194,8 +189,9 @@
             "cacheRead": 0,
             "cacheWrite": 0
           },
-          "contextWindow": 2048,
-          "maxTokens": 8192
+          "contextWindow": 8192,
+          "maxTokens": 2048,
+          "api": "ollama"
         },
         {
           "id": "qwen3:14b",
@@ -211,7 +207,8 @@
             "cacheWrite": 0
           },
           "contextWindow": 40960,
-          "maxTokens": 8192
+          "maxTokens": 8192,
+          "api": "ollama"
         },
         {
           "id": "gemma2:9b",
@@ -227,7 +224,8 @@
             "cacheWrite": 0
           },
           "contextWindow": 8192,
-          "maxTokens": 8192
+          "maxTokens": 8192,
+          "api": "ollama"
         },
         {
           "id": "tinyllama:latest",
@@ -243,7 +241,8 @@
             "cacheWrite": 0
           },
           "contextWindow": 2048,
-          "maxTokens": 8192
+          "maxTokens": 8192,
+          "api": "ollama"
         },
         {
           "id": "qwen3:30b",
@@ -259,7 +258,8 @@
             "cacheWrite": 0
           },
           "contextWindow": 262144,
-          "maxTokens": 8192
+          "maxTokens": 8192,
+          "api": "ollama"
         },
         {
           "id": "minimax-m2:cloud",
@@ -275,11 +275,12 @@
             "cacheWrite": 0
           },
           "contextWindow": 204800,
-          "maxTokens": 8192
+          "maxTokens": 8192,
+          "api": "ollama"
         },
         {
-          "id": "lfm2:latest",
-          "name": "lfm2:latest",
+          "id": "gemma4:31b-cloud",
+          "name": "gemma4:31b-cloud",
           "reasoning": false,
           "input": [
             "text"
@@ -290,8 +291,9 @@
             "cacheRead": 0,
             "cacheWrite": 0
           },
-          "contextWindow": 32768,
-          "maxTokens": 8192
+          "contextWindow": 262144,
+          "maxTokens": 8192,
+          "api": "ollama"
         }
       ]
     }

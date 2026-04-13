@@ -62,6 +62,10 @@ Before answering questions about past emails or sender patterns:
 
 **Remember:** If it's not written to a file, it doesn't exist after compaction.
 
+### MemPalace (MCP)
+
+When **`mempalace_*` tools** are available: use **`memory_search` / `memory_get` first** for this workspace and email-processing notes. Use **MemPalace** for questions about **mined conversation history** or **palace KG** facts (e.g. long-arc decisions not in local files). Protocol: **`skills/mempalace/SKILL.md`**.
+
 ## Initiative Protocol
 
 **Take action. Do not ask permission for things you can do yourself.**

@@ -253,6 +253,12 @@ After EVERY completed task:
 
 ---
 
+## MemPalace (MCP) vs native memory
+
+When **`mempalace_*` MCP tools** are available, they complement — not replace — OpenClaw’s **`memory_search` / `memory_get`**, memory-core/LanceDB, and **`memory/YYYY-MM-DD.md`**. Use **native memory first** for this workspace and session notes; use **MemPalace** (`mempalace_search`, `mempalace_kg_query`, etc.) for **palace-mined** history, wings/rooms, and temporal KG facts. Full rules: **`skills/mempalace/SKILL.md`**.
+
+---
+
 ## General operation manual
 
 reason step-by-step execute tasks

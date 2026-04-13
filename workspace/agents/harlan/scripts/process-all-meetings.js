@@ -8,15 +8,24 @@ const path = require('path');
 const fs = require('fs');
 const { execSync } = require('child_process');
 
-const WORKSPACE_DIR = path.resolve(__dirname, '../../../..');
-const HARLAN_DIR = path.join(WORKSPACE_DIR, 'agents', 'harlan');
+const WORKSPACE_ROOT = path.resolve(__dirname, '../../..');
+const HARLAN_DIR = path.resolve(__dirname, '..');
 const MEETINGS_DIR = path.join(HARLAN_DIR, 'meetings');
 const MEMORY_DIR = path.join(HARLAN_DIR, 'memory');
-const LOG_DIR = path.join(WORKSPACE_DIR, 'logs');
+const LOG_DIR = path.join(WORKSPACE_ROOT, 'logs');
 const LOG_FILE = path.join(LOG_DIR, 'harlan-actions.log');
 
 const FULL_DATA_FILE = path.join(MEETINGS_DIR, 'full-bee-data.json');
-const STATE_FILE = path.join(WORKSPACE_DIR, '.harlan-bee-state.json');
+const STATE_FILE = path.join(WORKSPACE_ROOT, '.harlan-bee-state.json');
+const REPO_ROOT = path.resolve(__dirname, '../../../..');
+const OLD_STATE_FILE = path.join(REPO_ROOT, '.harlan-bee-state.json');
+if (!fs.existsSync(STATE_FILE) && fs.existsSync(OLD_STATE_FILE)) {
+  try {
+    fs.copyFileSync(OLD_STATE_FILE, STATE_FILE);
+  } catch {
+    /* ignore */
+  }
+}
 
 // Load existing state
 function loadState() {
@@ -64,7 +73,7 @@ async function getMeetingTranscript(conversationId) {
   
   try {
     const output = execSync(`bee transcript ${conversationId}`, { 
-      cwd: WORKSPACE_DIR,
+      cwd: REPO_ROOT,
       encoding: 'utf8',
       timeout: 60000
     });
