@@ -40,23 +40,6 @@
           "api": "ollama"
         },
         {
-          "id": "glm-5:cloud",
-          "name": "glm-5:cloud",
-          "reasoning": false,
-          "input": [
-            "text"
-          ],
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          },
-          "contextWindow": 128000,
-          "maxTokens": 8192,
-          "api": "ollama"
-        },
-        {
           "id": "Krakekai/qwen3-reranker-8b:latest",
           "name": "Krakekai/qwen3-reranker-8b:latest",
           "reasoning": false,
@@ -295,8 +278,8 @@
           "api": "ollama"
         },
         {
-          "id": "lfm2:latest",
-          "name": "lfm2:latest",
+          "id": "gemma4:31b-cloud",
+          "name": "gemma4:31b-cloud",
           "reasoning": false,
           "input": [
             "text"
@@ -307,7 +290,7 @@
             "cacheRead": 0,
             "cacheWrite": 0
           },
-          "contextWindow": 32768,
+          "contextWindow": 262144,
           "maxTokens": 8192,
           "api": "ollama"
         }

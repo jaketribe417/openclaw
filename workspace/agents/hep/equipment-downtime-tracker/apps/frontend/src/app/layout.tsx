@@ -4,6 +4,8 @@ import "./globals.css";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { Toaster } from "@/components/ui/toaster";
+import { Navigation } from "@/components/navigation";
+import { cn } from "@/lib/utils";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,7 +34,12 @@ export default function RootLayout({
       >
         <QueryProvider>
           <AuthProvider>
-            {children}
+            <div className="flex min-h-screen">
+              <Navigation />
+              <div className="flex-1 lg:pl-0">
+                {children}
+              </div>
+            </div>
             <Toaster />
           </AuthProvider>
         </QueryProvider>
