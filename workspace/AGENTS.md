@@ -16,6 +16,8 @@ Before doing anything else:
 4. Read `memory/YYYY-MM-DD.md` (today + yesterday) for recent context
 5. **Read `PROJECTS.md`** — Active project tracker (COO function: maintain this file)
 6. **If in MAIN SESSION** (direct chat with your human): Also read `MEMORY.md`
+7. **Call `mempalace_status`** — Load palace overview and check for cross-session context
+8. **Call `mempalace_diary_read`** — Review recent diary entries for continuity
 
 Don't ask permission. Just do it.
 
@@ -84,7 +86,13 @@ MemPalace is enabled **for all agents** when the gateway exposes the `mempalace`
 - **`memory_search` / `memory_get`**, memory-core, LanceDB, daily files, `MEMORY.md` → **default** for this OpenClaw workspace and ingested notes.
 - **`mempalace_*` tools** → mined transcripts/exports, **wings/rooms**, **verbatim** cross-session history, **knowledge-graph** facts (`mempalace_kg_*`), optional **diary**.
 
-**Order:** Search native memory first; use MemPalace when the question needs **palace-ingested** data or KG time-filtered facts. Do not run the same semantic query in both systems unless native results are empty and the topic fits the palace. Details and tool list: **`skills/mempalace/SKILL.md`**.
+**MANDATORY PROTOCOL:**
+1. **ON WAKEUP**: Call `mempalace_status` to load palace overview
+2. **BEFORE RESPONDING** about any person, project, or past event: Query palace first (`mempalace_search` or `mempalace_kg_query`). Never guess—verify.
+3. **AFTER EACH SESSION**: Call `mempalace_diary_write` to record what happened, what was learned, what matters.
+4. **WHEN FACTS CHANGE**: Use `mempalace_kg_invalidate` on old facts, `mempalace_kg_add` for new ones.
+
+**Order:** Search native memory first; use MemPalace when native results are empty OR the question needs palace-ingested data, KG facts, or cross-session verbatim history. Details: **`skills/mempalace/SKILL.md`**.
 
 ### 📝 Write It Down - No "Mental Notes"!
 

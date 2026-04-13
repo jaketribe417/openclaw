@@ -1,0 +1,15 @@
+{
+  "description": "Task Checker Cron Job - Checks TODOs every 30 min and delegates work",
+  "schedule": "*/30 * * * *",
+  "script": "/Users/Jack/.openclaw/task-checker-cron.js",
+  "log": "/Users/Jack/.openclaw/logs/task-checker.log",
+  "state": "/Users/Jack/.openclaw/state/task-checker-state.json",
+  "enabled": true,
+  "lastRun": null,
+  "runCount": 0,
+  "monitoredFiles": [
+    "/Users/Jack/.openclaw/workspace/todo.md",
+    "/Users/Jack/.openclaw/workspace/agents/hep/TODO.md",
+    "/Users/Jack/.openclaw/workspace/jake-mission-control/todo.md"
+  ]
+}

@@ -1,13 +1,86 @@
 {
   "providers": {
+    "codex": {
+      "baseUrl": "https://chatgpt.com/backend-api",
+      "auth": "token",
+      "api": "openai-codex-responses",
+      "models": [
+        {
+          "id": "gpt-5.4",
+          "name": "gpt-5.4",
+          "api": "openai-codex-responses",
+          "reasoning": true,
+          "input": [
+            "text",
+            "image"
+          ],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "contextWindow": 272000,
+          "maxTokens": 128000,
+          "compat": {
+            "supportsReasoningEffort": true,
+            "supportsUsageInStreaming": true
+          }
+        },
+        {
+          "id": "gpt-5.4-mini",
+          "name": "GPT-5.4-Mini",
+          "api": "openai-codex-responses",
+          "reasoning": true,
+          "input": [
+            "text",
+            "image"
+          ],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "contextWindow": 272000,
+          "maxTokens": 128000,
+          "compat": {
+            "supportsReasoningEffort": true,
+            "supportsUsageInStreaming": true
+          }
+        },
+        {
+          "id": "gpt-5.2",
+          "name": "gpt-5.2",
+          "api": "openai-codex-responses",
+          "reasoning": true,
+          "input": [
+            "text",
+            "image"
+          ],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "contextWindow": 272000,
+          "maxTokens": 128000,
+          "compat": {
+            "supportsReasoningEffort": true,
+            "supportsUsageInStreaming": true
+          }
+        }
+      ]
+    },
     "ollama": {
       "baseUrl": "http://127.0.0.1:11434",
       "apiKey": "OLLAMA_API_KEY",
       "api": "ollama",
       "models": [
         {
-          "id": "kimi-k2.5:cloud",
-          "name": "kimi-k2.5:cloud",
+          "id": "qwen3.5:27b",
+          "name": "qwen3.5:27b",
           "reasoning": false,
           "input": [
             "text"
@@ -23,8 +96,8 @@
           "api": "ollama"
         },
         {
-          "id": "minimax-m2.5:cloud",
-          "name": "minimax-m2.5:cloud",
+          "id": "gemma4:31b-cloud",
+          "name": "gemma4:31b-cloud",
           "reasoning": false,
           "input": [
             "text"
@@ -35,7 +108,7 @@
             "cacheRead": 0,
             "cacheWrite": 0
           },
-          "contextWindow": 204800,
+          "contextWindow": 262144,
           "maxTokens": 8192,
           "api": "ollama"
         },
@@ -76,6 +149,23 @@
         {
           "id": "qwen3.5:0.8b",
           "name": "qwen3.5:0.8b",
+          "reasoning": false,
+          "input": [
+            "text"
+          ],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "contextWindow": 262144,
+          "maxTokens": 8192,
+          "api": "ollama"
+        },
+        {
+          "id": "kimi-k2.5:cloud",
+          "name": "kimi-k2.5:cloud",
           "reasoning": false,
           "input": [
             "text"
@@ -279,8 +369,8 @@
           "api": "ollama"
         },
         {
-          "id": "gemma4:31b-cloud",
-          "name": "gemma4:31b-cloud",
+          "id": "minimax-m2.5:cloud",
+          "name": "minimax-m2.5:cloud",
           "reasoning": false,
           "input": [
             "text"
@@ -291,47 +381,16 @@
             "cacheRead": 0,
             "cacheWrite": 0
           },
-          "contextWindow": 262144,
+          "contextWindow": 204800,
           "maxTokens": 8192,
           "api": "ollama"
-        }
-      ]
-    },
-    "codex": {
-      "baseUrl": "https://chatgpt.com/backend-api",
-      "auth": "token",
-      "api": "openai-codex-responses",
-      "models": [
-        {
-          "id": "gpt-5.4",
-          "name": "gpt-5.4",
-          "api": "openai-codex-responses",
-          "reasoning": true,
-          "input": [
-            "text",
-            "image"
-          ],
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          },
-          "contextWindow": 272000,
-          "maxTokens": 128000,
-          "compat": {
-            "supportsReasoningEffort": true,
-            "supportsUsageInStreaming": true
-          }
         },
         {
-          "id": "gpt-5.4-mini",
-          "name": "GPT-5.4-Mini",
-          "api": "openai-codex-responses",
-          "reasoning": true,
+          "id": "lfm2:latest",
+          "name": "lfm2:latest",
+          "reasoning": false,
           "input": [
-            "text",
-            "image"
+            "text"
           ],
           "cost": {
             "input": 0,
@@ -339,34 +398,9 @@
             "cacheRead": 0,
             "cacheWrite": 0
           },
-          "contextWindow": 272000,
-          "maxTokens": 128000,
-          "compat": {
-            "supportsReasoningEffort": true,
-            "supportsUsageInStreaming": true
-          }
-        },
-        {
-          "id": "gpt-5.2",
-          "name": "gpt-5.2",
-          "api": "openai-codex-responses",
-          "reasoning": true,
-          "input": [
-            "text",
-            "image"
-          ],
-          "cost": {
-            "input": 0,
-            "output": 0,
-            "cacheRead": 0,
-            "cacheWrite": 0
-          },
-          "contextWindow": 272000,
-          "maxTokens": 128000,
-          "compat": {
-            "supportsReasoningEffort": true,
-            "supportsUsageInStreaming": true
-          }
+          "contextWindow": 32768,
+          "maxTokens": 8192,
+          "api": "ollama"
         }
       ]
     }

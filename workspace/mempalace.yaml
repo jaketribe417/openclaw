@@ -1,0 +1,65 @@
+wing: workspace
+rooms:
+- name: temp
+  description: Files from TEMP/
+  keywords:
+  - temp
+  - temp
+- name: memory
+  description: Files from memory/
+  keywords:
+  - memory
+  - memory
+- name: projects
+  description: Files from projects/
+  keywords:
+  - projects
+  - projects
+- name: agents
+  description: Files from agents/
+  keywords:
+  - agents
+  - agents
+- name: documentation
+  description: Files from docs/
+  keywords:
+  - documentation
+  - docs
+- name: jake_mission_control
+  description: Files from jake-mission-control/
+  keywords:
+  - jake_mission_control
+  - jake-mission-control
+- name: logs
+  description: Files from logs/
+  keywords:
+  - logs
+  - logs
+- name: scripts
+  description: Files from scripts/
+  keywords:
+  - scripts
+  - scripts
+- name: skills
+  description: Files from skills/
+  keywords:
+  - skills
+  - skills
+- name: sharefile
+  description: Files from ShareFile/
+  keywords:
+  - sharefile
+  - sharefile
+- name: cron
+  description: Files from cron/
+  keywords:
+  - cron
+  - cron
+- name: reports
+  description: Files from reports/
+  keywords:
+  - reports
+  - reports
+- name: general
+  description: Files that don't fit other rooms
+  keywords: []

@@ -23,3 +23,7 @@ This is Jake's curated memory for important information.
 - Restart tracker system implemented for gateway recovery
 - Cron jobs managed via OpenClaw cron tool (not openclaw.json)
 - Email automation: Joy checks jaketribe_bot@agentmail.to every 10 minutes
+- **MemPalace enabled April 12, 2026** — 2,845 drawers indexed, MCP tools active for all agents
+  - Protocol: Query palace before responding about people/projects/events
+  - Diary writes mandatory after each session
+  - KG facts for temporal relationships

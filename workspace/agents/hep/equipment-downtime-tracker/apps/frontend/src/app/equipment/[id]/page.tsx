@@ -1,395 +1,462 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { useEquipmentStore } from "@/stores/equipment-store";
+import { useRouter } from "next/navigation";
+import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { useAuthStore } from "@/stores/auth-store";
-import { apiClient } from "@/lib/api-client";
-import { StatusBadge } from "@/components/status-badge";
+import { useEquipmentStore } from "@/stores/equipment-store";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import {
+import { Skeleton } from "@/components/ui/skeleton";
+import { EquipmentStatusBadge } from "@/components/status-badge";
+import { useToast } from "@/hooks/use-toast";
+import { 
   ArrowLeft,
   AlertCircle,
+  CheckCircle2,
   Clock,
+  Settings,
+  MapPin,
   Activity,
   Wrench,
-  History,
-  Settings,
   ChevronRight,
+  History,
+  Edit3,
+  AlertTriangle
 } from "lucide-react";
 import Link from "next/link";
-import { Equipment, EquipmentStatus, Module, Component, DowntimeEvent } from "@edt/shared";
-import { useToast } from "@/hooks/use-toast";
+import { Equipment, EquipmentStatus, DowntimeEvent } from "@edt/shared";
+import { equipmentStatusConfig } from "@/lib/status-config";
+import { formatDistanceToNow } from "date-fns";
 
-export default function EquipmentDetailPage() {
-  const params = useParams();
+export default function EquipmentDetailPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const { toast } = useToast();
-  const { user } = useAuthStore();
-  const { equipment, fetchEquipment } = useEquipmentStore();
-  const [equipmentDetail, setEquipmentDetail] = useState<Equipment | null>(null);
-  const [modules, setModules] = useState<Module[]>([]);
-  const [events, setEvents] = useState<DowntimeEvent[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [statusDialogOpen, setStatusDialogOpen] = useState(false);
+  const { isAuthenticated, user } = useAuthStore();
+  const { 
+    equipment, 
+    downtimeEvents,
+    isLoading, 
+    fetchEquipment,
+    fetchDowntimeEvents,
+    updateEquipmentStatus 
+  } = useEquipmentStore();
+
+  const [selectedEquipment, setSelectedEquipment] = useState<Equipment | null>(null);
+  const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);
   const [newStatus, setNewStatus] = useState<EquipmentStatus>("running");
   const [statusReason, setStatusReason] = useState("");
+  const [isUpdating, setIsUpdating] = useState(false);
 
-  const equipmentId = params.id as string;
-
-  const isTechnician = user?.role === "technician";
-  const isSupervisor = user?.role === "supervisor";
-  const isAdmin = user?.role === "admin";
-  const canEditStatus = isTechnician || isSupervisor || isAdmin;
+  // Unwrap params
+  const { id: equipmentId } = params;
 
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        // Fetch equipment details
-        const eqResponse = await apiClient.get(`/equipment/${equipmentId}`);
-        setEquipmentDetail(eqResponse.data);
+    if (!isAuthenticated) {
+      router.push("/login");
+      return;
+    }
+    
+    fetchEquipment();
+    fetchDowntimeEvents();
+  }, [isAuthenticated, router, fetchEquipment, fetchDowntimeEvents]);
 
-        // Fetch modules
-        const modResponse = await apiClient.get(`/equipment/${equipmentId}/modules`);
-        setModules(modResponse.data);
+  useEffect(() => {
+    if (equipment.length > 0 && equipmentId) {
+      const found = equipment.find((e) => e.id === equipmentId);
+      setSelectedEquipment(found || null);
+    }
+  }, [equipment, equipmentId]);
 
-        // Fetch downtime events
-        const eventsResponse = await apiClient.get(`/downtime-events?equipmentId=${equipmentId}`);
-        setEvents(eventsResponse.data);
-      } catch (error) {
-        toast({
-          title: "Error",
-          description: "Failed to load equipment details",
-          variant: "destructive",
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [equipmentId, toast]);
-
-  const handleStatusChange = async () => {
+  const handleStatusUpdate = async () => {
+    if (!selectedEquipment) return;
+    
+    setIsUpdating(true);
     try {
-      await apiClient.patch(`/equipment/${equipmentId}/status`, {
-        status: newStatus,
-        reason: statusReason,
-      });
-      await fetchEquipment();
-      setStatusDialogOpen(false);
-      setStatusReason("");
+      await updateEquipmentStatus(selectedEquipment.id, newStatus, statusReason);
       toast({
         title: "Status Updated",
         description: `Equipment status changed to ${newStatus}`,
       });
+      setIsStatusDialogOpen(false);
+      setStatusReason("");
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to update status",
+        title: "Update Failed",
+        description: "Failed to update equipment status",
         variant: "destructive",
       });
+    } finally {
+      setIsUpdating(false);
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 p-4">
-        <div className="max-w-4xl mx-auto space-y-4">
-          <div className="h-8 w-48 animate-pulse bg-gray-200 rounded" />
-          <div className="h-48 animate-pulse bg-gray-200 rounded-lg" />
-          <div className="h-96 animate-pulse bg-gray-200 rounded-lg" />
-        </div>
-      </div>
-    );
+  // Get equipment-specific events
+  const equipmentEvents = downtimeEvents.filter(
+    (e) => e.equipmentId === equipmentId
+  ).sort((a, b) => new Date(b.reportedAt).getTime() - new Date(a.reportedAt).getTime());
+
+  const activeEvents = equipmentEvents.filter((e) => e.status !== "resolved");
+
+  if (!isAuthenticated) {
+    return null;
   }
 
-  if (!equipmentDetail) {
+  if (isLoading || !selectedEquipment) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <AlertCircle className="h-16 w-16 mx-auto mb-4 text-gray-400" />
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Equipment Not Found</h1>
-          <p className="text-gray-500 mb-4">The equipment you're looking for doesn't exist.</p>
-          <Link href="/equipment">
-            <Button>Back to Equipment List</Button>
-          </Link>
+      <DashboardLayout>
+        <div className="space-y-6">
+          <Skeleton className="h-8 w-64" />
+          <div className="grid gap-6 lg:grid-cols-3">
+            <Skeleton className="h-64 lg:col-span-2" />
+            <Skeleton className="h-64" />
+          </div>
         </div>
-      </div>
+      </DashboardLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link href="/equipment">
-                <Button variant="ghost" size="sm">
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Back
-                </Button>
-              </Link>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">{equipmentDetail.name}</h1>
-                <p className="text-sm text-gray-500">{equipmentDetail.equipmentId}</p>
-              </div>
+    <DashboardLayout>
+      <div className="space-y-6">
+        {/* Back Navigation */}
+        <Button variant="ghost" asChild className="-ml-4">
+          <Link href="/equipment">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Equipment
+          </Link>
+        </Button>
+
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <div className="h-16 w-16 rounded-xl bg-gray-100 flex items-center justify-center">
+              <Settings className="h-8 w-8 text-gray-600" />
             </div>
-            <div className="flex items-center gap-2">
-              <StatusBadge status={equipmentDetail.status} size="lg" />
-              {canEditStatus && (
-                <Dialog open={statusDialogOpen} onOpenChange={setStatusDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button variant="outline" size="sm">
-                      <Settings className="h-4 w-4 mr-2" />
-                      Change Status
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Update Equipment Status</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4 py-4">
-                      <div className="space-y-2">
-                        <Label>New Status</Label>
-                        <Select value={newStatus} onValueChange={(v) => setNewStatus(v as EquipmentStatus)}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="running">Running</SelectItem>
-                            <SelectItem value="degraded">Degraded</SelectItem>
-                            <SelectItem value="down">Down</SelectItem>
-                            <SelectItem value="maintenance">Maintenance</SelectItem>
-                            <SelectItem value="offline">Offline</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Reason (optional)</Label>
-                        <Textarea
-                          value={statusReason}
-                          onChange={(e) => setStatusReason(e.target.value)}
-                          placeholder="Why is the status changing?"
-                        />
-                      </div>
-                      <Button onClick={handleStatusChange} className="w-full">
-                        Update Status
-                      </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              )}
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">{selectedEquipment.name}</h1>
+              <p className="text-muted-foreground">
+                ID: {selectedEquipment.equipmentId} • {selectedEquipment.type}
+              </p>
             </div>
           </div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setNewStatus(selectedEquipment.status);
+                setIsStatusDialogOpen(true);
+              }}
+            >
+              <Edit3 className="mr-2 h-4 w-4" />
+              Update Status
+            </Button>
+            <Button asChild>
+              <Link href={`/report-issue?equipment=${selectedEquipment.id}`}>
+                <AlertTriangle className="mr-2 h-4 w-4" />
+                Report Issue
+              </Link>
+            </Button>
+          </div>
         </div>
-      </header>
 
-      {/* Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="modules">Modules</TabsTrigger>
-            <TabsTrigger value="history">History</TabsTrigger>
-            <TabsTrigger value="events">Events</TabsTrigger>
-          </TabsList>
-
-          {/* Overview Tab */}
-          <TabsContent value="overview" className="space-y-6">
+        {/* Main Content */}
+        <div className="grid gap-6 lg:grid-cols-3">
+          {/* Left Column - Equipment Info */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Status Card */}
             <Card>
               <CardHeader>
-                <CardTitle>Equipment Details</CardTitle>
+                <CardTitle>Current Status</CardTitle>
+                <CardDescription>Real-time equipment status</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label className="text-gray-500">Equipment ID</Label>
-                    <p className="font-medium">{equipmentDetail.equipmentId}</p>
-                  </div>
-                  <div>
-                    <Label className="text-gray-500">Current Status</Label>
-                    <p>
-                      <StatusBadge status={equipmentDetail.status} />
-                    </p>
-                  </div>
-                  <div>
-                    <Label className="text-gray-500">Manufacturer</Label>
-                    <p className="font-medium">{equipmentDetail.manufacturer || "—"}</p>
-                  </div>
-                  <div>
-                    <Label className="text-gray-500">Model</Label>
-                    <p className="font-medium">{equipmentDetail.model || "—"}</p>
-                  </div>
-                  <div>
-                    <Label className="text-gray-500">Serial Number</Label>
-                    <p className="font-medium">{equipmentDetail.serialNumber || "—"}</p>
-                  </div>
-                  <div>
-                    <Label className="text-gray-500">Purchase Date</Label>
-                    <p className="font-medium">
-                      {equipmentDetail.purchaseDate
-                        ? new Date(equipmentDetail.purchaseDate).toLocaleDateString()
-                        : "—"}
-                    </p>
-                  </div>
-                </div>
-                {equipmentDetail.description && (
-                  <>
-                    <Separator />
-                    <div>
-                      <Label className="text-gray-500">Description</Label>
-                      <p className="mt-1">{equipmentDetail.description}</p>
+              <CardContent>
+                <div className="flex items-center justify-between p-4 rounded-lg border">
+                  <div className="flex items-center gap-4">
+                    <div className={`h-12 w-12 rounded-full flex items-center justify-center ${
+                      selectedEquipment.status === "running" ? "bg-green-100" :
+                      selectedEquipment.status === "degraded" ? "bg-yellow-100" :
+                      selectedEquipment.status === "down" ? "bg-red-100" : "bg-gray-100"
+                    }`}>
+                      {selectedEquipment.status === "running" ? <CheckCircle2 className="h-6 w-6 text-green-600" /> :
+                       selectedEquipment.status === "degraded" ? <Activity className="h-6 w-6 text-yellow-600" /> :
+                       selectedEquipment.status === "down" ? <AlertCircle className="h-6 w-6 text-red-600" /> :
+                       <Clock className="h-6 w-6 text-gray-600" />}
                     </div>
-                  </>
-                )}
-                <Separator />
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <Label className="text-gray-500">Created</Label>
-                    <p>{new Date(equipmentDetail.createdAt).toLocaleString()}</p>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Current Status</p>
+                      <EquipmentStatusBadge status={selectedEquipment.status} size="lg" />
+                    </div>
                   </div>
-                  <div>
-                    <Label className="text-gray-500">Last Updated</Label>
-                    <p>{new Date(equipmentDetail.updatedAt).toLocaleString()}</p>
+                  <div className="text-right">
+                    <p className="text-sm text-muted-foreground">Last Updated</p>
+                    <p className="font-medium">
+                      {formatDistanceToNow(new Date(selectedEquipment.updatedAt), { addSuffix: true })}
+                    </p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Quick Stats */}
-            <div className="grid grid-cols-3 gap-4">
-              <Card>
-                <CardContent className="p-4 text-center">
-                  <p className="text-2xl font-bold">{modules.length}</p>
-                  <p className="text-sm text-gray-500">Modules</p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-4 text-center">
-                  <p className="text-2xl font-bold">
-                    {events.filter((e) => e.status !== "resolved").length}
-                  </p>
-                  <p className="text-sm text-gray-500">Active Issues</p>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="p-4 text-center">
-                  <p className="text-2xl font-bold">{events.length}</p>
-                  <p className="text-sm text-gray-500">Total Events</p>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          {/* Modules Tab */}
-          <TabsContent value="modules">
+            {/* Downtime Events */}
             <Card>
-              <CardHeader>
-                <CardTitle>Modules & Components</CardTitle>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Downtime Events</CardTitle>
+                  <CardDescription>History of reported issues</CardDescription>
+                </div>
+                <Button variant="outline" asChild>
+                  <Link href="/downtime-events">
+                    View All
+                  </Link>
+                </Button>
               </CardHeader>
               <CardContent>
-                {modules.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    <Wrench className="h-12 w-12 mx-auto mb-2 opacity-30" />
-                    <p>No modules configured for this equipment</p>
+                {equipmentEvents.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-8 text-center">
+                    <CheckCircle2 className="h-12 w-12 text-green-500 mb-4" />
+                    <h3 className="font-semibold">No Events</h3>
+                    <p className="text-sm text-muted-foreground">
+                      This equipment has no downtime events
+                    </p>
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {modules.map((module) => (
-                      <div key={module.id} className="border rounded-lg p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <div>
-                            <p className="font-medium">{module.name}</p>
-                            <p className="text-sm text-gray-500">{module.moduleId}</p>
-                          </div>
-                          <StatusBadge status={module.status} size="sm" />
+                    {equipmentEvents.slice(0, 5).map((event) => (
+                      <EventCard key={event.id} event={event} />
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right Column - Info & Quick Actions */}
+          <div className="space-y-6">
+            {/* Equipment Details */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Details</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <p className="text-sm text-muted-foreground">Type</p>
+                  <p className="font-medium capitalize">{selectedEquipment.type}</p>
+                </div>
+                <Separator />
+                <div>
+                  <p className="text-sm text-muted-foreground">Equipment ID</p>
+                  <p className="font-medium">{selectedEquipment.equipmentId}</p>
+                </div>
+                <Separator />
+                <div>
+                  <p className="text-sm text-muted-foreground">Zone</p>
+                  <p className="font-medium">{selectedEquipment.zoneId}</p>
+                </div>
+                <Separator />
+                <div>
+                  <p className="text-sm text-muted-foreground">Created</p>
+                  <p className="font-medium">
+                    {new Date(selectedEquipment.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Active Events Summary */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Active Events</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {activeEvents.length === 0 ? (
+                  <div className="text-center py-4">
+                    <p className="text-sm text-muted-foreground">No active events</p>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {activeEvents.map((event) => (
+                      <div
+                        key={event.id}
+                        className="flex items-center justify-between p-3 rounded-lg border border-yellow-200 bg-yellow-50"
+                      >
+                        <div className="flex items-center gap-2">
+                          <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                          <span className="text-sm font-medium">{event.status}</span>
                         </div>
-                        {module.description && (
-                          <p className="text-sm text-gray-500 mt-2">{module.description}</p>
-                        )}
+                        <Badge variant="outline">
+                          {event.severity}
+                        </Badge>
                       </div>
                     ))}
                   </div>
                 )}
               </CardContent>
             </Card>
-          </TabsContent>
 
-          {/* History Tab */}
-          <TabsContent value="history">
+            {/* Quick Actions */}
             <Card>
               <CardHeader>
-                <CardTitle>Status History</CardTitle>
+                <CardTitle>Quick Actions</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="text-center py-8 text-gray-500">
-                  <History className="h-12 w-12 mx-auto mb-2 opacity-30" />
-                  <p>Status history will be displayed here</p>
-                  <p className="text-sm mt-1">Tracked automatically via database triggers</p>
-                </div>
+              <CardContent className="space-y-2">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setNewStatus("running");
+                    setIsStatusDialogOpen(true);
+                  }}
+                >
+                  <CheckCircle2 className="mr-2 h-4 w-4 text-green-500" />
+                  Mark as Running
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setNewStatus("degraded");
+                    setIsStatusDialogOpen(true);
+                  }}
+                >
+                  <Activity className="mr-2 h-4 w-4 text-yellow-500" />
+                  Mark as Degraded
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => {
+                    setNewStatus("down");
+                    setIsStatusDialogOpen(true);
+                  }}
+                >
+                  <AlertCircle className="mr-2 h-4 w-4 text-red-500" />
+                  Mark as Down
+                </Button>
+                <Separator className="my-2" />
+                <Button variant="outline" className="w-full justify-start" asChild>
+                  <Link href={`/report-issue?equipment=${selectedEquipment.id}`}>
+                    <Wrench className="mr-2 h-4 w-4" />
+                    Report Issue
+                  </Link>
+                </Button>
               </CardContent>
             </Card>
-          </TabsContent>
+          </div>
+        </div>
 
-          {/* Events Tab */}
-          <TabsContent value="events">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle>Downtime Events</CardTitle>
-                <Link href="/downtime-events">
-                  <Button variant="outline" size="sm">View All</Button>
-                </Link>
-              </CardHeader>
-              <CardContent>
-                {events.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    <Activity className="h-12 w-12 mx-auto mb-2 opacity-30" />
-                    <p>No downtime events recorded</p>
-                  </div>
-                ) : (
-                  <ScrollArea className="h-[400px]">
-                    <div className="space-y-3">
-                      {events.map((event) => (
-                        <Link key={event.id} href={`/downtime-events/${event.id}`}>
-                          <div className="p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-                            <div className="flex items-start justify-between">
-                              <div>
-                                <p className="font-medium">{event.issueType}</p>
-                                <p className="text-sm text-gray-500">
-                                  Reported {new Date(event.reportedAt).toLocaleString()}
-                                </p>
-                                {event.description && (
-                                  <p className="text-sm text-gray-600 mt-1 line-clamp-2">
-                                    {event.description}
-                                  </p>
-                                )}
-                              </div>
-                              <StatusBadge status={event.status} type="event" size="sm" />
-                            </div>
-                          </div>
-                        </Link>
-                      ))}
-                    </div>
-                  </ScrollArea>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </main>
-    </div>
+        {/* Status Update Dialog */}
+        <Dialog open={isStatusDialogOpen} onOpenChange={setIsStatusDialogOpen}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Update Equipment Status</DialogTitle>
+              <DialogDescription>
+                Change the status for {selectedEquipment?.name}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">New Status</label>
+                <Select value={newStatus} onValueChange={(v) => setNewStatus(v as EquipmentStatus)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="running">
+                      <span className="flex items-center gap-2">
+                        <span className="h-2 w-2 rounded-full bg-green-500" />
+                        Running
+                      </span>
+                    </SelectItem>
+                    <SelectItem value="degraded">
+                      <span className="flex items-center gap-2">
+                        <span className="h-2 w-2 rounded-full bg-yellow-500" />
+                        Degraded
+                      </span>
+                    </SelectItem>
+                    <SelectItem value="down">
+                      <span className="flex items-center gap-2">
+                        <span className="h-2 w-2 rounded-full bg-red-500" />
+                        Down
+                      </span>
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Reason (Optional)</label>
+                <Textarea
+                  placeholder="Enter reason for status change..."
+                  value={statusReason}
+                  onChange={(e) => setStatusReason(e.target.value)}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsStatusDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleStatusUpdate} disabled={isUpdating}>
+                {isUpdating && <Clock className="mr-2 h-4 w-4 animate-spin" />}
+                Update Status
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </DashboardLayout>
+  );
+}
+
+interface EventCardProps {
+  event: DowntimeEvent;
+}
+
+function EventCard({ event }: EventCardProps) {
+  const statusColors = {
+    reported: "bg-amber-50 border-amber-200",
+    acknowledged: "bg-blue-50 border-blue-200",
+    in_repair: "bg-purple-50 border-purple-200",
+    resolved: "bg-green-50 border-green-200",
+    escalated: "bg-red-50 border-red-200",
+  };
+
+  const statusIcons = {
+    reported: <AlertCircle className="h-4 w-4 text-amber-600" />,
+    acknowledged: <Clock className="h-4 w-4 text-blue-600" />,
+    in_repair: <Wrench className="h-4 w-4 text-purple-600" />,
+    resolved: <CheckCircle2 className="h-4 w-4 text-green-600" />,
+    escalated: <AlertTriangle className="h-4 w-4 text-red-600" />,
+  };
+
+  return (
+    <Link href={`/downtime-events`}>
+      <div className={`flex items-start gap-3 p-4 rounded-lg border cursor-pointer hover:shadow-sm transition-shadow ${statusColors[event.status]}`}>
+        <div className="mt-0.5">{statusIcons[event.status]}</div>
+        <div className="flex-1">
+          <div className="flex items-center justify-between">
+            <Badge variant="outline" className="text-xs">
+              {event.severity}
+            </Badge>
+            <span className="text-xs text-muted-foreground">
+              {formatDistanceToNow(new Date(event.reportedAt), { addSuffix: true })}
+            </span>
+          </div>
+          <p className="mt-2 text-sm">{event.description}</p>
+          <div className="mt-2 flex items-center gap-2">
+            <Badge variant="secondary" className="text-xs">
+              {event.status}
+            </Badge>
+          </div>
+        </div>
+      </div>
+    </Link>
   );
 }

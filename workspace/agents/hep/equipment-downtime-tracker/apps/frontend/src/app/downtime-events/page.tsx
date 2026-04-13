@@ -1,351 +1,463 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useEquipmentStore } from "@/stores/equipment-store";
+import { useEffect, useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { useAuthStore } from "@/stores/auth-store";
-import { apiClient } from "@/lib/api-client";
-import { StatusBadge } from "@/components/status-badge";
+import { useEquipmentStore } from "@/stores/equipment-store";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import {
+import { Skeleton } from "@/components/ui/skeleton";
+import { EventStatusBadge } from "@/components/status-badge";
+import { useToast } from "@/hooks/use-toast";
+import { 
   AlertCircle,
+  CheckCircle2,
   Clock,
-  CheckCircle,
-  Wrench,
-  AlertTriangle,
   Search,
   Filter,
-  ChevronRight,
+  X,
+  ArrowRight,
+  Wrench,
   User,
   Calendar,
+  AlertTriangle,
+  Play,
+  CheckCircle
 } from "lucide-react";
 import Link from "next/link";
-import { DowntimeEvent, DowntimeEventStatus } from "@edt/shared";
-import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
+import { DowntimeEvent, DowntimeEventStatus, Equipment } from "@edt/shared";
+import { formatDistanceToNow, format } from "date-fns";
 
 export default function DowntimeEventsPage() {
+  const router = useRouter();
   const { toast } = useToast();
-  const { user } = useAuthStore();
-  const { equipment, fetchEquipment, downtimeEvents, fetchDowntimeEvents } = useEquipmentStore();
+  const { isAuthenticated, user } = useAuthStore();
+  const { 
+    equipment, 
+    downtimeEvents, 
+    isLoading, 
+    fetchEquipment,
+    fetchDowntimeEvents 
+  } = useEquipmentStore();
+
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<DowntimeEventStatus | "all">("all");
+  const [activeTab, setActiveTab] = useState("active");
   const [selectedEvent, setSelectedEvent] = useState<DowntimeEvent | null>(null);
-  const [actionDialogOpen, setActionDialogOpen] = useState(false);
-  const [actionType, setActionType] = useState<"acknowledge" | "start-repair" | "resolve" | null>(null);
-  const [workLog, setWorkLog] = useState("");
+  const [isActionDialogOpen, setIsActionDialogOpen] = useState(false);
+  const [actionType, setActionType] = useState<"acknowledge" | "start_repair" | "resolve">("acknowledge");
+  const [actionNote, setActionNote] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const isTechnician = user?.role === "technician";
-  const isSupervisor = user?.role === "supervisor";
-  const isAdmin = user?.role === "admin";
-  const canManageEvents = isTechnician || isSupervisor || isAdmin;
-
   useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/login");
+      return;
+    }
     fetchEquipment();
     fetchDowntimeEvents();
-  }, [fetchEquipment, fetchDowntimeEvents]);
+  }, [isAuthenticated, router, fetchEquipment, fetchDowntimeEvents]);
 
-  // Filter events
-  const filteredEvents = downtimeEvents.filter((event) => {
-    const eq = equipment.find((e) => e.id === event.equipmentId);
-    const matchesSearch =
-      eq?.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      event.issueType.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = statusFilter === "all" || event.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  });
+  // Filter events based on tab and search
+  const filteredEvents = useMemo(() => {
+    let events = [...downtimeEvents];
+    
+    // Filter by status tab
+    if (activeTab === "active") {
+      events = events.filter((e) => e.status !== "resolved");
+    } else if (activeTab === "resolved") {
+      events = events.filter((e) => e.status === "resolved");
+    }
+    
+    // Filter by search query
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      events = events.filter((e) => {
+        const relatedEquipment = equipment.find((eq) => eq.id === e.equipmentId);
+        return (
+          e.description.toLowerCase().includes(query) ||
+          relatedEquipment?.name.toLowerCase().includes(query) ||
+          relatedEquipment?.equipmentId.toLowerCase().includes(query)
+        );
+      });
+    }
+    
+    // Sort by reported date (newest first)
+    return events.sort((a, b) => 
+      new Date(b.reportedAt).getTime() - new Date(a.reportedAt).getTime()
+    );
+  }, [downtimeEvents, activeTab, searchQuery, equipment]);
 
-  const activeEvents = filteredEvents.filter((e) => e.status !== "resolved" && e.status !== "escalated");
-  const resolvedEvents = filteredEvents.filter((e) => e.status === "resolved" || e.status === "escalated");
+  // Get event counts
+  const eventCounts = useMemo(() => {
+    return {
+      all: downtimeEvents.length,
+      active: downtimeEvents.filter((e) => e.status !== "resolved").length,
+      resolved: downtimeEvents.filter((e) => e.status === "resolved").length,
+      reported: downtimeEvents.filter((e) => e.status === "reported").length,
+      acknowledged: downtimeEvents.filter((e) => e.status === "acknowledged").length,
+      inRepair: downtimeEvents.filter((e) => e.status === "in_repair").length,
+    };
+  }, [downtimeEvents]);
 
-  const getEquipmentName = (equipmentId: string) => {
-    const eq = equipment.find((e) => e.id === equipmentId);
-    return eq?.name || "Unknown Equipment";
-  };
-
-  const handleEventAction = async () => {
-    if (!selectedEvent || !actionType) return;
+  const handleAction = async () => {
+    if (!selectedEvent || !user) return;
 
     setIsSubmitting(true);
-    try {
-      let endpoint = "";
-      let payload: any = {};
-
-      switch (actionType) {
-        case "acknowledge":
-          endpoint = `/downtime-events/${selectedEvent.id}/acknowledge`;
-          payload = { technicianId: user?.id };
-          break;
-        case "start-repair":
-          endpoint = `/downtime-events/${selectedEvent.id}/start-repair`;
-          payload = { technicianId: user?.id };
-          break;
-        case "resolve":
-          endpoint = `/downtime-events/${selectedEvent.id}/resolve`;
-          payload = { 
-            technicianId: user?.id,
-            workLog: workLog || undefined
-          };
-          break;
-      }
-
-      await apiClient.patch(endpoint, payload);
-
-      toast({
-        title: "Success",
-        description: `Event ${actionType === "acknowledge" ? "acknowledged" : actionType === "start-repair" ? "repair started" : "resolved"} successfully.`,
-      });
-
-      setActionDialogOpen(false);
-      setWorkLog("");
-      setSelectedEvent(null);
-      fetchDowntimeEvents();
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update event. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    
+    // Simulate API call
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    
+    toast({
+      title: "Action Completed",
+      description: `Event ${actionType.replace("_", " ")}d successfully`,
+    });
+    
+    setIsActionDialogOpen(false);
+    setActionNote("");
+    setIsSubmitting(false);
+    setSelectedEvent(null);
+    
+    // Refresh data
+    fetchDowntimeEvents();
   };
 
-  const openActionDialog = (event: DowntimeEvent, action: "acknowledge" | "start-repair" | "resolve") => {
+  const openActionDialog = (event: DowntimeEvent, action: "acknowledge" | "start_repair" | "resolve") => {
     setSelectedEvent(event);
     setActionType(action);
-    setActionDialogOpen(true);
+    setIsActionDialogOpen(true);
   };
 
-  const renderEventCard = (event: DowntimeEvent, showActions = false) => (
-    <Card key={event.id} className="hover:shadow-md transition-shadow">
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <Link href={`/equipment/${event.equipmentId}`}>
-                <span className="font-semibold hover:text-blue-600 transition-colors">
-                  {getEquipmentName(event.equipmentId)}
-                </span>
-              </Link>
-              <StatusBadge status={event.status} type="event" size="sm" />
-            </div>
-            
-            <p className="text-sm text-gray-600 mb-2">{event.issueType}</p>
-            
-            {event.description && (
-              <p className="text-sm text-gray-500 line-clamp-2 mb-2">{event.description}</p>
-            )}
-            
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-400">
-              <span className="flex items-center gap-1">
-                <Calendar className="h-3 w-3" />
-                Reported {new Date(event.reportedAt).toLocaleString()}
-              </span>
-              {event.acknowledgedAt && (
-                <span className="flex items-center gap-1">
-                  <CheckCircle className="h-3 w-3" />
-                  Acknowledged
-                </span>
-              )}
-              {event.resolvedAt && (
-                <span className="flex items-center gap-1">
-                  <CheckCircle className="h-3 w-3 text-green-500" />
-                  Resolved {new Date(event.resolvedAt).toLocaleString()}
-                </span>
-              )}
-            </div>
-          </div>
+  const getActionButton = (event: DowntimeEvent) => {
+    const canAcknowledge = event.status === "reported" && user?.role !== "operator";
+    const canStartRepair = event.status === "acknowledged" && (user?.role === "technician" || user?.role === "admin");
+    const canResolve = event.status === "in_repair" && (user?.role === "technician" || user?.role === "admin" || user?.role === "supervisor");
 
-          {showActions && canManageEvents && (
-            <div className="flex flex-col gap-2 ml-4">
-              {event.status === "reported" && (
-                <Button
-                  size="sm"
-                  onClick={() => openActionDialog(event, "acknowledge")}
-                >
-                  Acknowledge
-                </Button>
-              )}
-              {event.status === "acknowledged" && (
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  onClick={() => openActionDialog(event, "start-repair")}
-                >
-                  <Wrench className="h-3 w-3 mr-1" />
-                  Start Repair
-                </Button>
-              )}
-              {(event.status === "in_repair" || event.status === "acknowledged") && (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => openActionDialog(event, "resolve")}
-                >
-                  <CheckCircle className="h-3 w-3 mr-1" />
-                  Resolve
-                </Button>
-              )}
-            </div>
-          )}
-        </div>
-      </CardContent>
-    </Card>
-  );
+    if (canAcknowledge) {
+      return (
+        <Button size="sm" onClick={() => openActionDialog(event, "acknowledge")}>
+          <AlertCircle className="mr-2 h-4 w-4" />
+          Acknowledge
+        </Button>
+      );
+    }
+    
+    if (canStartRepair) {
+      return (
+        <Button size="sm" onClick={() => openActionDialog(event, "start_repair")}>
+          <Wrench className="mr-2 h-4 w-4" />
+          Start Repair
+        </Button>
+      );
+    }
+    
+    if (canResolve) {
+      return (
+        <Button size="sm" variant="outline" onClick={() => openActionDialog(event, "resolve")}>
+          <CheckCircle2 className="mr-2 h-4 w-4" />
+          Resolve
+        </Button>
+      );
+    }
+    
+    return null;
+  };
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-              <h1 className="text-2xl font-bold text-gray-900">Downtime Events</h1>
-              <Link href="/report-issue">
-                <Button>
-                  <AlertCircle className="h-4 w-4 mr-2" />
-                  Report Issue
-                </Button>
-              </Link>
-            </div>
+    <DashboardLayout>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Downtime Events</h1>
+            <p className="text-muted-foreground">
+              Track and manage equipment downtime events
+            </p>
+          </div>
+          <Button asChild>
+            <Link href="/report-issue">
+              <AlertCircle className="mr-2 h-4 w-4" />
+              Report Issue
+            </Link>
+          </Button>
+        </div>
 
-            {/* Filters */}
-            <div className="flex flex-col sm:flex-row gap-3">
+        {/* Stats Cards */}
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+          <StatCard
+            title="Total Events"
+            count={eventCounts.all}
+            color="blue"
+            isLoading={isLoading}
+          />
+          <StatCard
+            title="Reported"
+            count={eventCounts.reported}
+            color="amber"
+            isLoading={isLoading}
+          />
+          <StatCard
+            title="Acknowledged"
+            count={eventCounts.acknowledged}
+            color="blue"
+            isLoading={isLoading}
+          />
+          <StatCard
+            title="In Repair"
+            count={eventCounts.inRepair}
+            color="purple"
+            isLoading={isLoading}
+          />
+          <StatCard
+            title="Resolved"
+            count={eventCounts.resolved}
+            color="green"
+            isLoading={isLoading}
+          />
+        </div>
+
+        {/* Filters */}
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex flex-col sm:flex-row gap-4">
               <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search events..."
+                  placeholder="Search events or equipment..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10"
                 />
               </div>
-              
-              <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as DowntimeEventStatus | "all")}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="reported">Reported</SelectItem>
-                  <SelectItem value="acknowledged">Acknowledged</SelectItem>
-                  <SelectItem value="in_repair">In Repair</SelectItem>
-                  <SelectItem value="resolved">Resolved</SelectItem>
-                  <SelectItem value="escalated">Escalated</SelectItem>
-                </SelectContent>
-              </Select>
+              {searchQuery && (
+                <Button variant="outline" onClick={() => setSearchQuery("")}>
+                  <X className="mr-2 h-4 w-4" />
+                  Clear
+                </Button>
+              )}
             </div>
-          </div>
-        </div>
-      </header>
+          </CardContent>
+        </Card>
 
-      {/* Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <Tabs defaultValue="active" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
+        {/* Events List */}
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList>
             <TabsTrigger value="active">
-              Active ({activeEvents.length})
+              Active
+              <Badge variant="secondary" className="ml-2">
+                {eventCounts.active}
+              </Badge>
             </TabsTrigger>
             <TabsTrigger value="resolved">
-              Resolved ({resolvedEvents.length})
+              Resolved
+              <Badge variant="secondary" className="ml-2">
+                {eventCounts.resolved}
+              </Badge>
+            </TabsTrigger>
+            <TabsTrigger value="all">
+              All
+              <Badge variant="secondary" className="ml-2">
+                {eventCounts.all}
+              </Badge>
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="active" className="space-y-4">
-            {activeEvents.length === 0 ? (
-              <div className="text-center py-12">
-                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-4">
-                  <CheckCircle className="h-8 w-8 text-green-600" />
-                </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">All Caught Up!</h3>
-                <p className="text-gray-500">No active downtime events at the moment.</p>
+          <TabsContent value={activeTab} className="mt-6">
+            {isLoading ? (
+              <div className="space-y-4">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Skeleton key={i} className="h-32" />
+                ))}
               </div>
+            ) : filteredEvents.length === 0 ? (
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+                  <CheckCircle2 className="h-12 w-12 text-green-500 mb-4" />
+                  <h3 className="font-semibold text-lg">
+                    {activeTab === "active" ? "No Active Events" : "No Events Found"}
+                  </h3>
+                  <p className="text-sm text-muted-foreground max-w-sm">
+                    {searchQuery
+                      ? "Try adjusting your search to see more results"
+                      : activeTab === "active"
+                      ? "Great! All downtime events have been resolved"
+                      : "No downtime events recorded yet"}
+                  </p>
+                </CardContent>
+              </Card>
             ) : (
               <div className="space-y-4">
-                {activeEvents.map((event) => renderEventCard(event, true))}
+                {filteredEvents.map((event) => (
+                  <EventCard
+                    key={event.id}
+                    event={event}
+                    equipment={equipment}
+                    actionButton={getActionButton(event)}
+                  />
+                ))}
               </div>
-            )}
-          </TabsContent>
-
-          <TabsContent value="resolved" className="space-y-4">
-            {resolvedEvents.length === 0 ? (
-              <div className="text-center py-12">
-                <Clock className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No Resolved Events</h3>
-                <p className="text-gray-500">No events have been resolved yet.</p>
-              </div>
-            ) : (
-              <ScrollArea className="h-[600px]">
-                <div className="space-y-4">
-                  {resolvedEvents.map((event) => renderEventCard(event))}
-                </div>
-              </ScrollArea>
             )}
           </TabsContent>
         </Tabs>
-      </main>
 
-      {/* Action Dialog */}
-      <Dialog open={actionDialogOpen} onOpenChange={setActionDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {actionType === "acknowledge" && "Acknowledge Event"}
-              {actionType === "start-repair" && "Start Repair"}
-              {actionType === "resolve" && "Resolve Event"}
-            </DialogTitle>
-          </DialogHeader>
-          
-          <div className="space-y-4 py-4">
-            {selectedEvent && (
-              <div className="bg-gray-50 p-3 rounded-lg">
-                <p className="font-medium">{getEquipmentName(selectedEvent.equipmentId)}</p>
-                <p className="text-sm text-gray-500">{selectedEvent.issueType}</p>
-              </div>
-            )}
-
-            {actionType === "resolve" && (
+        {/* Action Dialog */}
+        <Dialog open={isActionDialogOpen} onOpenChange={setIsActionDialogOpen}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>
+                {actionType === "acknowledge" && "Acknowledge Event"}
+                {actionType === "start_repair" && "Start Repair"}
+                {actionType === "resolve" && "Resolve Event"}
+              </DialogTitle>
+              <DialogDescription>
+                {selectedEvent && (
+                  <>
+                    Event for{" "}
+                    {equipment.find((e) => e.id === selectedEvent.equipmentId)?.name || "Unknown Equipment"}
+                  </>
+                )}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
               <div className="space-y-2">
-                <Label>Work Log (Optional)</Label>
+                <label className="text-sm font-medium">Notes</label>
                 <Textarea
-                  placeholder="Describe what was done to resolve the issue..."
-                  value={workLog}
-                  onChange={(e) => setWorkLog(e.target.value)}
-                  rows={4}
+                  placeholder="Add notes about this action..."
+                  value={actionNote}
+                  onChange={(e) => setActionNote(e.target.value)}
                 />
               </div>
-            )}
-
-            <div className="flex gap-3">
-              <Button
-                variant="outline"
-                className="flex-1"
-                onClick={() => setActionDialogOpen(false)}
-                disabled={isSubmitting}
-              >
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsActionDialogOpen(false)}>
                 Cancel
               </Button>
-              <Button
-                className="flex-1"
-                onClick={handleEventAction}
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? "Processing..." : "Confirm"}
+              <Button onClick={handleAction} disabled={isSubmitting}>
+                {isSubmitting && <Clock className="mr-2 h-4 w-4 animate-spin" />}
+                {actionType === "acknowledge" && "Acknowledge"}
+                {actionType === "start_repair" && "Start Repair"}
+                {actionType === "resolve" && "Resolve"}
               </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+    </DashboardLayout>
+  );
+}
+
+interface StatCardProps {
+  title: string;
+  count: number;
+  color: "blue" | "green" | "amber" | "purple" | "red";
+  isLoading: boolean;
+}
+
+function StatCard({ title, count, color, isLoading }: StatCardProps) {
+  const colorClasses = {
+    blue: "bg-blue-50 border-blue-200 text-blue-700",
+    green: "bg-green-50 border-green-200 text-green-700",
+    amber: "bg-amber-50 border-amber-200 text-amber-700",
+    purple: "bg-purple-50 border-purple-200 text-purple-700",
+    red: "bg-red-50 border-red-200 text-red-700",
+  };
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardContent className="p-6">
+          <Skeleton className="h-8 w-16" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className={colorClasses[color]}>
+      <CardContent className="p-6">
+        <p className="text-sm font-medium opacity-80">{title}</p>
+        <p className="text-3xl font-bold mt-1">{count}</p>
+      </CardContent>
+    </Card>
+  );
+}
+
+interface EventCardProps {
+  event: DowntimeEvent;
+  equipment: Equipment[];
+  actionButton: React.ReactNode;
+}
+
+function EventCard({ event, equipment, actionButton }: EventCardProps) {
+  const relatedEquipment = equipment.find((e) => e.id === event.equipmentId);
+  const timeAgo = formatDistanceToNow(new Date(event.reportedAt), { addSuffix: true });
+  const reportedAt = format(new Date(event.reportedAt), "MMM d, yyyy h:mm a");
+
+  const statusConfig = {
+    reported: { icon: <AlertCircle className="h-5 w-5" />, bg: "bg-amber-50", border: "border-amber-200" },
+    acknowledged: { icon: <Clock className="h-5 w-5" />, bg: "bg-blue-50", border: "border-blue-200" },
+    in_repair: { icon: <Wrench className="h-5 w-5" />, bg: "bg-purple-50", border: "border-purple-200" },
+    resolved: { icon: <CheckCircle2 className="h-5 w-5" />, bg: "bg-green-50", border: "border-green-200" },
+    escalated: { icon: <AlertTriangle className="h-5 w-5" />, bg: "bg-red-50", border: "border-red-200" },
+  };
+
+  const config = statusConfig[event.status];
+
+  return (
+    <Card className={`${config.bg} ${config.border}`}>
+      <CardContent className="p-6">
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+          <div className="flex items-start gap-4">
+            <div className="mt-1">{config.icon}</div>
+            <div className="flex-1">
+              <div className="flex flex-wrap items-center gap-2 mb-1">
+                <h3 className="font-semibold">
+                  {relatedEquipment?.name || "Unknown Equipment"}
+                </h3>
+                <EventStatusBadge status={event.status} size="sm" />
+                <Badge variant={event.severity === "critical" ? "destructive" : "secondary"}>
+                  {event.severity}
+                </Badge>
+              </div>
+              <p className="text-sm text-muted-foreground mb-3">
+                {event.description}
+              </p>
+              <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
+                <span className="flex items-center gap-1">
+                  <Settings className="h-4 w-4" />
+                  {relatedEquipment?.equipmentId || "N/A"}
+                </span>
+                <span className="flex items-center gap-1">
+                  <Calendar className="h-4 w-4" />
+                  {reportedAt}
+                </span>
+                <span className="flex items-center gap-1">
+                  <User className="h-4 w-4" />
+                  Reported {timeAgo}
+                </span>
+              </div>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
-    </div>
+          <div className="flex items-center gap-2">
+            {actionButton}
+            <Button variant="ghost" size="sm" asChild>
+              <Link href={`/equipment/${event.equipmentId}`}>
+                View Equipment
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
   );
 }

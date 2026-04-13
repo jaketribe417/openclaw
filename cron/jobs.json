@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1776045612933,
+      "updatedAtMs": 1776049215814,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -27,11 +27,11 @@
         "accountId": "Joy-email"
       },
       "state": {
-        "nextRunAtMs": 1776046200000,
-        "lastRunAtMs": 1776045600022,
+        "nextRunAtMs": 1776049800000,
+        "lastRunAtMs": 1776049200018,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 12911,
+        "lastDurationMs": 15796,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -140,46 +140,13 @@
       }
     },
     {
-      "id": "827b3afc-337b-4369-812b-7fdd09401591",
-      "agentId": "main",
-      "sessionKey": "agent:main:main",
-      "name": "harlan-bee-check",
-      "enabled": false,
-      "createdAtMs": 1774929904841,
-      "updatedAtMs": 1775359711971,
-      "schedule": {
-        "expr": "0 7-21 * * *",
-        "kind": "cron",
-        "tz": "America/Chicago"
-      },
-      "sessionTarget": "isolated",
-      "wakeMode": "now",
-      "payload": {
-        "kind": "agentTurn",
-        "message": "Run Harlan's Bee meeting check. Execute: node /Users/Jack/.openclaw/workspace/agents/harlan/scripts/bee-meeting-check.js",
-        "timeoutSeconds": 180
-      },
-      "delivery": {
-        "mode": "none"
-      },
-      "state": {
-        "lastRunAtMs": 1775354405660,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 17033,
-        "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 0,
-        "lastDelivered": false
-      }
-    },
-    {
       "id": "344e25ad-82d2-49b4-a483-474c52983bd3",
       "agentId": "main",
       "sessionKey": "agent:main:main",
       "name": "git-auto-push",
       "enabled": true,
       "createdAtMs": 1775007924606,
-      "updatedAtMs": 1776042292532,
+      "updatedAtMs": 1776045956147,
       "schedule": {
         "expr": "0 * * * *",
         "kind": "cron",
@@ -196,15 +163,15 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1776045871643,
-        "lastRunAtMs": 1776042271657,
+        "nextRunAtMs": 1776049471643,
+        "lastRunAtMs": 1776045910941,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 20875,
+        "lastDurationMs": 45206,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false,
-        "runningAtMs": 1776045910865
+        "runningAtMs": 1776049471651
       }
     },
     {

@@ -1,116 +1,107 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useEquipmentStore } from "@/stores/equipment-store";
+import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { useAuthStore } from "@/stores/auth-store";
+import { useEquipmentStore } from "@/stores/equipment-store";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Camera, Clock, AlertCircle, CheckCircle, ChevronLeft, Search } from "lucide-react";
-import Link from "next/link";
 import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
-
-// Quick issue templates
-const quickTemplates = [
-  { id: "jam", label: "Paper Jam", category: "mechanical" },
-  { id: "quality", label: "Print Quality Issue", category: "quality" },
-  { id: "communication", label: "Communication Error", category: "software" },
-  { id: "noise", label: "Unusual Noise", category: "mechanical" },
-  { id: "overheat", label: "Overheating", category: "mechanical" },
-  { id: "other", label: "Other", category: "other" },
-];
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { 
+  ArrowLeft,
+  Camera,
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  Settings,
+  Loader2,
+  Zap
+} from "lucide-react";
+import Link from "next/link";
+import { Equipment, DowntimeSeverity } from "@edt/shared";
+import { equipmentStatusConfig } from "@/lib/status-config";
 
 export default function ReportIssuePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { toast } = useToast();
-  const { user } = useAuthStore();
-  const { equipment, buildings, floors, zones, fetchEquipment, fetchBuildings, fetchFloors, fetchZones, reportIssue } = useEquipmentStore();
+  const { isAuthenticated, user } = useAuthStore();
+  const { 
+    equipment, 
+    isLoading, 
+    fetchEquipment,
+    reportIssue 
+  } = useEquipmentStore();
 
-  const [step, setStep] = useState<"select" | "details" | "submit">("select");
-  const [selectedEquipment, setSelectedEquipment] = useState<string | null>(null);
-  const [selectedBuilding, setSelectedBuilding] = useState<string | null>(null);
-  const [selectedFloor, setSelectedFloor] = useState<string | null>(null);
-  const [selectedZone, setSelectedZone] = useState<string | null>(null);
-  const [issueType, setIssueType] = useState<"critical" | "non-critical">("critical");
-  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
-  const [description, setDescription] = useState("");
+  // Form state
+  const [selectedEquipmentId, setSelectedEquipmentId] = useState<string>("");
+  const [severity, setSeverity] = useState<DowntimeSeverity>("non_critical");
+  const [description, setDescription] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [step, setStep] = useState<number>(1);
+
+  // Get pre-selected equipment from URL
+  const preSelectedId = searchParams.get("equipment");
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/login");
+      return;
+    }
     fetchEquipment();
-    fetchBuildings();
-  }, [fetchEquipment, fetchBuildings]);
+  }, [isAuthenticated, router, fetchEquipment]);
 
   useEffect(() => {
-    if (selectedBuilding) {
-      fetchFloors(selectedBuilding);
+    if (preSelectedId && equipment.some((e) => e.id === preSelectedId)) {
+      setSelectedEquipmentId(preSelectedId);
+      setStep(2);
     }
-  }, [selectedBuilding, fetchFloors]);
+  }, [preSelectedId, equipment]);
 
-  useEffect(() => {
-    if (selectedFloor) {
-      fetchZones(selectedFloor);
-    }
-  }, [selectedFloor, fetchZones]);
+  const selectedEquipment = equipment.find((e) => e.id === selectedEquipmentId);
 
-  // Filter equipment based on selections and search
-  const filteredEquipment = equipment.filter((eq) => {
-    const matchesBuilding = !selectedBuilding || eq.buildingId === selectedBuilding;
-    const matchesFloor = !selectedFloor || eq.floorId === selectedFloor;
-    const matchesZone = !selectedZone || eq.zoneId === selectedZone;
-    const matchesSearch = 
-      eq.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      eq.equipmentId.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesBuilding && matchesFloor && matchesZone && matchesSearch;
-  });
-
-  // Group equipment by zone for better organization
-  const equipmentByZone = filteredEquipment.reduce((acc, eq) => {
-    const zoneId = eq.zoneId || "uncategorized";
-    if (!acc[zoneId]) acc[zoneId] = [];
-    acc[zoneId].push(eq);
-    return acc;
-  }, {} as Record<string, typeof equipment>);
-
-  const handleTemplateSelect = (templateId: string) => {
-    setSelectedTemplate(templateId);
-    const template = quickTemplates.find((t) => t.id === templateId);
-    if (template) {
-      setDescription(template.label);
-    }
-  };
+  // Filter equipment for search
+  const filteredEquipment = equipment.filter((e) => 
+    e.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    e.equipmentId.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleSubmit = async () => {
-    if (!selectedEquipment) return;
-    
+    if (!selectedEquipment || !user) return;
+
     setIsSubmitting(true);
     try {
       await reportIssue({
-        equipmentId: selectedEquipment,
-        reportedBy: user?.id || "unknown",
-        issueType: issueType === "critical" ? "critical" : "non_critical",
-        priority: issueType,
-        description: description || undefined,
+        equipmentId: selectedEquipment.id,
+        reportedBy: user.id,
+        issueType: severity === "critical" ? "Critical Issue" : "Non-Critical Issue",
+        priority: severity,
+        description,
       });
-      
+
       toast({
         title: "Issue Reported",
-        description: "Your issue has been submitted successfully.",
+        description: "Your issue has been reported successfully",
       });
-      
-      router.push("/dashboard");
+
+      // Reset form and redirect
+      setStep(1);
+      setSelectedEquipmentId("");
+      setSeverity("non_critical");
+      setDescription("");
+      router.push("/downtime-events");
     } catch (error) {
       toast({
-        title: "Error",
-        description: "Failed to submit issue. Please try again.",
+        title: "Failed to Report",
+        description: "There was an error reporting the issue. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -118,352 +109,332 @@ export default function ReportIssuePage() {
     }
   };
 
-  const getZoneName = (zoneId: string) => {
-    if (zoneId === "uncategorized") return "Uncategorized";
-    const zone = zones.find((z) => z.id === zoneId);
-    return zone?.name || "Unknown Zone";
-  };
+  const canSubmit = selectedEquipment && description.trim().length > 0;
 
-  const getEquipmentName = (id: string) => {
-    const eq = equipment.find((e) => e.id === id);
-    return eq?.name || "Unknown Equipment";
-  };
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b sticky top-0 z-10">
-        <div className="max-w-2xl mx-auto px-4 py-4">
-          <div className="flex items-center gap-4">
-            <Link href="/dashboard">
-              <Button variant="ghost" size="sm">
-                <ChevronLeft className="h-4 w-4 mr-1" />
-                Cancel
-              </Button>
-            </Link>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Report Issue</h1>
-              <p className="text-sm text-gray-500">Step {step === "select" ? 1 : step === "details" ? 2 : 3} of 3</p>
+    <DashboardLayout>
+      <div className="space-y-6 max-w-2xl mx-auto">
+        {/* Header */}
+        <Button variant="ghost" asChild className="-ml-4">
+          <Link href="/dashboard">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Dashboard
+          </Link>
+        </Button>
+
+        <div className="text-center">
+          <h1 className="text-3xl font-bold tracking-tight">Report Issue</h1>
+          <p className="text-muted-foreground mt-2">
+            Report equipment downtime in under 30 seconds
+          </p>
+        </div>
+
+        {/* Progress Steps */}
+        <div className="flex items-center justify-center gap-4 mb-8">
+          <div className="flex items-center">
+            <div className={`h-8 w-8 rounded-full flex items-center justify-center text-sm font-medium ${
+              step >= 1 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+            }`}>
+              1
+            </div>
+            <div className="ml-2 hidden sm:block">
+              <p className="text-sm font-medium">Equipment</p>
+            </div>
+          </div>
+          <div className="h-px w-8 bg-border" />
+          <div className="flex items-center">
+            <div className={`h-8 w-8 rounded-full flex items-center justify-center text-sm font-medium ${
+              step >= 2 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+            }`}>
+              2
+            </div>
+            <div className="ml-2 hidden sm:block">
+              <p className="text-sm font-medium">Details</p>
+            </div>
+          </div>
+          <div className="h-px w-8 bg-border" />
+          <div className="flex items-center">
+            <div className={`h-8 w-8 rounded-full flex items-center justify-center text-sm font-medium ${
+              step >= 3 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+            }`}>
+              3
+            </div>
+            <div className="ml-2 hidden sm:block">
+              <p className="text-sm font-medium">Submit</p>
             </div>
           </div>
         </div>
-      </header>
 
-      {/* Progress Bar */}
-      <div className="bg-white border-b">
-        <div className="max-w-2xl mx-auto px-4 py-2">
-          <div className="flex gap-1">
-            {["select", "details", "submit"].map((s, i) => (
-              <div
-                key={s}
-                className={cn(
-                  "h-1 flex-1 rounded-full transition-colors",
-                  step === s || ["details", "submit"].includes(step) && s === "select" || step === "submit" && s === "details"
-                    ? "bg-blue-500"
-                    : "bg-gray-200"
-                )}
-              />
-            ))}
-          </div>
-        </div>
-      </div>
+        {/* Step 1: Select Equipment */}
+        {step === 1 && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Select Equipment</CardTitle>
+              <CardDescription>
+                Choose the equipment experiencing issues
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {/* Search */}
+              <div className="relative">
+                <Input
+                  placeholder="Search equipment by name or ID..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full"
+                />
+              </div>
 
-      {/* Content */}
-      <main className="max-w-2xl mx-auto px-4 py-6">
-        {step === "select" && (
-          <div className="space-y-6">
-            {/* Location Filters */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Filter by Location</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-3 gap-2">
-                  <Select value={selectedBuilding || ""} onValueChange={setSelectedBuilding}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Building" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="">All Buildings</SelectItem>
-                      {buildings.map((b) => (
-                        <SelectItem key={b.id} value={b.id}>{b.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  <Select value={selectedFloor || ""} onValueChange={setSelectedFloor} disabled={!selectedBuilding}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Floor" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="">All Floors</SelectItem>
-                      {floors.map((f) => (
-                        <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-
-                  <Select value={selectedZone || ""} onValueChange={setSelectedZone} disabled={!selectedFloor}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Zone" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="">All Zones</SelectItem>
-                      {zones.map((z) => (
-                        <SelectItem key={z.id} value={z.id}>{z.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                  <Input
-                    placeholder="Search equipment..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Equipment Selection */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Select Equipment</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {filteredEquipment.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    <AlertCircle className="h-12 w-12 mx-auto mb-2 opacity-30" />
-                    <p>No equipment found</p>
-                  </div>
-                ) : (
-                  <div className="space-y-4 max-h-[400px] overflow-y-auto">
-                    {Object.entries(equipmentByZone).map(([zoneId, zoneEquipment]) => (
-                      <div key={zoneId}>
-                        <p className="text-sm font-medium text-gray-500 mb-2 sticky top-0 bg-white py-1">
-                          {getZoneName(zoneId)}
-                        </p>
-                        <div className="space-y-2">
-                          {zoneEquipment.map((eq) => (
-                            <button
-                              key={eq.id}
-                              onClick={() => {
-                                setSelectedEquipment(eq.id);
-                                setStep("details");
-                              }}
-                              className={cn(
-                                "w-full text-left p-3 rounded-lg border-2 transition-all",
-                                selectedEquipment === eq.id
-                                  ? "border-blue-500 bg-blue-50"
-                                  : "border-gray-200 hover:border-blue-300 hover:bg-gray-50"
-                              )}
-                            >
-                              <div className="flex items-center justify-between">
-                                <div>
-                                  <p className="font-medium">{eq.name}</p>
-                                  <p className="text-sm text-gray-500">{eq.equipmentId}</p>
-                                </div>
-                                {selectedEquipment === eq.id && (
-                                  <CheckCircle className="h-5 w-5 text-blue-500" />
-                                )}
-                              </div>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
+              {/* Equipment List */}
+              <div className="space-y-2 max-h-[400px] overflow-y-auto">
+                {isLoading ? (
+                  <div className="space-y-2">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <div key={i} className="h-16 bg-muted rounded-lg animate-pulse" />
                     ))}
                   </div>
+                ) : filteredEquipment.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Settings className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-muted-foreground">No equipment found</p>
+                  </div>
+                ) : (
+                  filteredEquipment.map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        setSelectedEquipmentId(item.id);
+                        setStep(2);
+                      }}
+                      className={`w-full flex items-center gap-4 p-4 rounded-lg border text-left transition-colors hover:bg-accent ${
+                        selectedEquipmentId === item.id ? "border-primary bg-primary/5" : ""
+                      }`}
+                    >
+                      <div className="h-10 w-10 rounded-lg bg-gray-100 flex items-center justify-center">
+                        <Settings className="h-5 w-5 text-gray-600" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-medium">{item.name}</p>
+                        <p className="text-sm text-muted-foreground">{item.equipmentId}</p>
+                      </div>
+                      <Badge 
+                        variant={item.status === "running" ? "default" : "secondary"}
+                        className={item.status === "down" ? "bg-red-100 text-red-700" : ""}
+                      >
+                        {item.status}
+                      </Badge>
+                    </button>
+                  ))
                 )}
-              </CardContent>
-            </Card>
-          </div>
+              </div>
+            </CardContent>
+          </Card>
         )}
 
-        {step === "details" && (
-          <div className="space-y-6">
-            {/* Selected Equipment */}
-            <Card className="bg-blue-50 border-blue-200">
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-blue-600 font-medium">Selected Equipment</p>
-                    <p className="text-lg font-semibold">{getEquipmentName(selectedEquipment!)}</p>
-                  </div>
-                  <Button variant="ghost" size="sm" onClick={() => setStep("select")}>
-                    Change
-                  </Button>
+        {/* Step 2: Issue Details */}
+        {step === 2 && selectedEquipment && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Issue Details</CardTitle>
+              <CardDescription>
+                Describe the issue for {selectedEquipment.name}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Selected Equipment Summary */}
+              <div className="flex items-center gap-4 p-4 rounded-lg bg-muted">
+                <div className="h-10 w-10 rounded-lg bg-gray-100 flex items-center justify-center">
+                  <Settings className="h-5 w-5 text-gray-600" />
                 </div>
-              </CardContent>
-            </Card>
+                <div className="flex-1">
+                  <p className="font-medium">{selectedEquipment.name}</p>
+                  <p className="text-sm text-muted-foreground">{selectedEquipment.equipmentId}</p>
+                </div>
+                <Button variant="ghost" size="sm" onClick={() => setStep(1)}>
+                  Change
+                </Button>
+              </div>
 
-            {/* Issue Type */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Issue Severity</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <RadioGroup value={issueType} onValueChange={(v) => setIssueType(v as "critical" | "non-critical")}>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <RadioGroupItem value="critical" id="critical" className="sr-only" />
-                      <Label
-                        htmlFor="critical"
-                        className={cn(
-                          "flex flex-col items-center p-4 border-2 rounded-lg cursor-pointer transition-all",
-                          issueType === "critical"
-                            ? "border-red-500 bg-red-50"
-                            : "border-gray-200 hover:border-red-300"
-                        )}
-                      >
-                        <AlertCircle className="h-8 w-8 mb-2 text-red-500" />
-                        <span className="font-semibold text-red-700">Critical</span>
-                        <span className="text-xs text-gray-500">Equipment is down</span>
-                      </Label>
+              {/* Severity Selection */}
+              <div className="space-y-2">
+                <Label>Severity Level</Label>
+                <div className="grid grid-cols-2 gap-4">
+                  <button
+                    onClick={() => setSeverity("non_critical")}
+                    className={`p-4 rounded-lg border text-left transition-colors ${
+                      severity === "non_critical" 
+                        ? "border-primary bg-primary/5" 
+                        : "hover:bg-accent"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <Clock className="h-5 w-5 text-yellow-500" />
+                      <span className="font-medium">Non-Critical</span>
                     </div>
-                    <div>
-                      <RadioGroupItem value="non-critical" id="non-critical" className="sr-only" />
-                      <Label
-                        htmlFor="non-critical"
-                        className={cn(
-                          "flex flex-col items-center p-4 border-2 rounded-lg cursor-pointer transition-all",
-                          issueType === "non-critical"
-                            ? "border-yellow-500 bg-yellow-50"
-                            : "border-gray-200 hover:border-yellow-300"
-                        )}
-                      >
-                        <Clock className="h-8 w-8 mb-2 text-yellow-500" />
-                        <span className="font-semibold text-yellow-700">Non-Critical</span>
-                        <span className="text-xs text-gray-500">Minor issue</span>
-                      </Label>
+                    <p className="text-sm text-muted-foreground">
+                      Issue can be addressed during normal maintenance
+                    </p>
+                  </button>
+                  <button
+                    onClick={() => setSeverity("critical")}
+                    className={`p-4 rounded-lg border text-left transition-colors ${
+                      severity === "critical" 
+                        ? "border-primary bg-primary/5" 
+                        : "hover:bg-accent"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <AlertTriangle className="h-5 w-5 text-red-500" />
+                      <span className="font-medium">Critical</span>
                     </div>
-                  </div>
-                </RadioGroup>
-              </CardContent>
-            </Card>
+                    <p className="text-sm text-muted-foreground">
+                      Immediate attention required - production impact
+                    </p>
+                  </button>
+                </div>
+              </div>
 
-            {/* Quick Templates */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Quick Select Issue Type</CardTitle>
-              </CardHeader>
-              <CardContent>
+              {/* Description */}
+              <div className="space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  placeholder="Describe the issue you're experiencing..."
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  className="min-h-[100px]"
+                />
+                <p className="text-xs text-muted-foreground">
+                  {description.length}/500 characters
+                </p>
+              </div>
+
+              {/* Photo Attachment (placeholder) */}
+              <div className="space-y-2">
+                <Label>Photo (Optional)</Label>
+                <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center hover:bg-accent/50 transition-colors cursor-pointer">
+                  <Camera className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-sm text-muted-foreground">
+                    Click to upload or drag and drop
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    PNG, JPG up to 5MB
+                  </p>
+                </div>
+              </div>
+
+              {/* Quick Description Templates */}
+              <div className="space-y-2">
+                <Label className="text-muted-foreground">Quick Templates</Label>
                 <div className="flex flex-wrap gap-2">
-                  {quickTemplates.map((template) => (
+                  {["Not starting", "Making noise", "Error code", "Overheating", "Jam/Stuck"].map((template) => (
                     <button
-                      key={template.id}
-                      onClick={() => handleTemplateSelect(template.id)}
-                      className={cn(
-                        "px-4 py-2 rounded-full text-sm border-2 transition-all",
-                        selectedTemplate === template.id
-                          ? "border-blue-500 bg-blue-50 text-blue-700"
-                          : "border-gray-200 hover:border-blue-300"
-                      )}
+                      key={template}
+                      onClick={() => setDescription(template)}
+                      className="text-sm px-3 py-1.5 rounded-full border hover:bg-accent transition-colors"
                     >
-                      {template.label}
+                      {template}
                     </button>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
 
-            {/* Description */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-base">Additional Details (Optional)</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <Textarea
-                  placeholder="Describe the issue in more detail..."
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  rows={4}
-                />
-                
-                <button className="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700">
-                  <Camera className="h-4 w-4" />
-                  Attach Photo (optional)
-                </button>
-              </CardContent>
-            </Card>
-
-            <div className="flex gap-3">
-              <Button variant="outline" className="flex-1" onClick={() => setStep("select")}>
-                Back
-              </Button>
-              <Button 
-                className="flex-1" 
-                onClick={() => setStep("submit")}
-                disabled={!selectedTemplate}
-              >
-                Continue
-              </Button>
-            </div>
-          </div>
+              {/* Navigation Buttons */}
+              <div className="flex gap-4 pt-4">
+                <Button variant="outline" onClick={() => setStep(1)} className="flex-1">
+                  Back
+                </Button>
+                <Button 
+                  onClick={() => setStep(3)} 
+                  className="flex-1"
+                  disabled={!description.trim()}
+                >
+                  Review
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         )}
 
-        {step === "submit" && (
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Confirm Report</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex justify-between py-2 border-b">
-                    <span className="text-gray-500">Equipment</span>
-                    <span className="font-medium">{getEquipmentName(selectedEquipment!)}</span>
-                  </div>
-                  <div className="flex justify-between py-2 border-b">
-                    <span className="text-gray-500">Severity</span>
-                    <Badge variant={issueType === "critical" ? "destructive" : "default"}>
-                      {issueType === "critical" ? "Critical" : "Non-Critical"}
-                    </Badge>
-                  </div>
-                  <div className="flex justify-between py-2 border-b">
-                    <span className="text-gray-500">Issue Type</span>
-                    <span className="font-medium">
-                      {quickTemplates.find((t) => t.id === selectedTemplate)?.label}
-                    </span>
-                  </div>
-                  {description && (
-                    <div className="py-2 border-b">
-                      <span className="text-gray-500">Description</span>
-                      <p className="mt-1 text-sm">{description}</p>
-                    </div>
-                  )}
+        {/* Step 3: Review & Submit */}
+        {step === 3 && selectedEquipment && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Review & Submit</CardTitle>
+              <CardDescription>
+                Confirm the details before submitting
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Summary */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 rounded-lg border">
+                  <span className="text-muted-foreground">Equipment</span>
+                  <span className="font-medium">{selectedEquipment.name}</span>
                 </div>
-
-                <div className="bg-yellow-50 p-4 rounded-lg">
-                  <p className="text-sm text-yellow-800">
-                    <strong>Note:</strong> This will immediately notify technicians and mark the equipment as {issueType === "critical" ? "down" : "degraded"}.
-                  </p>
-                </div>
-
-                <div className="flex gap-3 pt-4">
-                  <Button 
-                    variant="outline" 
-                    className="flex-1" 
-                    onClick={() => setStep("details")}
-                    disabled={isSubmitting}
+                <div className="flex items-center justify-between p-4 rounded-lg border">
+                  <span className="text-muted-foreground">Severity</span>
+                  <Badge 
+                    variant={severity === "critical" ? "destructive" : "secondary"}
                   >
-                    Back
-                  </Button>
-                  <Button 
-                    className="flex-1" 
-                    onClick={handleSubmit}
-                    disabled={isSubmitting}
-                  >
-                    {isSubmitting ? "Submitting..." : "Submit Report"}
-                  </Button>
+                    {severity === "critical" ? "Critical" : "Non-Critical"}
+                  </Badge>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+                <div className="p-4 rounded-lg border">
+                  <span className="text-muted-foreground block mb-2">Description</span>
+                  <p className="font-medium">{description}</p>
+                </div>
+                <div className="flex items-center justify-between p-4 rounded-lg border">
+                  <span className="text-muted-foreground">Reported By</span>
+                  <span className="font-medium">{user?.name}</span>
+                </div>
+                <div className="flex items-center justify-between p-4 rounded-lg border">
+                  <span className="text-muted-foreground">Time</span>
+                  <span className="font-medium">{new Date().toLocaleString()}</span>
+                </div>
+              </div>
+
+              {/* Estimated Time */}
+              <Alert className="bg-blue-50 border-blue-200">
+                <Clock className="h-4 w-4 text-blue-600" />
+                <AlertDescription className="text-blue-700">
+                  Average response time for {severity === "critical" ? "critical" : "non-critical"} issues: 
+                  <span className="font-medium"> {severity === "critical" ? "15 minutes" : "2 hours"}</span>
+                </AlertDescription>
+              </Alert>
+
+              {/* Navigation Buttons */}
+              <div className="flex gap-4 pt-4">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setStep(2)} 
+                  className="flex-1"
+                  disabled={isSubmitting}
+                >
+                  Back
+                </Button>
+                <Button 
+                  onClick={handleSubmit} 
+                  className="flex-1"
+                  disabled={isSubmitting || !canSubmit}
+                >
+                  {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                  {isSubmitting ? "Submitting..." : "Submit Report"}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         )}
-      </main>
-    </div>
+
+        {/* Help Text */}
+        <p className="text-center text-sm text-muted-foreground">
+          Need help? Contact your supervisor or call the maintenance hotline.
+        </p>
+      </div>
+    </DashboardLayout>
   );
 }

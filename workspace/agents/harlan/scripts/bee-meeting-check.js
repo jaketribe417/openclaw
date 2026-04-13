@@ -126,7 +126,7 @@ async function getAllBeeMeetings(fullSync = false, historyDays = 60) {
   
   // Try multiple commands to get comprehensive history
   let allConversations = [];
-  const commands = ['changed', 'now', 'list'];
+  const commands = ['changed', 'now', 'conversations list --limit 50'];
   
   for (const cmd of commands) {
     try {

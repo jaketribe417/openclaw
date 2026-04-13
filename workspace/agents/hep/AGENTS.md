@@ -40,9 +40,17 @@ Before answering questions about past work or starting non-trivial tasks:
 
 **Remember:** If it's not written to a file, it doesn't exist after compaction.
 
-### MemPalace (MCP)
+### MemPalace (MCP) — Mandatory Protocol
 
-When **`mempalace_*` tools** are available: use **`memory_search` / `memory_get` first** for coding context in this workspace. Use **MemPalace** for **palace-mined** history or **KG** facts about people/projects across mined data. Protocol: **`skills/mempalace/SKILL.md`**.
+When **`mempalace_*` tools** are available:
+
+**MANDATORY PROTOCOL:**
+1. **ON WAKEUP**: Call `mempalace_status` to load palace overview
+2. **BEFORE RESPONDING** about any person, project, or past event: Query palace first (`mempalace_search` or `mempalace_kg_query`). Never guess—verify.
+3. **AFTER EACH SESSION**: Call `mempalace_diary_write` to record what happened, what was learned, what matters.
+4. **WHEN FACTS CHANGE**: Use `mempalace_kg_invalidate` on old facts, `mempalace_kg_add` for new ones.
+
+**Order:** Search native memory first; use MemPalace when native results are empty OR the question needs palace-ingested data, KG facts, or cross-session verbatim history.
 
 ## Tools
 
