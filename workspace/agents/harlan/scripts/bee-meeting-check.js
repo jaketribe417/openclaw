@@ -17,6 +17,7 @@ const LOG_DIR = path.join(WORKSPACE_ROOT, 'logs');
 const LOG_FILE = path.join(LOG_DIR, 'harlan-actions.log');
 const MEMORY_DIR = path.join(HARLAN_DIR, 'memory');
 const MEETINGS_DIR = path.join(HARLAN_DIR, 'meetings');
+const SYNC_DIR = path.join(HARLAN_DIR, 'bee-sync');
 const STATE_FILE = path.join(WORKSPACE_ROOT, '.harlan-bee-state.json');
 const MEETINGS_INDEX_FILE = path.join(HARLAN_DIR, 'meetings', 'index.json');
 const REPO_ROOT = path.resolve(__dirname, '../../../..');
@@ -41,6 +42,9 @@ if (!fs.existsSync(MEMORY_DIR)) {
 }
 if (!fs.existsSync(MEETINGS_DIR)) {
   fs.mkdirSync(MEETINGS_DIR, { recursive: true });
+}
+if (!fs.existsSync(SYNC_DIR)) {
+  fs.mkdirSync(SYNC_DIR, { recursive: true });
 }
 
 function getTimestamp() {
@@ -346,7 +350,7 @@ async function checkBeeFacts() {
   return { available: true, recentFacts, error: null };
 }
 
-// Get full transcript for a meeting using bee transcript command
+// Get full transcript for a meeting using bee conversations get
 async function getMeetingTranscript(conversationId) {
   if (!conversationId) {
     return { success: false, transcript: null, error: 'No conversation ID' };
@@ -355,7 +359,7 @@ async function getMeetingTranscript(conversationId) {
   logAction(`TRANSCRIPT: Fetching for conversation ${conversationId}`);
   
   try {
-    const output = execSync(`bee transcript ${conversationId}`, { 
+    const output = execSync(`bee conversations get ${conversationId}`, { 
       cwd: REPO_ROOT,
       encoding: 'utf8',
       timeout: 30000
@@ -370,6 +374,31 @@ async function getMeetingTranscript(conversationId) {
   } catch (err) {
     logAction(`TRANSCRIPT_ERROR: ${err.message}`);
     return { success: false, transcript: null, error: err.message };
+  }
+}
+
+// Run bee sync to export all data to markdown files
+async function runBeeSync() {
+  logAction('BEE_SYNC: Running bee sync to export all data');
+  
+  try {
+    // Run bee sync with custom output directory
+    execSync(`bee sync --output ${SYNC_DIR}`, {
+      cwd: REPO_ROOT,
+      encoding: 'utf8',
+      timeout: 120000
+    });
+    
+    logAction(`BEE_SYNC: Sync complete. Data exported to ${SYNC_DIR}`);
+    
+    // Check what files were created
+    const files = fs.readdirSync(SYNC_DIR);
+    logAction(`BEE_SYNC: Files created: ${files.join(', ')}`);
+    
+    return { success: true, files, error: null };
+  } catch (err) {
+    logAction(`BEE_SYNC_ERROR: ${err.message}`);
+    return { success: false, files: [], error: err.message };
   }
 }
 
@@ -693,6 +722,9 @@ async function main() {
   logAction('HARLAN QUILL — BEE CHECK WITH MEMORY & TODOS');
   logAction('═══════════════════════════════════════');
   
+  // Run bee sync first to get full data export
+  const syncResult = await runBeeSync();
+  
   // Get meetings, todos, and facts
   const meetings = await getBeeMeetings();
   const todos = await checkBeeTodos();
@@ -717,6 +749,7 @@ async function main() {
   
   logAction('');
   logAction(`SUMMARY:`);
+  logAction(`  Bee Sync: ${syncResult.success ? 'Complete' : 'Failed'}${syncResult.files.length > 0 ? ` (${syncResult.files.length} files)` : ''}`);
   logAction(`  Meetings: ${meetings.meetings?.length || 0} total, ${memoryResult.saved} new saved`);
   logAction(`  Meeting Files: ${memoryResult.files?.length || 0} created`);
   logAction(`  Memory Index: ${memoryResult.memoryUpdated ? 'Updated' : 'No changes'}`);
@@ -725,6 +758,7 @@ async function main() {
   logAction(`  Todos (Bee): ${todos.newTodos?.length || 0} new, ${todos.totalIncomplete || 0} incomplete`);
   logAction(`  Facts: ${facts.recentFacts?.length || 0} recent`);
   logAction(`  Locations:`);
+  logAction(`    • workspace/agents/harlan/bee-sync/ (full sync)`);
   logAction(`    • workspace/agents/harlan/meetings/`);
   logAction(`    • workspace/agents/harlan/memory/meetings-index.md`);
   logAction(`    • workspace/agents/harlan/todos/`);

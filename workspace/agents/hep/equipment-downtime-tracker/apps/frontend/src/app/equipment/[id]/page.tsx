@@ -36,7 +36,7 @@ import { Equipment, EquipmentStatus, DowntimeEvent } from "@edt/shared";
 import { equipmentStatusConfig } from "@/lib/status-config";
 import { formatDistanceToNow } from "date-fns";
 
-export default function EquipmentDetailPage({ params }: { params: { id: string } }) {
+export default function EquipmentDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
   const { toast } = useToast();
   const { isAuthenticated, user } = useAuthStore();
@@ -54,9 +54,12 @@ export default function EquipmentDetailPage({ params }: { params: { id: string }
   const [newStatus, setNewStatus] = useState<EquipmentStatus>("running");
   const [statusReason, setStatusReason] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
+  const [equipmentId, setEquipmentId] = useState<string>("");
 
   // Unwrap params
-  const { id: equipmentId } = params;
+  useEffect(() => {
+    params.then(p => setEquipmentId(p.id));
+  }, [params]);
 
   useEffect(() => {
     if (!isAuthenticated) {

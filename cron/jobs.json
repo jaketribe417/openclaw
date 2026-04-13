@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1776049215814,
+      "updatedAtMs": 1776052820398,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -27,14 +27,14 @@
         "accountId": "Joy-email"
       },
       "state": {
-        "nextRunAtMs": 1776049800000,
-        "lastRunAtMs": 1776049200018,
+        "nextRunAtMs": 1776053400000,
+        "lastRunAtMs": 1776052800027,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 15796,
-        "lastDeliveryStatus": "not-delivered",
+        "lastDurationMs": 20371,
+        "lastDeliveryStatus": "delivered",
         "consecutiveErrors": 0,
-        "lastDelivered": false
+        "lastDelivered": true
       }
     },
     {
@@ -146,7 +146,7 @@
       "name": "git-auto-push",
       "enabled": true,
       "createdAtMs": 1775007924606,
-      "updatedAtMs": 1776045956147,
+      "updatedAtMs": 1776049490646,
       "schedule": {
         "expr": "0 * * * *",
         "kind": "cron",
@@ -163,15 +163,15 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1776049471643,
-        "lastRunAtMs": 1776045910941,
+        "nextRunAtMs": 1776053071643,
+        "lastRunAtMs": 1776049471657,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 45206,
+        "lastDurationMs": 18989,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false,
-        "runningAtMs": 1776049471651
+        "runningAtMs": 1776053122557
       }
     },
     {
@@ -208,6 +208,40 @@
         "consecutiveErrors": 3,
         "lastDeliveryError": "⚠️ ✉️ Message: `1488391200917553162` failed",
         "lastError": "⚠️ ✉️ Message: `1488391200917553162` failed"
+      }
+    },
+    {
+      "id": "task-checker-001",
+      "agentId": "hep",
+      "sessionKey": "agent:hep:hep",
+      "name": "hep-task-checker",
+      "enabled": true,
+      "createdAtMs": 1776052620000,
+      "updatedAtMs": 1776053120440,
+      "schedule": {
+        "expr": "*/30 * * * *",
+        "kind": "cron"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "payload": {
+        "kind": "agentTurn",
+        "message": "Check your TODO list and work on the next item.\n\nSTEPS:\n1. Read your memory files to understand current project status\n2. Check /Users/Jack/.openclaw/workspace/jake-mission-control/todo.md for pending tasks\n3. Identify the highest priority pending task\n4. Work on that task\n5. Report what you completed\n\nIf no tasks are pending, report 'All tasks complete - awaiting new instructions.'",
+        "timeoutSeconds": 300
+      },
+      "delivery": {
+        "mode": "none"
+      },
+      "state": {
+        "nextRunAtMs": 1776054600000,
+        "lastRunAtMs": 1776052820398,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 300042,
+        "lastDeliveryStatus": "not-requested",
+        "consecutiveErrors": 1,
+        "lastError": "cron: job execution timed out",
+        "lastErrorReason": "timeout"
       }
     }
   ]

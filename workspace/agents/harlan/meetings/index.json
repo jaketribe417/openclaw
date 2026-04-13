@@ -1,7 +1,7 @@
 {
-  "lastUpdated": "2026-04-13T03:04:00.804Z",
+  "lastUpdated": "2026-04-13T03:20:01.677Z",
   "totalMeetings": 50,
-  "newMeetingsCount": 6,
+  "newMeetingsCount": 0,
   "missingMeetingsCount": 0,
   "allMeetings": [
     {
@@ -355,37 +355,6 @@
       "status": "unknown"
     }
   ],
-  "newMeetings": [
-    {
-      "id": 7441305,
-      "title": "Untitled",
-      "date": 1775750541358
-    },
-    {
-      "id": 7438568,
-      "title": "Untitled",
-      "date": 1775742095495
-    },
-    {
-      "id": 7427666,
-      "title": "Untitled",
-      "date": 1775680643493
-    },
-    {
-      "id": 7405481,
-      "title": "Untitled",
-      "date": 1775586096600
-    },
-    {
-      "id": 7402647,
-      "title": "Untitled",
-      "date": 1775578455376
-    },
-    {
-      "id": 7399692,
-      "title": "Untitled",
-      "date": 1775569871563
-    }
-  ],
+  "newMeetings": [],
   "missingMeetings": []
 }
