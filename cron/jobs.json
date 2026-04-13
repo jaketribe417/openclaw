@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1776060011676,
+      "updatedAtMs": 1776063656589,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -27,11 +27,11 @@
         "accountId": "Joy-email"
       },
       "state": {
-        "nextRunAtMs": 1776060600000,
-        "lastRunAtMs": 1776060000032,
+        "nextRunAtMs": 1776064200000,
+        "lastRunAtMs": 1776063600032,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 11644,
+        "lastDurationMs": 56557,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -146,7 +146,7 @@
       "name": "git-auto-push",
       "enabled": true,
       "createdAtMs": 1775007924606,
-      "updatedAtMs": 1776056765165,
+      "updatedAtMs": 1776060384607,
       "schedule": {
         "expr": "0 * * * *",
         "kind": "cron",
@@ -163,15 +163,15 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1776060271643,
-        "lastRunAtMs": 1776056730218,
+        "nextRunAtMs": 1776063871643,
+        "lastRunAtMs": 1776060350509,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 34947,
+        "lastDurationMs": 34098,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false,
-        "runningAtMs": 1776060350499
+        "runningAtMs": 1776063912259
       }
     },
     {
@@ -217,7 +217,7 @@
       "name": "hep-task-checker",
       "enabled": true,
       "createdAtMs": 1776052620000,
-      "updatedAtMs": 1776060311714,
+      "updatedAtMs": 1776063881681,
       "schedule": {
         "expr": "*/30 * * * *",
         "kind": "cron"
@@ -233,15 +233,14 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1776061800000,
-        "lastRunAtMs": 1776060011676,
-        "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 300038,
-        "lastDeliveryStatus": "not-requested",
-        "consecutiveErrors": 1,
-        "lastError": "cron: job execution timed out",
-        "lastErrorReason": "timeout"
+        "nextRunAtMs": 1776065400000,
+        "lastRunAtMs": 1776063656589,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 225092,
+        "lastDeliveryStatus": "not-delivered",
+        "consecutiveErrors": 0,
+        "lastDelivered": false
       }
     }
   ]
