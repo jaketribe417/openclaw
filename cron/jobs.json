@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1776146420819,
+      "updatedAtMs": 1776150033088,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -27,11 +27,11 @@
         "accountId": "Joy-email"
       },
       "state": {
-        "nextRunAtMs": 1776147000000,
-        "lastRunAtMs": 1776146400034,
+        "nextRunAtMs": 1776150600000,
+        "lastRunAtMs": 1776150000021,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 20785,
+        "lastDurationMs": 33067,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -146,7 +146,7 @@
       "name": "git-auto-push",
       "enabled": true,
       "createdAtMs": 1775007924606,
-      "updatedAtMs": 1776143176033,
+      "updatedAtMs": 1776146706059,
       "schedule": {
         "expr": "0 * * * *",
         "kind": "cron",
@@ -163,16 +163,15 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1776146671643,
-        "lastRunAtMs": 1776143135970,
-        "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 40063,
+        "nextRunAtMs": 1776150271643,
+        "lastRunAtMs": 1776146671661,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 34398,
         "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 1,
+        "consecutiveErrors": 0,
         "lastDelivered": false,
-        "lastDeliveryError": "⚠️ 📝 Edit: `in ~/.openclaw/todo.md` failed",
-        "runningAtMs": 1776146671655
+        "runningAtMs": 1776150271649
       }
     },
     {
@@ -216,7 +215,7 @@
       "name": "hep-task-checker",
       "enabled": true,
       "createdAtMs": 1776052620000,
-      "updatedAtMs": 1776146466609,
+      "updatedAtMs": 1776150161076,
       "schedule": {
         "expr": "*/30 * * * *",
         "kind": "cron"
@@ -232,11 +231,11 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1776148200000,
-        "lastRunAtMs": 1776146420819,
+        "nextRunAtMs": 1776151800000,
+        "lastRunAtMs": 1776150033088,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 45790,
+        "lastDurationMs": 127988,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
