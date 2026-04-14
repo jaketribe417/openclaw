@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "updatedAt": "2026-04-14T12:00:35.933Z",
+  "entries": {
+    "memory:memory/2026-04-06.md:1:22": {
+      "key": "memory:memory/2026-04-06.md:1:22",
+      "path": "memory/2026-04-06.md",
+      "startLine": 1,
+      "endLine": 22,
+      "source": "memory",
+      "snippet": "# Joy Email Log - 2026-04-06 ## Morning Tasks Completed ### 6:00 AM - Daily Calendar Summary - **Triggered by:** Cron job (joy-calendar-daily) - **Action:** Executed joy-calendar-summary.js - **Result:** Successfully sent daily calendar summary to jhansen@trustlineage.com - **Calendar events found:** 3 meetings for today (Monday, April 6th) - **Status:** ✅ Delivered ### Email Sent - **To:** jhansen@trustlineage.com - **From:** jaketribe_bot@agentmail.to (Joy) - **Subject:** Daily Calendar Summary - Monday, April 6, 2026 - **Content:** 3 meetings listed with times and durations - **Signed:** Joy ## Notes - Calendar connected to Office 365 (trustlineage.com) - Auto-delivery via AgentMail A",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.35001460313796995,
+      "maxScore": 0.35001460313796995,
+      "firstRecalledAt": "2026-04-14T12:00:35.933Z",
+      "lastRecalledAt": "2026-04-14T12:00:35.933Z",
+      "queryHashes": [
+        "a919dcde7cb7"
+      ],
+      "recallDays": [
+        "2026-04-14"
+      ],
+      "conceptTags": [
+        "joy-calendar-daily",
+        "joy-calendar-summary.js",
+        "trustlineage.com",
+        "jaketribe-bot",
+        "agentmail.to",
+        "auto-delivery",
+        "joy",
+        "email"
+      ]
+    }
+  }
+}
