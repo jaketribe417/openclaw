@@ -1,8 +1,5 @@
-- [x] Step 1: cd /Users/Jack/.openclaw — Status: DONE
-- [x] Step 2: Check git status — Status: DONE (found 7 modified files, 9 untracked)
-- [ ] Step 3: Commit and push changes — Status: FAILED (removed workspace-main/ orphan, committed locally, but push blocked by GitHub secret scanning)
-- [ ] Step 4: Report result — Status: PENDING
+# Git Auto-Push Task
 
-## Summary
-- Successfully committed 16 files to local repo
-- Push failed: GitHub rejected due to Discord bot tokens in `openclawbeforesecurity.json` (lines 403, 429, 455, 489)
+Step 1: Check git status — Status: DONE (result: 1 file modified - cron/jobs.json)
+Step 2: Stage, commit, and push changes — Status: IN_PROGRESS
+Step 3: Report result — Status: PENDING
