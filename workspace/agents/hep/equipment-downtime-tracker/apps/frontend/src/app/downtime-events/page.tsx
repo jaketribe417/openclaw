@@ -28,10 +28,11 @@ import {
   Calendar,
   AlertTriangle,
   Play,
-  CheckCircle
+  CheckCircle,
+  Settings
 } from "lucide-react";
 import Link from "next/link";
-import { DowntimeEvent, DowntimeEventStatus, Equipment } from "@edt/shared";
+import { DowntimeEvent, DowntimeStatus, Equipment } from "@edt/shared";
 import { formatDistanceToNow, format } from "date-fns";
 
 export default function DowntimeEventsPage() {

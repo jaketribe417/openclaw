@@ -51,7 +51,7 @@ export default function EquipmentDetailPage({ params }: { params: Promise<{ id: 
 
   const [selectedEquipment, setSelectedEquipment] = useState<Equipment | null>(null);
   const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);
-  const [newStatus, setNewStatus] = useState<EquipmentStatus>("running");
+  const [newStatus, setNewStatus] = useState<EquipmentStatus>(EquipmentStatus.RUNNING);
   const [statusReason, setStatusReason] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
   const [equipmentId, setEquipmentId] = useState<string>("");
@@ -314,7 +314,7 @@ export default function EquipmentDetailPage({ params }: { params: Promise<{ id: 
                   variant="outline" 
                   className="w-full justify-start"
                   onClick={() => {
-                    setNewStatus("running");
+                    setNewStatus(EquipmentStatus.RUNNING);
                     setIsStatusDialogOpen(true);
                   }}
                 >
@@ -325,7 +325,7 @@ export default function EquipmentDetailPage({ params }: { params: Promise<{ id: 
                   variant="outline" 
                   className="w-full justify-start"
                   onClick={() => {
-                    setNewStatus("degraded");
+                    setNewStatus(EquipmentStatus.DEGRADED);
                     setIsStatusDialogOpen(true);
                   }}
                 >
@@ -336,7 +336,7 @@ export default function EquipmentDetailPage({ params }: { params: Promise<{ id: 
                   variant="outline" 
                   className="w-full justify-start"
                   onClick={() => {
-                    setNewStatus("down");
+                    setNewStatus(EquipmentStatus.DOWN);
                     setIsStatusDialogOpen(true);
                   }}
                 >
