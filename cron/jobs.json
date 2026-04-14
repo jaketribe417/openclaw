@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1776182412907,
+      "updatedAtMs": 1776186017330,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -27,11 +27,11 @@
         "accountId": "Joy-email"
       },
       "state": {
-        "nextRunAtMs": 1776183000000,
-        "lastRunAtMs": 1776182400028,
+        "nextRunAtMs": 1776186600000,
+        "lastRunAtMs": 1776186000033,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 12879,
+        "lastDurationMs": 17297,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -146,7 +146,7 @@
       "name": "git-auto-push",
       "enabled": true,
       "createdAtMs": 1775007924606,
-      "updatedAtMs": 1776179098753,
+      "updatedAtMs": 1776182712067,
       "schedule": {
         "expr": "0 * * * *",
         "kind": "cron",
@@ -163,15 +163,16 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1776182671643,
-        "lastRunAtMs": 1776179071686,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 27067,
+        "nextRunAtMs": 1776186271643,
+        "lastRunAtMs": 1776182671673,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 40394,
         "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 0,
+        "consecutiveErrors": 1,
         "lastDelivered": false,
-        "runningAtMs": 1776182671655
+        "lastDeliveryError": "⚠️ 📝 Edit: `in ~/.openclaw/workspace/todo.md` failed",
+        "runningAtMs": 1776186319484
       }
     },
     {
@@ -215,7 +216,7 @@
       "name": "hep-task-checker",
       "enabled": true,
       "createdAtMs": 1776052620000,
-      "updatedAtMs": 1776182439878,
+      "updatedAtMs": 1776186317366,
       "schedule": {
         "expr": "*/30 * * * *",
         "kind": "cron"
@@ -231,14 +232,15 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1776184200000,
-        "lastRunAtMs": 1776182412907,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 26971,
-        "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 0,
-        "lastDelivered": false
+        "nextRunAtMs": 1776187800000,
+        "lastRunAtMs": 1776186017330,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 300036,
+        "lastDeliveryStatus": "not-requested",
+        "consecutiveErrors": 2,
+        "lastErrorReason": "timeout",
+        "lastError": "cron: job execution timed out"
       }
     }
   ]
