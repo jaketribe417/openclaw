@@ -1,0 +1,37 @@
+{
+  "version": 1,
+  "updatedAt": "2026-04-19T22:30:29.802Z",
+  "entries": {
+    "memory:memory/2026-04-12.md:31:56": {
+      "key": "memory:memory/2026-04-12.md:31:56",
+      "path": "memory/2026-04-12.md",
+      "startLine": 31,
+      "endLine": 56,
+      "source": "memory",
+      "snippet": "5. Create `/map` page for floor map visualization 6. Wire up navigation between pages 7. Add proper routing guards (auth-required pages) 8. Connect to actual backend API endpoints #### Next Steps After UI Complete: - Phase 4: Floor Map Drag-and-Drop - Phase 5: Reporting Dashboard - Phase 6: Testing & Polish - Phase 7: Deployment --- ## User Request \"Finish the front end UI and check back with me when done.\" --- ## Action Required ⚠️ Resume Frontend Core UI work to complete page routing and component integration. --- *Forge-Master: HEP* *The fire burns eternal.*",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.3792786031961441,
+      "maxScore": 0.3792786031961441,
+      "firstRecalledAt": "2026-04-19T22:30:29.802Z",
+      "lastRecalledAt": "2026-04-19T22:30:29.802Z",
+      "queryHashes": [
+        "0d641d226f77"
+      ],
+      "recallDays": [
+        "2026-04-19"
+      ],
+      "conceptTags": [
+        "auth-required",
+        "drag-and-drop",
+        "forge-master",
+        "create",
+        "map",
+        "page",
+        "floor",
+        "visualization"
+      ]
+    }
+  }
+}
