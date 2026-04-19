@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1776618018114,
+      "updatedAtMs": 1776621720069,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -27,14 +27,15 @@
         "accountId": "Joy-email"
       },
       "state": {
-        "nextRunAtMs": 1776618600000,
-        "lastRunAtMs": 1776618000041,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 18073,
-        "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 0,
-        "lastDelivered": false
+        "nextRunAtMs": 1776622200000,
+        "lastRunAtMs": 1776621600034,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 120035,
+        "lastDeliveryStatus": "unknown",
+        "consecutiveErrors": 1,
+        "lastError": "cron: job execution timed out",
+        "lastErrorReason": "timeout"
       }
     },
     {
@@ -146,7 +147,7 @@
       "name": "git-auto-push",
       "enabled": true,
       "createdAtMs": 1775007924606,
-      "updatedAtMs": 1776614710434,
+      "updatedAtMs": 1776618298170,
       "schedule": {
         "expr": "0 * * * *",
         "kind": "cron",
@@ -163,15 +164,15 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1776618271643,
-        "lastRunAtMs": 1776614671651,
+        "nextRunAtMs": 1776621871643,
+        "lastRunAtMs": 1776618271659,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 38783,
+        "lastDurationMs": 26511,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false,
-        "runningAtMs": 1776618271650
+        "runningAtMs": 1776621871649
       }
     },
     {
@@ -217,7 +218,7 @@
       "name": "hep-task-checker",
       "enabled": true,
       "createdAtMs": 1776052620000,
-      "updatedAtMs": 1776618059162,
+      "updatedAtMs": 1776621864303,
       "schedule": {
         "expr": "*/30 * * * *",
         "kind": "cron"
@@ -233,11 +234,11 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1776619800000,
-        "lastRunAtMs": 1776618018114,
+        "nextRunAtMs": 1776623400000,
+        "lastRunAtMs": 1776621720069,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 41048,
+        "lastDurationMs": 144234,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
