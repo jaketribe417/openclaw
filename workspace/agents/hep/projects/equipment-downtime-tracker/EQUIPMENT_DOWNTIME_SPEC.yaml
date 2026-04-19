@@ -1,0 +1,780 @@
+# =============================================================================
+# Equipment Downtime Tracker — Consolidated specification (complete YAML)
+# =============================================================================
+# Client: Lineage Connect production floor
+# Consolidated: 2026-04-18
+# Sources: PROJECT_PLAN.md, project-template.yaml (historical), EQUIPMENT_DOWNTIME_SPECS.md,
+#          IMPLEMENTATION_SUMMARY.md (repo: workspace/agents/hep/equipment-downtime-tracker/)
+# =============================================================================
+
+document:
+  title: Equipment Downtime Tracking System
+  slug: equipment-downtime-tracker
+  version: "1.0.0"
+  last_updated: "2026-04-18"
+  requirements_finalized: "2026-04-10"
+  implementation_snapshot: "2026-04-10"
+
+project:
+  name: equipment-downtime-tracker
+  version: "1.0.0"
+  description: Real-time equipment downtime tracking for production floor management
+  client: Lineage Connect
+  approach:
+    iterative_development: true
+    quality_over_speed: true
+    fully_baked_solution: true
+    no_hard_deadline: true
+
+# -----------------------------------------------------------------------------
+# Scope & scale
+# -----------------------------------------------------------------------------
+
+scope:
+  problem_statement: >-
+    Real-time visibility into equipment downtime and repairs (IT-ticket-style history)
+    for incident response, maintenance history, and operational analytics.
+  approximate_total_equipment: 45
+  printers:
+    count_range: [10, 15]
+    module_tracking: true
+  finishing_equipment:
+    approximate_count: 30
+    module_tracking: true
+  modules_and_components:
+    description: Identifiable sub-units per equipment line; technicians add on the fly
+
+# -----------------------------------------------------------------------------
+# Reconciliations (supersedes earlier drafts)
+# -----------------------------------------------------------------------------
+
+reconciliations:
+  mobile:
+    final: responsive_web_app
+    superseded_notes:
+      - Early draft mentioned PWA and offline sync; finalized spec uses responsive web (reliable on-site Wi-Fi).
+      - QR/barcode-first flows remain optional future enhancements.
+  backend:
+    planned_generic: Node.js REST API
+    implemented_framework: Fastify
+  project_plan_header:
+    note: PROJECT_PLAN.md header may say Requirements Collection; body contains finalized requirements.
+
+# -----------------------------------------------------------------------------
+# Architecture
+# -----------------------------------------------------------------------------
+
+architecture:
+  type: multi_tenant_hierarchical
+
+  hierarchy:
+    description: >-
+      Company → Building → Floor → Zone → Equipment → Module → Component
+    levels:
+      company:
+        description: Top-level organization (multi-company capable)
+        can_create: [administrator]
+      building:
+        description: Physical building
+        can_create: [administrator]
+      floor:
+        description: Floor within building
+        can_create: [administrator]
+      zone:
+        description: Logical production zone (e.g. printer, inserter, jet)
+        can_create: [administrator]
+      equipment:
+        description: Physical equipment unit (admin-created only)
+        has_parent: zone
+        can_create: [administrator]
+      module:
+        description: Sub-unit of equipment
+        has_parent: equipment
+        can_create: [technician, administrator]
+      component:
+        description: Sub-part of module
+        has_parent: module
+        can_create: [technician, administrator]
+
+  deployment:
+    strategy: containerized
+    docker: true
+    options:
+      on_premise: supported
+      cloud: supported
+      migration_path: seamless
+
+  stack:
+    planned:
+      frontend_framework: React/Next.js
+      backend: Node.js REST API
+      database: PostgreSQL
+      object_storage: MinIO_S3_compatible
+      api_docs: OpenAPI_Swagger
+
+    implemented:
+      monorepo:
+        package_manager: pnpm
+        workspaces: [apps/*, packages/*]
+        build: Turbo
+      frontend:
+        framework: Next.js
+        version_note: "15 (App Router)"
+        ui: [Tailwind CSS, Shadcn UI]
+        state: Zustand
+        data_fetching: TanStack_Query
+      backend:
+        framework: Fastify
+        validation: Zod
+        auth: JWT
+        plugins: [CORS, multipart, Swagger]
+      database:
+        engine: PostgreSQL
+        orm: Drizzle
+        package: "@edt/db"
+        multi_tenancy:
+          row_level_security: true
+          company_context_middleware: true
+      realtime:
+        mechanism: SSE
+        purpose: dashboard_and_status_broadcasts
+      packages:
+        shared: "@edt/shared"
+
+# -----------------------------------------------------------------------------
+# Roles & permissions
+# -----------------------------------------------------------------------------
+
+roles:
+  administrator:
+    permissions:
+      - full_crud_all_entities
+      - user_management
+      - company_building_floor_zone_creation
+      - system_configuration
+      - report_access_all
+  supervisor:
+    permissions:
+      - view_all_entities
+      - receive_escalations
+      - mark_equipment_operational
+      - view_reports
+      - export_reports
+  technician:
+    permissions:
+      - acknowledge_repairs
+      - log_work
+      - update_status
+      - add_modules
+      - add_components
+      - mark_equipment_operational
+      - view_history
+      - view_dashboard
+  operator:
+    permissions:
+      - report_issues_critical_and_non_critical
+      - view_status
+      - view_history
+      - attach_photos
+      - log_self_resolved_errors
+
+# -----------------------------------------------------------------------------
+# Equipment identification & status
+# -----------------------------------------------------------------------------
+
+equipment:
+  identification:
+    format: custom_names_with_ids_at_each_level
+    admin_controlled_equipment: true
+    fields:
+      - id_auto_generated
+      - name_admin_defined
+      - description_optional
+      - location_hierarchical_reference
+      - photo_optional
+
+  status:
+    equipment_and_module:
+      running:
+        color: green
+        description: Fully operational
+      degraded:
+        color: yellow
+        description: Operating with issues
+      down:
+        color: red
+        description: Stopped; requires attention
+    rollup_logic: user_determined
+    rollup_rules:
+      - module_down_may_map_to_equipment_degraded_not_necessarily_down
+      - not_fully_automatic: technician_or_supervisor_decides
+
+  lifecycle:
+    equipment_creation: admin_only
+    modules_components:
+      on_the_fly: true
+      by: [technician, administrator]
+
+# -----------------------------------------------------------------------------
+# Downtime events
+# -----------------------------------------------------------------------------
+
+downtime_events:
+  severity:
+    - critical
+    - non_critical
+
+  status:
+    - reported
+    - acknowledged
+    - in_repair
+    - resolved
+
+  workflow:
+    steps:
+      - id: 1
+        name: report
+        actor: operator
+        fields:
+          - equipment_selection
+          - severity
+          - description_optional
+          - photo_optional
+        result: equipment_status_updated
+      - id: 2
+        name: notify
+        recipients: [technician_pool, supervisor]
+        channels_mvp: [email, in_app]
+      - id: 3
+        name: acknowledge
+        actor: technician
+        rule: first_to_acknowledge_gets_assignment
+        escalation:
+          minutes: 15
+          if: unacknowledged
+          recipient: manager
+          channels_mvp: [email]
+      - id: 4
+        name: repair
+        actor: assigned_technician
+        actions:
+          - log_work
+          - record_parts_used
+          - track_time
+          - add_notes
+          - upload_photos_optional
+      - id: 5
+        name: resolve
+        actor: [technician, supervisor]
+        result:
+          - equipment_marked_operational
+          - audit_trail_complete
+
+  non_critical_self_resolved:
+    description: Operator logs issues fixed without vendor repair (e.g. reboot)
+    purpose: pattern_and_trend_tracking
+    example: "Printer communication error — reboot fixed"
+
+# -----------------------------------------------------------------------------
+# Mobile operator interface
+# -----------------------------------------------------------------------------
+
+mobile_interface:
+  type: responsive_web_app
+  pwa: false
+  reason: reliable_on_site_wifi_simpler_than_installable_pwa
+  target_submit_seconds: 30
+  features:
+    equipment_selection:
+      - zone_list
+      - quick_search
+      - recent_equipment_optional
+    reporting:
+      - one_tap_severity
+      - optional_note
+      - optional_photo
+    photos:
+      use_cases: [error_screens, machine_messages]
+    ui:
+      - large_touch_targets
+      - minimal_forms
+      - thumb_friendly
+
+  optional_future_enhancements:
+    - qr_barcode_scan_to_select_equipment
+    - favorites_list
+    - quick_issue_templates
+    - voice_to_text
+
+# -----------------------------------------------------------------------------
+# Floor map
+# -----------------------------------------------------------------------------
+
+floor_map:
+  views:
+    map_view: true
+    list_view: true
+    toggle_between: true
+  admin_uploads_floor_plan_per_floor: true
+  positioning:
+    method: drag_and_drop
+    storage: xy_coordinates
+    snap_to_grid: optional
+  representation:
+    type: generic_icons
+    status_colors:
+      running: green
+      degraded: yellow
+      down: red
+  interaction:
+    click_opens: equipment_detail_with_photo
+  navigation:
+    - zoom
+    - pan
+    - mini_map_optional
+  optional_ux:
+    - grid_snap_alignment
+    - layer_controls_by_equipment_type
+
+  example_locations:
+    main_building:
+      floors: [floor_1, floor_2]
+    additional_building:
+      floors: [floor_1]
+    example_zones:
+      - printer_zone
+      - inserter_zone
+      - jet_zone
+      - finishing_zone
+
+# -----------------------------------------------------------------------------
+# Notifications (phased)
+# -----------------------------------------------------------------------------
+
+notifications:
+  phase1_mvp:
+    email:
+      recipients: role_based
+      events:
+        - equipment_down
+        - escalation
+        - repair_complete
+    in_app:
+      type: real_time_updates
+      recipients: active_users
+  phase2:
+    microsoft_teams:
+      integration: webhook
+  phase3_future:
+    sms:
+      use_case: critical_escalations
+      priority_note: highest_cost_last_priority
+
+# -----------------------------------------------------------------------------
+# Parts & cost tracking
+# -----------------------------------------------------------------------------
+
+parts_tracking:
+  strategy: simple_catalog
+  part_attributes:
+    - name
+    - part_number
+    - cost_optional
+    - description_optional
+    - company_scoped: true
+  usage:
+    selection: dropdown_on_work_log
+    recorded_per_repair: true
+  reporting:
+    - cost_per_repair
+    - cost_per_equipment
+    - cost_per_time_period
+    - parts_usage_frequency
+  future: full_inventory_management
+
+# -----------------------------------------------------------------------------
+# Reporting & analytics
+# -----------------------------------------------------------------------------
+
+reporting:
+  live_dashboard:
+    features:
+      - real_time_equipment_module_status
+      - color_coded_indicators
+    filters:
+      - location
+      - zone
+      - equipment_type
+      - status
+  executive_reports:
+    time_periods: configurable
+    metrics:
+      - mttr
+      - mtbf
+      - downtime_by_equipment_top_offenders
+      - downtime_by_module_component
+      - technician_performance
+      - peak_failure_times_shift_patterns
+      - repair_cost_summary
+    performance_target_seconds: 5
+
+# -----------------------------------------------------------------------------
+# Authentication
+# -----------------------------------------------------------------------------
+
+authentication:
+  phase1:
+    type: email_password
+    admin_controlled_users: true
+  phase2:
+    type: microsoft_entra_id
+    sso: true
+
+# -----------------------------------------------------------------------------
+# Data model (entities & fields)
+# -----------------------------------------------------------------------------
+
+data_model:
+  entities:
+    Company:
+      fields:
+        id: { type: uuid, pk: true }
+        name: { type: string }
+        created_at: { type: timestamp }
+        updated_at: { type: timestamp }
+
+    Building:
+      fields:
+        id: { type: uuid, pk: true }
+        company_id: { type: uuid, fk: Company.id }
+        name: { type: string }
+        address: { type: text }
+        created_at: { type: timestamp }
+
+    Floor:
+      fields:
+        id: { type: uuid, pk: true }
+        building_id: { type: uuid, fk: Building.id }
+        name: { type: string }
+        floor_number: { type: integer }
+        created_at: { type: timestamp }
+
+    Zone:
+      fields:
+        id: { type: uuid, pk: true }
+        floor_id: { type: uuid, fk: Floor.id }
+        name: { type: string }
+        zone_type: { type: enum }
+        created_at: { type: timestamp }
+
+    Equipment:
+      fields:
+        id: { type: uuid, pk: true }
+        zone_id: { type: uuid, fk: Zone.id }
+        name: { type: string }
+        equipment_id: { type: string }
+        type: { type: enum }
+        status: { type: enum, values: [running, degraded, down] }
+        photo_url: { type: string, nullable: true }
+        floor_map_x: { type: float }
+        floor_map_y: { type: float }
+        created_at: { type: timestamp }
+        updated_at: { type: timestamp }
+
+    Module:
+      fields:
+        id: { type: uuid, pk: true }
+        equipment_id: { type: uuid, fk: Equipment.id }
+        name: { type: string }
+        module_id: { type: string }
+        status: { type: enum, values: [running, degraded, down] }
+        created_at: { type: timestamp }
+
+    Component:
+      fields:
+        id: { type: uuid, pk: true }
+        module_id: { type: uuid, fk: Module.id }
+        name: { type: string }
+        component_id: { type: string }
+        created_at: { type: timestamp }
+
+    User:
+      fields:
+        id: { type: uuid, pk: true }
+        email: { type: string }
+        name: { type: string }
+        role: { type: enum, values: [admin, supervisor, technician, operator] }
+        company_id: { type: uuid, fk: Company.id }
+        active: { type: boolean }
+        created_at: { type: timestamp }
+
+    DowntimeEvent:
+      fields:
+        id: { type: uuid, pk: true }
+        equipment_id: { type: uuid, fk: Equipment.id }
+        module_id: { type: uuid, fk: Module.id, nullable: true }
+        reported_by: { type: uuid, fk: User.id }
+        acknowledged_by: { type: uuid, fk: User.id, nullable: true }
+        resolved_by: { type: uuid, fk: User.id, nullable: true }
+        severity: { type: enum, values: [critical, non_critical] }
+        status: { type: enum, values: [reported, acknowledged, in_repair, resolved] }
+        description: { type: text }
+        photo_url: { type: string, nullable: true }
+        reported_at: { type: timestamp }
+        acknowledged_at: { type: timestamp, nullable: true }
+        resolved_at: { type: timestamp, nullable: true }
+
+    WorkLog:
+      fields:
+        id: { type: uuid, pk: true }
+        downtime_event_id: { type: uuid, fk: DowntimeEvent.id }
+        technician_id: { type: uuid, fk: User.id }
+        description: { type: text }
+        time_spent_minutes: { type: integer }
+        created_at: { type: timestamp }
+
+    Part:
+      fields:
+        id: { type: uuid, pk: true }
+        name: { type: string }
+        part_number: { type: string }
+        cost: { type: decimal }
+        company_id: { type: uuid, fk: Company.id }
+
+    PartsUsed:
+      fields:
+        id: { type: uuid, pk: true }
+        work_log_id: { type: uuid, fk: WorkLog.id }
+        part_id: { type: uuid, fk: Part.id }
+        quantity: { type: integer }
+        cost_at_time: { type: decimal }
+
+    FloorMap:
+      fields:
+        id: { type: uuid, pk: true }
+        floor_id: { type: uuid, fk: Floor.id }
+        image_url: { type: string }
+        uploaded_by: { type: uuid, fk: User.id }
+        created_at: { type: timestamp }
+
+# -----------------------------------------------------------------------------
+# Planned implementation phases (product)
+# -----------------------------------------------------------------------------
+
+implementation_phases:
+  phase1_mvp:
+    duration_weeks: "4-6"
+    features:
+      - core_downtime_tracking
+      - basic_dashboard
+      - mobile_reporting
+      - email_notifications
+      - simple_user_management
+  phase2_visualization:
+    duration_weeks: "2-3"
+    features:
+      - floor_map_drag_drop
+      - equipment_photos
+      - zone_management
+      - teams_integration
+  phase3_analytics:
+    duration_weeks: "2"
+    features:
+      - executive_reports
+      - cost_tracking
+      - mttr_mtbf_metrics
+  phase4_integration:
+    duration_weeks: "2"
+    features:
+      - microsoft_sso
+      - advanced_notifications
+
+# -----------------------------------------------------------------------------
+# Implementation status (engineering snapshot)
+# -----------------------------------------------------------------------------
+
+implementation_status:
+  snapshot_date: "2026-04-10"
+  summary: Phase 1 infrastructure complete; backend routes and frontend in progress
+  completed:
+    database:
+      - postgresql_schema_14_tables
+      - indexes
+      - row_level_security
+      - audit_triggers
+      - status_history_triggers
+      - reporting_views_mttr_technician_performance_current_status
+      - seed_data
+    infrastructure:
+      - docker_compose_postgresql_minio
+      - env_example_template
+      - db_init_script_enums_tables_views_seed
+    monorepo:
+      - pnpm_workspaces
+      - turbo
+      - typescript_configs
+    packages:
+      db:
+        - drizzle_schema
+        - migrations_drizzle_kit
+        - seed_script
+        - connection_pooling_tenant_context
+      shared:
+        - typescript_types
+        - enums
+        - api_types
+        - permissions_utilities
+    backend_foundation:
+      - fastify_server
+      - cors_jwt_multipart_swagger
+      - auth_plugin_jwt
+      - company_context_rls
+      - auth_routes_login_register_me_password_reset
+      - health_check
+  pending:
+    backend_routes:
+      - company_management
+      - building_floor_zone_crud
+      - equipment_crud_status
+      - module_component_crud
+      - downtime_workflow
+      - work_logs_parts_used
+      - parts_catalog
+      - floor_map_upload_management
+      - reporting_mttr_mtbf_technician
+      - sse_realtime
+    frontend:
+      - nextjs_app_router_ui
+      - tailwind_shadcn
+      - zustand_react_query_wiring
+      - auth_ui
+      - dashboard_realtime
+      - equipment_management_ui
+      - floor_map_drag_drop
+      - downtime_workflow_ui
+      - reporting_dashboard
+    integrations:
+      - minio_file_uploads
+      - sse_broadcasting
+      - csv_excel_bulk_import
+      - email_notifications
+      - entra_id_sso
+
+# -----------------------------------------------------------------------------
+# Non-functional requirements
+# -----------------------------------------------------------------------------
+
+technical:
+  wifi: reliable_on_production_floor
+  devices: [phones, tablets, computers]
+  camera_access_operators: true
+  offline_support: not_required
+  performance:
+    page_load_target: "<3 seconds"
+    realtime_transport: SSE
+    concurrent_users_target: "50+"
+    executive_report_generation_target: "<5 seconds"
+
+success_criteria:
+  - operators_report_under_30_seconds
+  - escalation_if_unacknowledged_15_minutes
+  - full_audit_trail
+  - real_time_dashboard_accuracy
+  - multi_location_hierarchy_works
+  - executive_reports_under_5_seconds_where_applicable
+
+# -----------------------------------------------------------------------------
+# Decisions log
+# -----------------------------------------------------------------------------
+
+decisions_log:
+  - date: "2026-04-01"
+    decision: Floor map drag-and-drop required
+    rationale: Visual equipment placement
+  - date: "2026-04-01"
+    decision: Mobile-first operator interface
+    rationale: Fast on-floor reporting
+  - date: "2026-04-10"
+    decision: Hierarchical multi-tenant Company→Building→Floor→Zone
+    rationale: Multiple locations and expansion
+  - date: "2026-04-10"
+    decision: Three-tier status Running/Degraded/Down
+    rationale: Partial failures and flexible rollup
+  - date: "2026-04-10"
+    decision: Equipment→Module→Component hierarchy
+    rationale: Admin-owned equipment; tech-owned sub-units
+  - date: "2026-04-10"
+    decision: First-to-acknowledge with 15-minute escalation
+    rationale: Fair distribution and response guarantee
+  - date: "2026-04-10"
+    decision: Simple parts catalog with cost tracking
+    rationale: Repair costs without full inventory
+  - date: "2026-04-10"
+    decision: Responsive web not PWA
+    rationale: Reliable Wi-Fi; simpler implementation
+  - date: "2026-04-10"
+    decision: Email and Teams before SMS
+    rationale: Cost and Microsoft ecosystem
+  - date: "2026-04-10"
+    decision: Containerized on-prem or cloud
+    rationale: IT flexibility
+  - date: "2026-04-10"
+    decision: Iterative fully-baked delivery
+    rationale: Quality over arbitrary deadline
+
+# -----------------------------------------------------------------------------
+# Original core requirements (traceability)
+# -----------------------------------------------------------------------------
+
+original_core_requirements:
+  inventory: Printers and finishing equipment with module tracking
+  status_tracking:
+    - non_critical_impaired_operation
+    - critical_down
+    - visual_dashboard_real_time
+  work_logging:
+    - technician_updates
+    - repair_duration
+    - parts_used
+    - historical_reporting
+
+# -----------------------------------------------------------------------------
+# Development & QA (non-production)
+# -----------------------------------------------------------------------------
+
+development:
+  repository_path: workspace/agents/hep/equipment-downtime-tracker
+  api_documentation_url: "http://localhost:3001/documentation"
+  quick_start_commands:
+    - "cd infrastructure && docker-compose up -d"
+    - "cd .. && pnpm install"
+    - "pnpm db:generate && pnpm db:migrate"
+    - "cd packages/db && pnpm seed"
+    - "cd ../../apps/backend && pnpm dev"
+  demo_users:
+    warning: Development credentials only — rotate or remove before production
+    users:
+      - role: admin
+        email: admin@lineageconnect.com
+        password: admin123
+      - role: supervisor
+        email: supervisor@lineageconnect.com
+        password: supervisor123
+      - role: technician
+        email: technician@lineageconnect.com
+        password: tech123
+      - role: operator
+        email: operator@lineageconnect.com
+        password: operator123
+
+# -----------------------------------------------------------------------------
+# Related documents
+# -----------------------------------------------------------------------------
+
+related_documents:
+  - path: PROJECT_PLAN.md
+    role: Narrative requirements and history
+  - path: EQUIPMENT_DOWNTIME_SPECS.md
+    role: Human-readable consolidated specification
+  - path: ../../equipment-downtime-tracker/IMPLEMENTATION_SUMMARY.md
+    role: Living engineering status and quick start
