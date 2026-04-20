@@ -1,40 +1,9 @@
 {
-  "version": "1.0",
-  "lastUpdated": "2026-04-20",
   "categories": [
-    {
-      "id": "personal",
-      "name": "Personal",
-      "color": "#00d4ff",
-      "description": "Personal tasks and errands",
-      "icon": "user",
-      "order": 1
-    },
-    {
-      "id": "pathfinders",
-      "name": "Pathfinders",
-      "color": "#ff6b00",
-      "description": "Pathfinder club activities and coordination",
-      "icon": "compass",
-      "order": 2
-    },
-    {
-      "id": "lineage",
-      "name": "Lineage",
-      "color": "#00ff88",
-      "description": "Work tasks for Lineage Connect/Mailing Services",
-      "icon": "building",
-      "order": 3
-    },
-    {
-      "id": "openclaw",
-      "name": "OpenClaw",
-      "color": "#ff00ff",
-      "description": "OpenClaw development and maintenance",
-      "icon": "terminal",
-      "order": 4
-    }
+    { "id": "personal", "name": "Personal", "color": "#00d4ff", "icon": "👤" },
+    { "id": "pathfinders", "name": "Pathfinders", "color": "#ff6b00", "icon": "⛺" },
+    { "id": "lineage", "name": "Lineage", "color": "#00ff88", "icon": "📬" },
+    { "id": "openclaw", "name": "OpenClaw", "color": "#ff00ff", "icon": "🤖" }
   ],
-  "defaultCategory": "personal",
-  "allowCustomCategories": true
+  "defaultCategory": "personal"
 }
