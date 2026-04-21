@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-04-19T22:30:29.802Z",
+  "updatedAt": "2026-04-21T09:01:24.911Z",
   "entries": {
     "memory:memory/2026-04-12.md:31:56": {
       "key": "memory:memory/2026-04-12.md:31:56",
@@ -31,6 +31,37 @@
         "page",
         "floor",
         "visualization"
+      ]
+    },
+    "memory:memory/2026-04-12.md:1:44": {
+      "key": "memory:memory/2026-04-12.md:1:44",
+      "path": "memory/2026-04-12.md",
+      "startLine": 1,
+      "endLine": 44,
+      "source": "memory",
+      "snippet": "# EDDTS Project Status Log **Project:** Equipment Downtime Tracking System (EDDTS) for Lineage Connect **Started:** 2026-04-10 **Last Updated:** 2026-04-12 (10:18 PM CDT) --- ## Current Phase: Frontend Core UI (Phase 3) ### Status: INCOMPLETE - CRITICAL GAP IDENTIFIED #### Completed Before Today: - ✅ Phase 1: Infrastructure (PostgreSQL, MinIO, Docker) - ✅ Phase 2: Backend API (Fastify, all CRUD routes, auth, SSE framework) - ✅ Phase 2: Frontend Scaffold (Next.js 15, Tailwind, Shadcn, Zustand, React Query) - ✅ Login page with demo accounts - ✅ Dashboard COMPONENTS created (OperatorDashboard, TechnicianDashboard, SupervisorDashboard) #### Critical Gap Identified (2026-04-12 10:18 PM)",
+      "recallCount": 1,
+      "dailyCount": 0,
+      "groundedCount": 0,
+      "totalScore": 0.5501835878424683,
+      "maxScore": 0.5501835878424683,
+      "firstRecalledAt": "2026-04-21T09:01:24.911Z",
+      "lastRecalledAt": "2026-04-21T09:01:24.911Z",
+      "queryHashes": [
+        "d8942d920954"
+      ],
+      "recallDays": [
+        "2026-04-21"
+      ],
+      "conceptTags": [
+        "next.js",
+        "eddts",
+        "project",
+        "status",
+        "log",
+        "equipment",
+        "downtime",
+        "tracking"
       ]
     }
   }
