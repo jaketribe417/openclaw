@@ -8,7 +8,7 @@
       "name": "joy-email-check",
       "enabled": true,
       "createdAtMs": 1774802854612,
-      "updatedAtMs": 1776942026010,
+      "updatedAtMs": 1776945624050,
       "schedule": {
         "expr": "*/10 * * * *",
         "kind": "cron"
@@ -27,11 +27,11 @@
         "accountId": "Joy-email"
       },
       "state": {
-        "nextRunAtMs": 1776942600000,
-        "lastRunAtMs": 1776942000025,
+        "nextRunAtMs": 1776946200000,
+        "lastRunAtMs": 1776945600029,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 25985,
+        "lastDurationMs": 24021,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
@@ -146,7 +146,7 @@
       "name": "git-auto-push",
       "enabled": true,
       "createdAtMs": 1775007924606,
-      "updatedAtMs": 1776938810588,
+      "updatedAtMs": 1776942301919,
       "schedule": {
         "expr": "0 * * * *",
         "kind": "cron",
@@ -163,15 +163,15 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1776942271643,
-        "lastRunAtMs": 1776938712154,
+        "nextRunAtMs": 1776945871643,
+        "lastRunAtMs": 1776942271649,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 98434,
+        "lastDurationMs": 30270,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false,
-        "runningAtMs": 1776942271647
+        "runningAtMs": 1776945871651
       }
     },
     {
@@ -181,7 +181,7 @@
       "name": "joy-daily-system-update",
       "enabled": true,
       "createdAtMs": 1775309997258,
-      "updatedAtMs": 1776859270996,
+      "updatedAtMs": 1776945733608,
       "schedule": {
         "expr": "0 7 * * *",
         "kind": "cron",
@@ -198,14 +198,16 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1776945600000,
-        "lastRunAtMs": 1776859218225,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 52771,
+        "nextRunAtMs": 1777032000000,
+        "lastRunAtMs": 1776945624050,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 109558,
         "lastDelivered": false,
         "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 0
+        "consecutiveErrors": 1,
+        "lastError": "⚠️ ✉️ Message failed",
+        "lastDeliveryError": "⚠️ ✉️ Message failed"
       }
     },
     {
@@ -215,7 +217,7 @@
       "name": "hep-task-checker",
       "enabled": true,
       "createdAtMs": 1776052620000,
-      "updatedAtMs": 1776942150756,
+      "updatedAtMs": 1776945765194,
       "schedule": {
         "expr": "*/30 * * * *",
         "kind": "cron"
@@ -231,11 +233,11 @@
         "mode": "none"
       },
       "state": {
-        "nextRunAtMs": 1776943800000,
-        "lastRunAtMs": 1776942073876,
+        "nextRunAtMs": 1776947400000,
+        "lastRunAtMs": 1776945733608,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 76880,
+        "lastDurationMs": 31586,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false
