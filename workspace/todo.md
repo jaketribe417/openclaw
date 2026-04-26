@@ -1,9 +1,6 @@
-# Auto-Push Task
+# Git Auto-Push Task
 
-## Steps
-1. [x] Check git status — Status: DONE (found 2 modified files, 1 untracked)
-2. [x] Stage and commit changes (excluding protected files) — Status: DONE
-3. [x] Push to origin main — Status: DONE
-4. [x] Report result — Status: DONE
-
-Result: Successfully pushed 4 files to GitHub
+Step 1: Navigate to /Users/Jack/.openclaw — Status: DONE (success)
+Step 2: Check git status — Status: DONE (3 modified files found)
+Step 3: If changes exist, stage (excluding sensitive files), commit, and push — Status: PENDING
+Step 4: Report success or failure — Status: PENDING
